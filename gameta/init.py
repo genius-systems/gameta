@@ -1,10 +1,10 @@
 import json
 from os.path import splitext, basename
-from typing import Dict
+from typing import Dict, Optional
 
 import click
 
-from git import Repo
+from git import Repo, InvalidGitRepositoryError
 
 from . import gameta_cli, gameta_context, GametaContext
 
@@ -35,24 +35,26 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
     """
     click.echo(f"Initialising metarepo in {context.project_dir}")
 
-    repo: Repo = Repo(context.project_dir)
-    name: str = splitext(basename(repo.remote().url))[0]
+    try:
+        repo: Repo = Repo(context.project_dir)
+        name: str = splitext(basename(repo.remote().url))[0]
+        url: Optional[str] = repo.remote().url
+    except InvalidGitRepositoryError:
+        if git is False:
+            raise click.ClickException(f"{context.project_dir} is not a valid git repo, initialise it with -g flag")
+        click.echo(f"Initialising {context.project_dir} as a git repository")
+        Repo.init(context.project_dir)
+        name: str = basename(context.project_dir)
+        url: Optional[str] = None
 
-    if not context.is_metarepo:
-        if repo.bare:
-            if not git:
-                click.ClickException(f"{context.project_dir} is not a valid git repo, initialise it with -g flag")
-            click.echo(f"Initialising {context.project_dir} as a git repo")
-            repo.init()
-    else:
-        if not overwrite:
-            click.echo(f"{context.project_dir} is a metarepo, ignoring")
-            return
+    if context.is_metarepo and overwrite is False:
+        click.echo(f"{context.project_dir} is a metarepo, ignoring")
+        return
 
     context.repositories[name] = {
-        'url': repo.remote().url,
+        'url': url,
         'path': '.',
         'tags': ['meta']
     }
     context.export()
-    click.secho(f"Successfully initialised {context.project_dir} as a metarepo")
+    click.secho(f"Successfully initialised {name} as a metarepo")
