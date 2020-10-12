@@ -3,9 +3,25 @@ version: 2.1
 orbs:
   python: circleci/python@1.2.0
 
+executors:
+  py36:
+    docker:
+      - image: cimg/python:3.6
+  py37:
+    docker:
+      - image: cimg/python:3.7
+  py38:
+    docker:
+      - image: cimg/python:3.8
+
 jobs:
   build_test:
-    executor: python/default
+    parameters:
+      executor:
+        type: executor
+      python_env:
+        type: string
+    executor: << parameters.executor >>
     steps:
       - checkout
       - run:
@@ -19,9 +35,14 @@ jobs:
           command: poetry install
       - run:
           name: Test
-          command: tox
+          command: tox -e << parameters.python_env >>
   deploy:
-    executor: python/default
+    parameters:
+      executor:
+        type: executor
+      python_env:
+        type: string
+    executor: << parameters.executor >>
     steps:
       - checkout
       - run:
@@ -43,7 +64,15 @@ jobs:
 workflows:
   main:
     jobs:
-      - build_test
+      - build_test:
+          executor: py36
+          python_env: py36
+      - build_test:
+          executor: py37
+          python_env: py37
+      - build_test:
+          executor: py38
+          python_env: py38
   nightly:
     triggers:
       - schedule:
@@ -55,4 +84,12 @@ workflows:
                 - develop
                 - staging
     jobs:
-      - build_test
+      - build_test:
+          executor: py36
+          python_env: py36
+      - build_test:
+          executor: py37
+          python_env: py37
+      - build_test:
+          executor: py38
+          python_env: py38
