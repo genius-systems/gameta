@@ -4,7 +4,7 @@ orbs:
   python: circleci/python@1.2.0
 
 jobs:
-  build:
+  build_test:
     executor: python/default
     steps:
       - checkout
@@ -17,15 +17,22 @@ jobs:
       - run:
           name: Install Python dependencies
           command: poetry install --no-root
-  test:
-    executor: python/default
-    steps:
       - run:
           name: Test
           command: tox
   deploy:
     executor: python/default
     steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Deactivate Poetry's virtualenv
+          command: poetry config virtualenvs.create false
+      - run:
+          name: Install Python dependencies
+          command: poetry install --no-root
       - run:
           name: Build
           command: poetry build
@@ -36,8 +43,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
-      - test
+      - build_test
   nightly:
     triggers:
       - schedule:
@@ -49,5 +55,4 @@ workflows:
                 - develop
                 - staging
     jobs:
-      - build
-      - test
+      - build_test
