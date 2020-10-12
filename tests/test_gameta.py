@@ -93,7 +93,7 @@ class TestGametaContext(TestCase):
                 'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'
             ]),
             [
-                getenv('SHELL'),
+                getenv('SHELL', '/bin/sh'),
                 '-c',
                 ' aws ecr get-login-password --region region | '
                 'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'
@@ -108,7 +108,7 @@ class TestGametaContext(TestCase):
                 'git merge'
             ]),
             [
-                getenv('SHELL'), '-c',
+                getenv('SHELL', '/bin/sh'), '-c',
                 ' git clone https://github.com/libgit2/libgit2 && '
                 'git fetch --all --tags --prune && '
                 'git merge'
@@ -549,7 +549,7 @@ class TestGametaContext(TestCase):
                 self.assertEqual(repo, repo_command[0])
                 self.assertEqual(
                     repo_command[1],
-                    [getenv('SHELL'), '-c', ' git fetch --all --tags --prune && git pull']
+                    [getenv('SHELL', '/bin/sh'), '-c', ' git fetch --all --tags --prune && git pull']
                 )
 
     def test_gameta_context_apply_with_parameter_substitution(self):

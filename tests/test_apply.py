@@ -1,4 +1,5 @@
 import zipfile
+from os import getenv
 from os.path import join, dirname
 from shutil import copyfile
 from unittest import TestCase
@@ -237,9 +238,9 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                "Error CalledProcessError.Command '['/bin/bash', '-c', ' git fetch --all --tags --prune']' "
-                "returned non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in "
-                "gameta, continuing execution\n"
+                f"Error CalledProcessError.Command '['{getenv('SHELL', '/bin/sh')}', '-c', "
+                "' git fetch --all --tags --prune']' returned non-zero exit status 128. occurred when executing "
+                "command git fetch --all --tags --prune in gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in GitPython\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
