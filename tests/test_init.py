@@ -1,5 +1,6 @@
 import json
 import zipfile
+from os import listdir
 from os.path import join, dirname, basename
 from shutil import copyfile
 
@@ -10,7 +11,7 @@ from click import Context
 from click.testing import CliRunner
 
 from gameta import GametaContext
-from gameta.init import init
+from gameta.init import init, sync
 
 
 class TestInit(TestCase):
@@ -41,7 +42,6 @@ class TestInit(TestCase):
             context.obj.project_dir = f
             mock_context.return_value = context
             result = self.runner.invoke(self.init)
-            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -56,7 +56,7 @@ class TestInit(TestCase):
                         'projects': {
                             basename(f): {
                                 'path': '.',
-                                'tags': ['meta'],
+                                'tags': ['metarepo'],
                                 'url': None
                             }
                         }
@@ -86,7 +86,7 @@ class TestInit(TestCase):
                         'projects': {
                             'gameta': {
                                 'path': '.',
-                                'tags': ['meta'],
+                                'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
                         }
@@ -118,7 +118,7 @@ class TestInit(TestCase):
                         'projects': {
                             'gameta': {
                                 'path': '.',
-                                'tags': ['meta'],
+                                'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
                         }
@@ -150,9 +150,60 @@ class TestInit(TestCase):
                         'projects': {
                             'gameta': {
                                 'path': '.',
-                                'tags': ['meta'],
+                                'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
                         }
                     }
                 )
+
+
+class TestSync(TestCase):
+    def setUp(self) -> None:
+        self.runner = CliRunner()
+        self.sync = sync
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_sync_empty_meta_file(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        'projects': {}
+                    }, m
+                )
+            context = Context(self.sync, obj=GametaContext())
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.sync)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Syncing all child repositories in metarepo {f}\n'
+            )
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_sync_all_repos(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = Context(self.sync, obj=GametaContext())
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.sync)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Syncing all child repositories in metarepo {f}\n'
+                'Successfully synced GitPython to GitPython\n'
+                'Successfully synced gitdb to core/gitdb\n'
+            )
+            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.meta'])
+            self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
+            self.assertCountEqual(listdir(join(f, 'core')), ['gitdb'])
+            self.assertTrue(all(i in listdir(join(f, 'core', 'gitdb')) for i in ['gitdb', 'doc', 'setup.py']))

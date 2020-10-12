@@ -1,5 +1,5 @@
 import json
-from os.path import splitext, basename
+from os.path import splitext, basename, normpath, abspath
 from typing import Dict, Optional
 
 import click
@@ -9,7 +9,7 @@ from git import Repo, InvalidGitRepositoryError
 from . import gameta_cli, gameta_context, GametaContext
 
 
-__all__ = ['init']
+__all__ = ['init', 'sync']
 
 
 @gameta_cli.command()
@@ -54,7 +54,30 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
     context.repositories[name] = {
         'url': url,
         'path': '.',
-        'tags': ['meta']
+        'tags': ['metarepo']
     }
     context.export()
     click.secho(f"Successfully initialised {name} as a metarepo")
+
+
+@gameta_cli.command()
+@gameta_context
+def sync(context: GametaContext) -> None:
+    """
+    Syncs all the repositories listed in the .meta file locally
+    \f
+    Returns:
+        None
+
+    Examples:
+        $ gameta sync
+    """
+    click.echo(f"Syncing all child repositories in metarepo {context.project_dir}")
+    for repo, details in context.repositories.items():
+
+        # We assume the metarepo has already been cloned
+        if abspath(details["path"]) == context.project_dir:
+            continue
+
+        Repo.clone_from(details['url'], details['path'])
+        click.echo(f'Successfully synced {repo} to {details["path"]}')

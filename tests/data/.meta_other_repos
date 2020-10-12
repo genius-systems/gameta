@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "gameta": {
+      "path": ".",
+      "tags": ["metarepo"],
+      "url": "git@github.com:genius-systems/gameta.git"
+    },
+    "GitPython": {
+      "path": "GitPython",
+      "tags": ["a", "b", "c"],
+      "url": "https://github.com/gitpython-developers/GitPython.git"
+    },
+    "gitdb": {
+      "path": "core/gitdb",
+      "tags": ["a", "c", "d"],
+      "url": "https://github.com/gitpython-developers/gitdb.git"
+    }
+  }
+}

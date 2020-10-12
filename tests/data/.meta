@@ -2,7 +2,7 @@
   "projects": {
     "gameta": {
       "path": ".",
-      "tags": ["meta"],
+      "tags": ["metarepo"],
       "url": "git@github.com:genius-systems/gameta.git"
     }
   }
