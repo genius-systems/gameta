@@ -25,6 +25,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Set Pyenv version
+          command: pyenv local `pyenv whence python3`
+      - run:
           name: Install dependencies
           command: pip install -U pip poetry
       - run:
