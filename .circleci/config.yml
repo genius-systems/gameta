@@ -3,9 +3,8 @@ version: 2.1
 orbs:
   python: circleci/python@1.2.0
 
-
 jobs:
-  build_test:
+  test:
     docker:
       image: fkrull/multi-python:bionic
     steps:
@@ -24,7 +23,7 @@ jobs:
           command: poetry config virtualenvs.create false
       - run:
           name: Install Python dependencies
-          command: poetry install --no-root
+          command: poetry install
       - run:
           name: Build
           command: poetry build
