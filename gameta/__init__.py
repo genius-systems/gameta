@@ -104,7 +104,7 @@ class GametaContext(object):
             None
         """
         for repo, details in self.repositories.items():
-            for tag in details['tags']:
+            for tag in details.get('tags', []):
                 if tag in self.tags:
                     self.tags[tag].append(repo)
                 else:
@@ -195,8 +195,8 @@ def gameta_cli(context: GametaContext, project_dir: str) -> None:
         None
 
     Examples:
-        $ devops  # Use all default values
-        $ devops -d /path/to/project/dir  # Specify a project directory
+        $ gameta  # Use all default values
+        $ gameta -d /path/to/project/dir  # Specify a project directory
     """
     context.project_dir = abspath(project_dir)
     chdir(context.project_dir)
