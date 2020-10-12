@@ -36,7 +36,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build_test
+      - test
   nightly:
     triggers:
       - schedule:
@@ -48,4 +48,4 @@ workflows:
                 - develop
                 - staging
     jobs:
-      - build_test
+      - test
