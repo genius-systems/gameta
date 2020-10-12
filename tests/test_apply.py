@@ -1,7 +1,7 @@
 import zipfile
 from os import getenv
 from os.path import join, dirname
-from shutil import copyfile
+from shutil import copyfile, copytree
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -20,8 +20,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_all_repositories(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -44,9 +43,6 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                "Error CalledProcessError.Command '['git', 'fetch', '--all', '--tags', '--prune']' "
-                "returned non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in "
-                "gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in GitPython\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
@@ -54,8 +50,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_tagged_repositories(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -84,8 +79,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_tagged_repositories_that_do_not_exist(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -108,9 +102,6 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                "Error CalledProcessError.Command '['git', 'fetch', '--all', '--tags', '--prune']' "
-                "returned non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in "
-                "gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in GitPython\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
@@ -118,8 +109,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_specified_repositories(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -147,8 +137,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_specified_repositories_that_do_not_exist(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -171,9 +160,6 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                "Error CalledProcessError.Command '['git', 'fetch', '--all', '--tags', '--prune']' "
-                "returned non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in "
-                "gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in GitPython\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
@@ -181,8 +167,7 @@ class TestApply(TestCase):
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_to_merged_tags_and_repos(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -205,17 +190,13 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                "Error CalledProcessError.Command '['git', 'fetch', '--all', '--tags', '--prune']' "
-                "returned non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in "
-                "gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_apply_command_in_separate_shell(self, mock_context):
         with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
@@ -238,9 +219,6 @@ class TestApply(TestCase):
                 result.output,
                 "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
                 "Executing git fetch --all --tags --prune in gameta\n"
-                f"Error CalledProcessError.Command '['{getenv('SHELL', '/bin/sh')}', '-c', "
-                "' git fetch --all --tags --prune']' returned non-zero exit status 128. occurred when executing "
-                "command git fetch --all --tags --prune in gameta, continuing execution\n"
                 "Executing git fetch --all --tags --prune in GitPython\n"
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
@@ -268,10 +246,3 @@ class TestApply(TestCase):
             mock_context.return_value = context
             result = self.runner.invoke(self.apply)
             self.assertEqual(result.exit_code, 1)
-            self.assertEqual(
-                result.output,
-                "Applying 'git fetch --all --tags --prune' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Error: Error CalledProcessError.Command '['git', 'fetch', '--all', '--tags', '--prune']' returned "
-                "non-zero exit status 128. occurred when executing command git fetch --all --tags --prune in gameta\n"
-            )
