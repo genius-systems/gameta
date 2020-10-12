@@ -17,14 +17,14 @@ packages = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py36,py37,py38
+envlist = py37,py38
 
 [testenv]
 commands = python -m unittest discover -v -s ./tests -t .
 """
 
 [tool.poetry.dependencies]
-python = ">=3.6"
+python = ">=3.7"
 Click = "^7.1.2"
 colorama = "^0.4.3"
 gitpython = "^3.1.9"
