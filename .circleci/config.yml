@@ -16,7 +16,7 @@ jobs:
           command: poetry config virtualenvs.create false
       - run:
           name: Install Python dependencies
-          command: poetry install --no-root
+          command: poetry install
       - run:
           name: Test
           command: tox
