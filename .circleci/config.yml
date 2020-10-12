@@ -1,0 +1,51 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.2.0
+
+jobs:
+  test:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Test
+          command: tox
+  deploy:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Deactivate Poetry's virtualenv
+          command: poetry config virtualenvs.create false
+      - run:
+          name: Install Python dependencies
+          command: poetry install
+      - run:
+          name: Build
+          command: poetry build
+      - run:
+          name: Publish
+          command: poetry publish
+
+workflows:
+  main:
+    jobs:
+      - test
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+                - staging
+    jobs:
+      - test
