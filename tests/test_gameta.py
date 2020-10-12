@@ -448,12 +448,14 @@ class TestGametaContext(TestCase):
                 )
             self.context.project_dir = f
             self.context.load()
-            for cwd, repo_command in zip(
+            for cwd, repo, repo_command in zip(
                     [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    ['gameta', 'genisys', 'genisys-testing'],
                     self.context.apply(['git fetch --all --tags --prune', 'git pull'])
             ):
                 self.assertEqual(getcwd(), cwd)
-                self.assertEqual(repo_command, ['git', 'fetch', '--all', '--tags', '--prune', '&&', 'git', 'pull'])
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], ['git', 'fetch', '--all', '--tags', '--prune', '&&', 'git', 'pull'])
 
     def test_gameta_context_apply_command_to_selected_repos(self):
         with self.runner.isolated_filesystem() as f:
@@ -492,12 +494,14 @@ class TestGametaContext(TestCase):
                 )
             self.context.project_dir = f
             self.context.load()
-            for cwd, repo_command in zip(
+            for cwd, repo, repo_command in zip(
                     [f, join(f, 'core', 'genisys')],
+                    ['gameta', 'genisys', 'genisys-testing'],
                     self.context.apply(['git fetch --all --tags --prune', 'git pull'], ['genisys', 'gameta'])
             ):
                 self.assertEqual(getcwd(), cwd)
-                self.assertEqual(repo_command, ['git', 'fetch', '--all', '--tags', '--prune', '&&', 'git', 'pull'])
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], ['git', 'fetch', '--all', '--tags', '--prune', '&&', 'git', 'pull'])
 
     def test_gameta_context_apply_command_in_separate_shell(self):
         with self.runner.isolated_filesystem() as f:
@@ -536,12 +540,17 @@ class TestGametaContext(TestCase):
                 )
             self.context.project_dir = f
             self.context.load()
-            for cwd, repo_command in zip(
+            for cwd, repo, repo_command in zip(
                     [f, join(f, 'core', 'genisys')],
+                    ['gameta', 'genisys', 'genisys-testing'],
                     self.context.apply(['git fetch --all --tags --prune', 'git pull'], shell=True)
             ):
                 self.assertEqual(getcwd(), cwd)
-                self.assertEqual(repo_command, [getenv('SHELL'), '-c', ' git fetch --all --tags --prune && git pull'])
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(
+                    repo_command[1],
+                    [getenv('SHELL'), '-c', ' git fetch --all --tags --prune && git pull']
+                )
 
     def test_gameta_context_apply_with_parameter_substitution(self):
         with self.runner.isolated_filesystem() as f:
@@ -580,14 +589,16 @@ class TestGametaContext(TestCase):
                 )
             self.context.project_dir = f
             self.context.load()
-            for cwd, test_output, repo_command in zip(
+            for cwd, test_output, repo, repo_command in zip(
                     [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
                     [
                         ['git', 'clone', 'https://github.com/test/gameta.git', '.'],
                         ['git', 'clone', 'https://github.com/test/genisys.git', 'core/genisys'],
                         ['git', 'clone', 'https://github.com/test/genisys-testing.git', 'core/genisys-testing']
                     ],
+                    ['gameta', 'genisys', 'genisys-testing'],
                     self.context.apply(['git clone {url} {path}'])
             ):
                 self.assertEqual(getcwd(), cwd)
-                self.assertEqual(repo_command, test_output)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], test_output)
