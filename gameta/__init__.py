@@ -115,7 +115,7 @@ class GametaContext(object):
             commands: List[str],
             repos: List[str] = (),
             shell: bool = False
-    ) -> Generator[List[str], None, None]:
+    ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
         in .meta file
@@ -136,8 +136,7 @@ class GametaContext(object):
             with self.cd(details['path']):
                 repo_commands: List[str] = [c.format(**details) for c in deepcopy(commands)]
                 command: List[str] = self.shell(repo_commands) if shell else self.tokenise(' && '.join(repo_commands))
-                click.secho(f"Executing command in {repo}", fg='green')
-                yield command
+                yield repo, command
 
     @staticmethod
     def tokenise(command: str) -> List[str]:
@@ -207,4 +206,5 @@ def gameta_cli(context: GametaContext, project_dir: str) -> None:
 
 from .init import *
 from .repos import *
+from .tags import *
 from .apply import *
