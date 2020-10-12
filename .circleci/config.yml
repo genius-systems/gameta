@@ -3,49 +3,16 @@ version: 2.1
 orbs:
   python: circleci/python@1.2.0
 
-executors:
-  py36:
-    docker:
-      - image: cimg/python:3.6
-  py37:
-    docker:
-      - image: cimg/python:3.7
-  py38:
-    docker:
-      - image: cimg/python:3.8
-
 jobs:
   build_test:
-    parameters:
-      executor:
-        type: executor
-      python_env:
-        type: string
-    executor: << parameters.executor >>
+    docker:
+      image: fkrull/multi-python:bionic
     steps:
       - checkout
       - run:
-          name: Set Pyenv version
-          command: pyenv local `pyenv whence python3`
-      - run:
-          name: Install dependencies
-          command: pip install -U pip poetry
-      - run:
-          name: Deactivate Poetry's virtualenv
-          command: poetry config virtualenvs.create false
-      - run:
-          name: Install Python dependencies
-          command: poetry install
-      - run:
           name: Test
-          command: tox -e << parameters.python_env >>
+          command: tox
   deploy:
-    parameters:
-      executor:
-        type: executor
-      python_env:
-        type: string
-    executor: << parameters.executor >>
     steps:
       - checkout
       - run:
@@ -67,15 +34,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build_test:
-          executor: py36
-          python_env: py36
-      - build_test:
-          executor: py37
-          python_env: py37
-      - build_test:
-          executor: py38
-          python_env: py38
+      - build_test
   nightly:
     triggers:
       - schedule:
@@ -87,12 +46,4 @@ workflows:
                 - develop
                 - staging
     jobs:
-      - build_test:
-          executor: py36
-          python_env: py36
-      - build_test:
-          executor: py37
-          python_env: py37
-      - build_test:
-          executor: py38
-          python_env: py38
+      - build_test
