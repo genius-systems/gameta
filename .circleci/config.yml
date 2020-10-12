@@ -6,13 +6,15 @@ orbs:
 jobs:
   test:
     docker:
-      image: fkrull/multi-python:bionic
+      - image: "fkrull/multi-python:bionic"
     steps:
       - checkout
       - run:
           name: Test
           command: tox
   deploy:
+    docker:
+      - image: "fkrull/multi-python:bionic"
     steps:
       - checkout
       - run:
