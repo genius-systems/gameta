@@ -66,6 +66,9 @@ def sync(context: GametaContext) -> None:
     """
     Syncs all the repositories listed in the .meta file locally
     \f
+    Args:
+        context (GametaContext): Gameta Context
+
     Returns:
         None
 

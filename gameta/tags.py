@@ -16,6 +16,7 @@ def tags_cli(context: GametaContext) -> None:
     \f
     Args:
         context (GametaContext): Gameta Context
+
     Returns:
         None
     """
@@ -38,6 +39,9 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta tags add -n repo_name -t tag1 -t tag2 -t tag3
     """
     click.echo(f"Adding tags {tags} to {name}")
     if name not in context.repositories:
@@ -64,6 +68,9 @@ def delete(context: GametaContext, name: str, tags: List[str]) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta tags delete -n repo_name -t tag1 -t tag2 -t tag3
     """
     click.echo(f"Deleting tags {tags} from {name}")
     if name not in context.repositories:

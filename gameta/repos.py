@@ -12,7 +12,7 @@ from . import gameta_cli, gameta_context, GametaContext
 __all__ = ['repo_cli']
 
 
-@gameta_cli.group('repos')
+@gameta_cli.group('repo')
 @gameta_context
 def repo_cli(context: GametaContext) -> None:
     """
@@ -20,6 +20,7 @@ def repo_cli(context: GametaContext) -> None:
     \f
     Args:
         context (GametaContext): Gameta Context
+
     Returns:
         None
     """
@@ -107,7 +108,7 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
 
     Examples:
         $ gameta repo delete -n repo_name
-        $ gameta repo delete -n repo_name -c
+        $ gameta repo delete -n repo_name -c  # Clears the local repository
     """
     click.echo(f"Deleting repository {name} from .meta file")
     if name not in context.repositories:
@@ -151,6 +152,12 @@ def update(
 
     Returns:
         None
+
+    Examples:
+        $ gameta repo update -n orig_repo_name -e new_repo_name -u https://github.com/git_user/repo_name.git
+                             -p /path/to/repo
+        $ gameta repo update -n orig_repo_name -e new_repo_name -u https://github.com/git_user/repo_name.git
+                             -p /path/to/repo -s  # Syncs all changes
     """
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in the .meta file, please add it first")
