@@ -5,16 +5,18 @@ orbs:
 
 jobs:
   build:
-    - checkout
-    - run:
-        name: Install dependencies
-        command: pip install -U pip poetry
-    - run:
-        name: Deactivate Poetry's virtualenv
-        command: poetry config virtualenvs.create false
-    - run:
-        name: Install Python dependencies
-        command: poetry install --no-root
+    executor: python/default
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Deactivate Poetry's virtualenv
+          command: poetry config virtualenvs.create false
+      - run:
+          name: Install Python dependencies
+          command: poetry install --no-root
   test:
     executor: python/default
     steps:
