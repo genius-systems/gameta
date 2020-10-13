@@ -63,14 +63,14 @@ class TestGametaContext(TestCase):
             with self.assertRaises(TypeError):
                 self.context.project_name
 
-    def test_gameta_context_meta_meta_file_provided(self):
+    def test_gameta_context_meta_points_to_meta_file_if_provided(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, 'pyproject.toml'), 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 m.write('Hello world')
             self.context.project_dir = f
             self.assertEqual(self.context.meta, join(f, '.meta'))
 
-    def test_gameta_context_meta_meta_file_not_provided(self):
+    def test_gameta_context_meta_points_to_meta_file_if_not_provided(self):
         with self.runner.isolated_filesystem() as f:
             self.context.project_dir = f
             self.assertEqual(self.context.meta, join(f, '.meta'))
@@ -79,6 +79,41 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             with self.assertRaises(TypeError):
                 self.context.meta
+
+    def test_gameta_context_gitignore_to_gitignore_file_if_provided(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.gitignore'), 'w') as m:
+                m.write('Hello world')
+            self.context.project_dir = f
+            self.assertEqual(self.context.gitignore, join(f, '.gitignore'))
+
+    def test_gameta_context_gitignore_points_to_gitignore_file_if_not_provided(self):
+        with self.runner.isolated_filesystem() as f:
+            self.context.project_dir = f
+            self.assertEqual(self.context.gitignore, join(f, '.gitignore'))
+
+    def test_gameta_context_gitignore_no_project_dir(self):
+        with self.runner.isolated_filesystem() as f:
+            with self.assertRaises(TypeError):
+                self.context.gitignore
+
+    def test_gameta_context_add_gitignore_add_path(self):
+        self.context.add_gitignore('test_path')
+        self.assertEqual(self.context.gitignore_data, ['test_path/\n'])
+
+    def test_gameta_context_remove_gitignore_delete_path(self):
+        self.context.add_gitignore('test_path')
+        self.context.add_gitignore('another_test_path')
+        self.context.add_gitignore('this/is/a/test')
+        self.context.remove_gitignore('test_path')
+        self.assertEqual(self.context.gitignore_data, ['another_test_path/\n', 'this/is/a/test/\n'])
+
+    def test_gameta_context_remove_gitignore_path_does_not_exist(self):
+        self.context.add_gitignore('test_path')
+        self.context.add_gitignore('another_test_path')
+        self.context.add_gitignore('this/is/a/test')
+        self.context.remove_gitignore('test')
+        self.assertEqual(self.context.gitignore_data, ['test_path/\n', 'another_test_path/\n', 'this/is/a/test/\n'])
 
     def test_gameta_context_tokenise(self):
         self.assertEqual(
@@ -241,6 +276,91 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertTrue(self.context.is_metarepo)
+
+    def test_gameta_load_meta_and_gitignore_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open('.meta', 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "meta"
+                                ]
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ]
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ]
+                            }
+                        }
+                    }, m
+                )
+            with open(join(f, '.gitignore'), 'w') as g:
+                g.writelines("HelloWorld\n")
+                g.writelines(".env\n")
+                g.writelines("env\n")
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertCountEqual(
+                self.context.repositories,
+                {
+                    "gameta": {
+                        "url": "https://github.com/testing/gameta.git",
+                        "path": ".",
+                        "tags": [
+                            "meta"
+                        ]
+                    },
+                    "genisys": {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ]
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ]
+                    }
+                }
+            )
+            self.assertCountEqual(
+                self.context.tags,
+                {
+                    'core': ['genisys-testing', 'genisys'],
+                    'testing': ['genisys-testing'],
+                    'developer': ['genisys-testing'],
+                    'templating': ['genisys'],
+                    'meta': ['gameta']
+                }
+            )
+            self.assertTrue(self.context.is_metarepo)
+            self.assertCountEqual(
+                self.context.gitignore_data,
+                ['HelloWorld\n', '.env\n', 'env\n']
+            )
 
     def test_gameta_context_load_no_meta_file(self):
         with self.runner.isolated_filesystem() as f:

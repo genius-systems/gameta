@@ -84,6 +84,7 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
         'url': url,
         'path': path,
     }
+    context.add_gitignore(path)
     context.export()
 
     click.echo(f"Successfully added repository {name}")
@@ -118,6 +119,7 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
     if clear:
         click.echo(f"Clearing repository {name} locally")
         rmtree(join(context.project_dir, context.repositories[name]["path"]), ignore_errors=True)
+    context.remove_gitignore(context.repositories[name]["path"])
     del context.repositories[name]
     context.export()
     click.echo(f"Repository {name} successfully deleted")
@@ -197,6 +199,8 @@ def update(
         click.echo("Sync complete")
 
     # Export the updated details
+    context.remove_gitignore(curr_repo_details["path"])
+    context.add_gitignore(new_repo_details["path"])
     context.repositories[name] = new_repo_details
     context.export()
     click.echo(f"Successfully updated repository {name} with new details")
