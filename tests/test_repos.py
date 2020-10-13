@@ -19,7 +19,7 @@ class TestAdd(TestCase):
         self.add = add
 
     @patch('gameta.click.BaseCommand.make_context')
-    def test_add_repository_added_to_meta_file_and_cloned(self, mock_context):
+    def test_add_repository_added_to_meta_file_and_create_gitignore_and_clone(self, mock_context):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -63,6 +63,59 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_add_repository_added_to_meta_file_and_add_path_to_gitignore_and_clone(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
+            context = Context(self.add, obj=GametaContext())
+            context.params = {
+                'name': 'GitPython',
+                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                'path': 'GitPython',
+                'overwrite': False
+            }
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.add)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Adding git repository {context.params["name"]}, {context.params["url"]} to '
+                f'{join(f, context.params["path"])}\n'
+                f'Repository {context.params["name"]} has been added locally\n'
+                f'Adding {context.params["name"]} to .meta file\n'
+                f'Successfully added repository {context.params["name"]}\n'
+            )
+            self.assertTrue(exists(join(f, 'GitPython')))
+            self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git"
+                            },
+                            "GitPython": {
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                'path': 'GitPython',
+                            }
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertTrue('GitPython/\n' in set(g.readlines()))
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_add_invalid_repository(self, mock_context):
@@ -162,6 +215,9 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_add_repository_already_exists_in_meta_file_overwritten(self, mock_context):
@@ -215,6 +271,9 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_add_repository_already_exists_locally(self, mock_context):
@@ -264,6 +323,9 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_add_repository_already_exists_locally_and_in_meta_file(self, mock_context):
@@ -319,6 +381,9 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_add_repository_already_exists_locally_parameters_differ(self, mock_context):
@@ -361,6 +426,9 @@ class TestAdd(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
 
 class TestDelete(TestCase):
@@ -369,7 +437,7 @@ class TestDelete(TestCase):
         self.delete = delete
 
     @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_repository_deleted_and_cleared(self, mock_context):
+    def test_delete_repository_deleted_and_cleared_gitignore_does_not_exist(self, mock_context):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -414,6 +482,115 @@ class TestDelete(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertCountEqual(g.readlines(), [])
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_delete_repository_deleted_and_cleared_gitignore_exist_but_does_not_contain_path(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output['projects']['GitPython'] = {
+                        "url": 'https://github.com/gitpython-developers/GitPython.git',
+                        'path': 'GitPython',
+                        'tags': ['a', 'b', 'c']
+                    }
+                    json.dump(output, m2)
+            copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
+            context = Context(self.delete, obj=GametaContext())
+            context.params = {
+                'name': 'GitPython',
+                'clear': True
+            }
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.delete)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Deleting repository {context.params['name']} from .meta file\n"
+                f"Clearing repository {context.params['name']} locally\n"
+                f"Repository {context.params['name']} successfully deleted\n"
+            )
+            self.assertFalse(exists(join(f, 'GitPython')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git"
+                            }
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertFalse("GitPython/\n" in g.readlines())
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_delete_repository_deleted_and_cleared_gitignore_exist_and_contains_path(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output['projects']['GitPython'] = {
+                        "url": 'https://github.com/gitpython-developers/GitPython.git',
+                        'path': 'GitPython',
+                        'tags': ['a', 'b', 'c']
+                    }
+                    json.dump(output, m2)
+            with open(join(dirname(__file__), 'data', '.gitignore'), 'r') as g1:
+                output = g1.readlines()
+                with open(join(f, '.gitignore'), 'w+') as g2:
+                    output.append('GitPython/\n')
+                    g2.writelines(output)
+            context = Context(self.delete, obj=GametaContext())
+            context.params = {
+                'name': 'GitPython',
+                'clear': True
+            }
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.delete)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Deleting repository {context.params['name']} from .meta file\n"
+                f"Clearing repository {context.params['name']} locally\n"
+                f"Repository {context.params['name']} successfully deleted\n"
+            )
+            self.assertFalse(exists(join(f, 'GitPython')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git"
+                            }
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertFalse("GitPython/\n" in g.readlines())
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_delete_repository_deleted_but_not_cleared(self, mock_context):
@@ -607,7 +784,7 @@ class TestUpdate(TestCase):
             )
 
     @patch('gameta.click.BaseCommand.make_context')
-    def test_update_all_parameters_updated(self, mock_context):
+    def test_update_all_parameters_updated_gitignore_created(self, mock_context):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -654,6 +831,122 @@ class TestUpdate(TestCase):
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertTrue("core/GitPython/\n" in g.readlines())
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_update_all_parameters_updated_gitignore_exists_but_does_not_contain_path(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
+            context = Context(self.update, obj=GametaContext())
+            context.params = {
+                'name': 'GitPython',
+                'new_name': 'test',
+                'new_url': 'https://github.com/jantman/GitPython.git',
+                'new_path': 'core/GitPython',
+                'sync': False
+            }
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.update)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Updating repository GitPython with new details (name: {context.params["new_name"]}, '
+                f'url: {context.params["new_url"]}, path: {context.params["new_path"]})\n'
+                f'Successfully updated repository {context.params["new_name"]} with new details\n'
+            )
+            with open(join(f, '.meta')) as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git"
+                            },
+                            "test": {
+                                "path": "core/GitPython",
+                                "tags": ["a", "b", "c"],
+                                "url": "https://github.com/jantman/GitPython.git"
+                            },
+                            "gitdb": {
+                                "path": "core/gitdb",
+                                "tags": ["a", "c", "d"],
+                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                            }
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                self.assertTrue("core/GitPython/\n" in g.readlines())
+
+    @patch('gameta.click.BaseCommand.make_context')
+    def test_update_all_parameters_updated_gitignore_exists_and_contains_path(self, mock_context):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            with open(join(dirname(__file__), 'data', '.gitignore'), 'r') as g1:
+                output = g1.readlines()
+                with open(join(f, '.gitignore'), 'w+') as g2:
+                    output.append('GitPython/\n')
+                    output.append('core/gitdb/\n')
+                    g2.writelines(output)
+            context = Context(self.update, obj=GametaContext())
+            context.params = {
+                'name': 'GitPython',
+                'new_name': 'test',
+                'new_url': 'https://github.com/jantman/GitPython.git',
+                'new_path': 'core/GitPython',
+                'sync': False
+            }
+            context.obj.project_dir = f
+            context.obj.load()
+            mock_context.return_value = context
+            result = self.runner.invoke(self.update)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Updating repository GitPython with new details (name: {context.params["new_name"]}, '
+                f'url: {context.params["new_url"]}, path: {context.params["new_path"]})\n'
+                f'Successfully updated repository {context.params["new_name"]} with new details\n'
+            )
+            with open(join(f, '.meta')) as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git"
+                            },
+                            "test": {
+                                "path": "core/GitPython",
+                                "tags": ["a", "b", "c"],
+                                "url": "https://github.com/jantman/GitPython.git"
+                            },
+                            "gitdb": {
+                                "path": "core/gitdb",
+                                "tags": ["a", "c", "d"],
+                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                            }
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, '.gitignore')))
+            with open(join(f, '.gitignore'), 'r') as g:
+                output = g.readlines()
+                self.assertTrue("core/gitdb/\n" in output)
+                self.assertTrue("core/GitPython/\n" in output)
 
     @patch('gameta.click.BaseCommand.make_context')
     def test_update_all_parameters_updated_with_physical_sync(self, mock_context):
