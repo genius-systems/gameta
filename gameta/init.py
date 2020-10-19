@@ -1,6 +1,5 @@
-import json
-from os.path import splitext, basename, normpath, abspath
-from typing import Dict, Optional
+from os.path import splitext, basename, abspath
+from typing import Optional
 
 import click
 
