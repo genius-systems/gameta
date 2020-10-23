@@ -32,6 +32,7 @@ class GametaContext(object):
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
     """
+    reserved_params = ['url', 'path', 'tags']
 
     def __init__(self):
         self.is_metarepo: bool = False
