@@ -32,9 +32,11 @@ class GametaContext(object):
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
     """
+    reserved_params = ['url', 'path', 'tags']
 
     def __init__(self):
         self.is_metarepo: bool = False
+        self.gitignore_data: List[str] = []
         self.project_dir: Optional[str] = None
         self.gameta_data: Dict = {}
         self.repositories: Dict[str, Dict] = {}
@@ -61,6 +63,44 @@ class GametaContext(object):
         """
         return join(self.project_dir, '.meta')
 
+    @property
+    def gitignore(self) -> str:
+        """
+        Returns the path to the .gitignore file of the project, i.e. where it should be if the Project has not been
+        initialised
+
+        Returns:
+            str: Path to the project's .gitignore file
+        """
+        return join(self.project_dir, '.gitignore')
+
+    def add_gitignore(self, path: str) -> None:
+        """
+        Adds the path to the gitignore_data
+
+        Args:
+            path (str): Path to be added
+
+        Returns:
+            None
+        """
+        self.gitignore_data.append(path + '/\n')
+
+    def remove_gitignore(self, path: str) -> None:
+        """
+        Removes the path from the gitignore_data
+
+        Args:
+            path (str): Path to be removed
+
+        Returns:
+            None
+        """
+        try:
+            self.gitignore_data.remove(path + '/\n')
+        except ValueError:
+            return
+
     def load(self) -> None:
         """
         Finds all repositories to manage and groups them into relative groups
@@ -80,9 +120,17 @@ class GametaContext(object):
 
         self.generate_tags()
 
+        try:
+            with open(self.gitignore, 'r') as f:
+                self.gitignore_data = f.readlines()
+        except FileNotFoundError:
+            return
+        except Exception as e:
+            raise click.ClickException(f"Could not load .meta file: {e.__class__.__name__}.{str(e)}")
+
     def export(self) -> None:
         """
-        Exports updated Gameta data to .meta file
+        Exports updated Gameta data to .meta file and gitignore data to the .gitignore file
 
         Returns:
             None
@@ -93,7 +141,15 @@ class GametaContext(object):
                 json.dump(self.gameta_data, f)
         except Exception as e:
             raise click.ClickException(
-                f"Could not export gameta data to pyproject.toml: {e.__class__.__name__}.{str(e)}"
+                f"Could not export gameta data to .meta file: {e.__class__.__name__}.{str(e)}"
+            )
+
+        try:
+            with open(self.gitignore, 'w+') as f:
+                f.writelines(self.gitignore_data)
+        except Exception as e:
+            raise click.ClickException(
+                f"Could not export gitignore data to .gitignore file: {e.__class__.__name__}.{str(e)}"
             )
 
     def generate_tags(self) -> None:

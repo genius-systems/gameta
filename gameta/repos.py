@@ -70,24 +70,28 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
     except GitError as e:
         raise click.ClickException(f'Error cloning {name} into directory {clone_path}: {e.__class__.__name__}.{str(e)}')
 
-    click.echo(f"Repository {name} has been added locally")
-    if name in context.repositories:
-        if overwrite is True:
-            click.echo(f"Overwriting repository {name} in .meta file")
+    try:
+        click.echo(f"Repository {name} has been added locally")
+        if name in context.repositories:
+            if overwrite is True:
+                click.echo(f"Overwriting repository {name} in .meta file")
+            else:
+                click.echo(f"Repository {name} has already been added to .meta file")
+                return
         else:
-            click.echo(f"Repository {name} has already been added to .meta file")
-            return
-    else:
-        click.echo(f"Adding {name} to .meta file")
+            click.echo(f"Adding {name} to .meta file")
 
-    context.repositories[name] = {
-        'url': url,
-        'path': path,
-    }
-    context.export()
+        context.repositories[name] = {
+            'url': url,
+            'path': path,
+        }
+        context.add_gitignore(path)
+        context.export()
 
-    click.echo(f"Successfully added repository {name}")
-    return context.repositories[name]
+        click.echo(f"Successfully added repository {name}")
+        return context.repositories[name]
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @repo_cli.command()
@@ -110,17 +114,21 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
         $ gameta repo delete -n repo_name
         $ gameta repo delete -n repo_name -c  # Clears the local repository
     """
-    click.echo(f"Deleting repository {name} from .meta file")
-    if name not in context.repositories:
-        click.echo(f"Repository {name} does not exist in the .meta file, ignoring")
-        return
+    try:
+        click.echo(f"Deleting repository {name} from .meta file")
+        if name not in context.repositories:
+            click.echo(f"Repository {name} does not exist in the .meta file, ignoring")
+            return
 
-    if clear:
-        click.echo(f"Clearing repository {name} locally")
-        rmtree(join(context.project_dir, context.repositories[name]["path"]), ignore_errors=True)
-    del context.repositories[name]
-    context.export()
-    click.echo(f"Repository {name} successfully deleted")
+        if clear:
+            click.echo(f"Clearing repository {name} locally")
+            rmtree(join(context.project_dir, context.repositories[name]["path"]), ignore_errors=True)
+        context.remove_gitignore(context.repositories[name]["path"])
+        del context.repositories[name]
+        context.export()
+        click.echo(f"Repository {name} successfully deleted")
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @repo_cli.command()
@@ -162,44 +170,49 @@ def update(
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in the .meta file, please add it first")
 
-    click.echo(f"Updating repository {name} with new details (name: {new_name}, url: {new_url}, path: {new_path})")
-    curr_repo_details: Dict = context.repositories[name]
+    try:
+        click.echo(f"Updating repository {name} with new details (name: {new_name}, url: {new_url}, path: {new_path})")
+        curr_repo_details: Dict = context.repositories[name]
 
-    # Update the details
-    new_repo_details: Dict = deepcopy(context.repositories[name])
-    for key, value in [('url', new_url), ('path', new_path)]:
-        if value is not None:
-            new_repo_details[key] = value
+        # Update the details
+        new_repo_details: Dict = deepcopy(context.repositories[name])
+        for key, value in [('url', new_url), ('path', new_path)]:
+            if value is not None:
+                new_repo_details[key] = value
 
-    if new_name is not None:
-        del context.repositories[name]
-        name = new_name
+        if new_name is not None:
+            del context.repositories[name]
+            name = new_name
 
-    # Perform a physical sync with the updated details
-    if sync:
-        click.echo("Performing a physical sync")
-        if new_url is not None:
-            # Only URL changes, need to clear the existing path and clone repository
-            click.echo(f"Cloning repository from new URL: {new_url}")
-            rmtree(join(context.project_dir, curr_repo_details['path']), ignore_errors=True)
-            Repo.clone_from(new_url, normpath(join(context.project_dir, new_repo_details['path'])))
-        elif new_url is None and new_path is not None:
-            # Only path changes, need to move the directory to the new location
-            click.echo(f"Copying repository to new path: {new_path}")
-            copytree(
-                join(context.project_dir, curr_repo_details["path"]),
-                join(context.project_dir, new_repo_details["path"])
-            )
-            rmtree(join(context.project_dir, curr_repo_details['path']), ignore_errors=True)
-        else:
-            # No physical changes
-            click.echo("No physical changes")
-        click.echo("Sync complete")
+        # Perform a physical sync with the updated details
+        if sync:
+            click.echo("Performing a physical sync")
+            if new_url is not None:
+                # Only URL changes, need to clear the existing path and clone repository
+                click.echo(f"Cloning repository from new URL: {new_url}")
+                rmtree(join(context.project_dir, curr_repo_details['path']), ignore_errors=True)
+                Repo.clone_from(new_url, normpath(join(context.project_dir, new_repo_details['path'])))
+            elif new_url is None and new_path is not None:
+                # Only path changes, need to move the directory to the new location
+                click.echo(f"Copying repository to new path: {new_path}")
+                copytree(
+                    join(context.project_dir, curr_repo_details["path"]),
+                    join(context.project_dir, new_repo_details["path"])
+                )
+                rmtree(join(context.project_dir, curr_repo_details['path']), ignore_errors=True)
+            else:
+                # No physical changes
+                click.echo("No physical changes")
+            click.echo("Sync complete")
 
-    # Export the updated details
-    context.repositories[name] = new_repo_details
-    context.export()
-    click.echo(f"Successfully updated repository {name} with new details")
+        # Export the updated details
+        context.remove_gitignore(curr_repo_details["path"])
+        context.add_gitignore(new_repo_details["path"])
+        context.repositories[name] = new_repo_details
+        context.export()
+        click.echo(f"Successfully updated repository {name} with new details")
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @repo_cli.command()

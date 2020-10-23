@@ -17,8 +17,32 @@ class TestAdd(TestCase):
         self.runner = CliRunner()
         self.add = add
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_add_empty_meta_file(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_key_parameters_not_provided(self, mock_ensure_object):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.add)
+            self.assertEqual(result.exit_code, 2)
+            self.assertEqual(
+                result.output,
+                "Usage: add [OPTIONS]\n"
+                "Try 'add --help' for help.\n"
+                "\n"
+                "Error: Missing option '--name' / '-n'.\n"
+            )
+
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_empty_meta_file(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -26,46 +50,52 @@ class TestAdd(TestCase):
                 json.dump({
                     'projects': {}
                 }, m)
-            context = Context(self.add, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.add)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Adding tags {context.params['tags']} to {context.params['name']}\n"
-                f"Error: Repository {context.params['name']} does not exist in .meta file\n"
+                f"Adding tags {params['tags']} to {params['name']}\n"
+                f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_add_nonexistent_repository(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_nonexistent_repository(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
             copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
-            context = Context(self.add, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.add)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Adding tags {context.params['tags']} to {context.params['name']}\n"
-                f"Error: Repository {context.params['name']} does not exist in .meta file\n"
+                f"Adding tags {params['tags']} to {params['name']}\n"
+                f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_add_repository_with_no_tags_initially(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_repository_with_no_tags_initially(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -77,20 +107,19 @@ class TestAdd(TestCase):
                         'path': 'GitPython',
                     }
                     json.dump(output, m2)
-            context = Context(self.add, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.add)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Adding tags {context.params['tags']} to {context.params['name']}\n"
-                f"Successfully added tags to repository {context.params['name']}\n"
+                f"Adding tags {params['tags']} to {params['name']}\n"
+                f"Successfully added tags to repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -111,8 +140,12 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_add_repository_with_disjoint_set_of_tags(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -125,20 +158,19 @@ class TestAdd(TestCase):
                         'tags': ['d', 'e', 'f']
                     }
                     json.dump(output, m2)
-            context = Context(self.add, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.add)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Adding tags {context.params['tags']} to {context.params['name']}\n"
-                f"Successfully added tags to repository {context.params['name']}\n"
+                f"Adding tags {params['tags']} to {params['name']}\n"
+                f"Successfully added tags to repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -159,8 +191,12 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_add_repository_with_duplicate_tags(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_add_repository_with_duplicate_tags(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -173,20 +209,19 @@ class TestAdd(TestCase):
                         'tags': ['c', 'b', 'f']
                     }
                     json.dump(output, m2)
-            context = Context(self.add, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.add)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Adding tags {context.params['tags']} to {context.params['name']}\n"
-                f"Successfully added tags to repository {context.params['name']}\n"
+                f"Adding tags {params['tags']} to {params['name']}\n"
+                f"Successfully added tags to repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -213,8 +248,32 @@ class TestDelete(TestCase):
         self.runner = CliRunner()
         self.delete = delete
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_empty_meta_file(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_key_parameters_not_provided(self, mock_ensure_object):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.delete)
+            self.assertEqual(result.exit_code, 2)
+            self.assertEqual(
+                result.output,
+                "Usage: delete [OPTIONS]\n"
+                "Try 'delete --help' for help.\n"
+                "\n"
+                "Error: Missing option '--name' / '-n'.\n"
+            )
+
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_empty_meta_file(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -222,46 +281,52 @@ class TestDelete(TestCase):
                 json.dump({
                     'projects': {}
                 }, m)
-            context = Context(self.delete, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.delete)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Deleting tags {context.params['tags']} from {context.params['name']}\n"
-                f"Error: Repository {context.params['name']} does not exist in .meta file\n"
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_nonexistent_repository(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_nonexistent_repository(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
             copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
-            context = Context(self.delete, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.delete)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Deleting tags {context.params['tags']} from {context.params['name']}\n"
-                f"Error: Repository {context.params['name']} does not exist in .meta file\n"
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_repository_with_no_tags(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_repository_with_no_tags(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -273,20 +338,19 @@ class TestDelete(TestCase):
                         'path': 'GitPython',
                     }
                     json.dump(output, m2)
-            context = Context(self.delete, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.delete)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting tags {context.params['tags']} from {context.params['name']}\n"
-                f"Successfully deleted tags from repository {context.params['name']}\n"
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Successfully deleted tags from repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -307,8 +371,12 @@ class TestDelete(TestCase):
                     }
                 )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_repository_with_disjoint_set_of_tags(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -321,20 +389,19 @@ class TestDelete(TestCase):
                         'tags': ['d', 'e', 'f']
                     }
                     json.dump(output, m2)
-            context = Context(self.delete, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.delete)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting tags {context.params['tags']} from {context.params['name']}\n"
-                f"Successfully deleted tags from repository {context.params['name']}\n"
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Successfully deleted tags from repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -355,8 +422,12 @@ class TestDelete(TestCase):
                     }
                 )
 
-    @patch('gameta.click.BaseCommand.make_context')
-    def test_delete_repository_with_duplicate_tags(self, mock_context):
+    @patch('gameta.click.Context.ensure_object')
+    def test_delete_repository_with_duplicate_tags(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -369,20 +440,19 @@ class TestDelete(TestCase):
                         'tags': ['c', 'b', 'f']
                     }
                     json.dump(output, m2)
-            context = Context(self.delete, obj=GametaContext())
-            context.params = {
-                'name': 'GitPython',
-                'tags': ['a', 'b', 'c']
-            }
-            context.obj.project_dir = f
-            context.obj.load()
-            mock_context.return_value = context
-            result = self.runner.invoke(self.delete)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting tags {context.params['tags']} from {context.params['name']}\n"
-                f"Successfully deleted tags from repository {context.params['name']}\n"
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Successfully deleted tags from repository {params['name']}\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
