@@ -48,29 +48,34 @@ def apply(
         $ gameta apply -c "git fetch --all --tags --prune" -e  # Raise errors and terminate
         $ gameta apply -c "git fetch --all --tags --prune" -s  # Executed in a separate shell
     """
-    repos: List[str] = sorted(
-        list(
-            set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
-            set([repo for repo in repositories if repo in context.repositories])
-        )
-    )
-    click.echo(
-        f"Applying '{command}' to repos {repos if repos else list(context.repositories.keys())}"
-        f"{' in a separate shell' if shell else ''}"
-    )
-    for repo, c in context.apply([command], repos=repos, shell=shell):
-        click.echo(f"Executing {command} in {repo}")
-        try:
-            if verbose:
-                click.echo(subprocess.check_output(c))
-            else:
-                subprocess.check_output(c)
-        except subprocess.SubprocessError as e:
-            if raise_errors:
-                raise click.ClickException(
-                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {command} in {repo}'
-                )
-            click.echo(
-                f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {command} in {repo}, '
-                f'continuing execution'
+    try:
+        repos: List[str] = sorted(
+            list(
+                set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
+                set([repo for repo in repositories if repo in context.repositories])
             )
+        )
+        click.echo(
+            f"Applying '{command}' to repos {repos if repos else list(context.repositories.keys())}"
+            f"{' in a separate shell' if shell else ''}"
+        )
+        for repo, c in context.apply([command], repos=repos, shell=shell):
+            click.echo(f"Executing {command} in {repo}")
+            try:
+                if verbose:
+                    click.echo(subprocess.check_output(c))
+                else:
+                    subprocess.check_output(c)
+            except subprocess.SubprocessError as e:
+                if raise_errors:
+                    raise click.ClickException(
+                        f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {command} in {repo}'
+                    )
+                click.echo(
+                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {command} in {repo}, '
+                    f'continuing execution'
+                )
+    except click.ClickException:
+        raise
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")

@@ -47,10 +47,13 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in .meta file")
 
-    repo_details: Dict = context.repositories[name]
-    repo_details['tags'] = sorted(list(set(repo_details.get('tags', [])) | set(tags)))
-    context.export()
-    click.echo(f"Successfully added tags to repository {name}")
+    try:
+        repo_details: Dict = context.repositories[name]
+        repo_details['tags'] = sorted(list(set(repo_details.get('tags', [])) | set(tags)))
+        context.export()
+        click.echo(f"Successfully added tags to repository {name}")
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @tags_cli.command()
@@ -76,7 +79,10 @@ def delete(context: GametaContext, name: str, tags: List[str]) -> None:
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in .meta file")
 
-    repo_details: Dict = context.repositories[name]
-    repo_details['tags'] = sorted(list(set(repo_details.get('tags', [])) - set(tags)))
-    context.export()
-    click.echo(f"Successfully deleted tags from repository {name}")
+    try:
+        repo_details: Dict = context.repositories[name]
+        repo_details['tags'] = sorted(list(set(repo_details.get('tags', [])) - set(tags)))
+        context.export()
+        click.echo(f"Successfully deleted tags from repository {name}")
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
