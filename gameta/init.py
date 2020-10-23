@@ -3,7 +3,7 @@ from typing import Optional
 
 import click
 
-from git import Repo, InvalidGitRepositoryError
+from git import Repo, InvalidGitRepositoryError, GitError
 
 from . import gameta_cli, gameta_context, GametaContext
 
@@ -45,18 +45,23 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
         Repo.init(context.project_dir)
         name: str = basename(context.project_dir)
         url: Optional[str] = None
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
-    if context.is_metarepo and overwrite is False:
-        click.echo(f"{context.project_dir} is a metarepo, ignoring")
-        return
+    try:
+        if context.is_metarepo and overwrite is False:
+            click.echo(f"{context.project_dir} is a metarepo, ignoring")
+            return
 
-    context.repositories[name] = {
-        'url': url,
-        'path': '.',
-        'tags': ['metarepo']
-    }
-    context.export()
-    click.secho(f"Successfully initialised {name} as a metarepo")
+        context.repositories[name] = {
+            'url': url,
+            'path': '.',
+            'tags': ['metarepo']
+        }
+        context.export()
+        click.echo(f"Successfully initialised {name} as a metarepo")
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @gameta_cli.command()
@@ -75,11 +80,15 @@ def sync(context: GametaContext) -> None:
         $ gameta sync
     """
     click.echo(f"Syncing all child repositories in metarepo {context.project_dir}")
-    for repo, details in context.repositories.items():
 
-        # We assume the metarepo has already been cloned
-        if abspath(details["path"]) == context.project_dir:
-            continue
+    try:
+        for repo, details in context.repositories.items():
 
-        Repo.clone_from(details['url'], details['path'])
-        click.echo(f'Successfully synced {repo} to {details["path"]}')
+            # We assume the metarepo has already been cloned
+            if abspath(details["path"]) == context.project_dir:
+                continue
+
+            Repo.clone_from(details['url'], details['path'])
+            click.echo(f'Successfully synced {repo} to {details["path"]}')
+    except Exception as e:
+        raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
