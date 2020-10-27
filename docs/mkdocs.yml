@@ -4,6 +4,8 @@ site_author: David Lee
 
 repo_url: https://github.com/genius-systems/gameta
 
+theme: readthedocs
+
 nav:
   - Home: index.md
   - Metarepos: metarepos/metarepos.md

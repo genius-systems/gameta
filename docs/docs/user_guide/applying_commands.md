@@ -112,10 +112,12 @@ cd GitPython && git checkout master && python setup.py bdist_wheel && cd ..
 cd core/gitdb && git checkout feature_a && python setup.py bdist_wheel && cd ../..
 ```
 
-!!! note
+___
+**Note**
 
-    To specify a parameter, enclose it in {curly_brackets}. The {branch}
-    expression substitutes the branch parameter; multiple substitutions
-    are supported.
+To specify a parameter, enclose it in {curly_brackets}. The {branch}
+expression substitutes the branch parameter; multiple substitutions
+are supported.
+___
 
-[Commands]: user_guide/commands.md
+[Commands]: commands.md
