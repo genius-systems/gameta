@@ -1,1 +1,17 @@
-site_name: My Docs
+site_name: Gameta
+site_description: CLI for managing Metarepos.
+site_author: David Lee
+
+repo_url: https://github.com/genius-systems/gameta
+
+nav:
+  - Home: index.md
+  - Metarepos: metarepos/metarepos.md
+  - User Guide:
+      - Command Reference: user_guide/commands.md
+      - Applying Commands: user_guide/applying_commands.md
+      - Best Practices: user_guide/best_practices.md
+  - About:
+      - Contributing: about/contributing.md
+      - License: about/license.md
+      - Release Notes: about/release_notes.md
