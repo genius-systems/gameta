@@ -11,23 +11,24 @@ first argument. There are several subcommand groups:
 6. gameta apply
 7. gameta cmd
 
-!!! note
+___
+**Note**
     
-    Flags/arguments sections that are bolded indicate that they are required,
-    while italicised sections indicate that they accept mutiple arguments
+Bolded flags/arguments indicate that they are required, while italicised 
+arguments indicate that they accept multiple arguments
+___
 
 ## gameta init
 
 Initialises the folder as a metarepo, searches for a .git folder and attempts
 to populate the project name and Git URL from the .git folder. 
 
-### --git / -g
+### Arguments
 
-Indicates that Gameta should initialise this folder as a git repository
-
-### --overwrite / -o
-
-Indicates that Gameta should overwrite the existing .meta file with new data
+* --git / -g: Indicates that Gameta should initialise this folder as a git 
+  repository
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+  with new data
 
 ## gameta sync
 
@@ -48,58 +49,35 @@ Adds a new child repository to the .meta file and clone it. If the repository
 is already cloned to the path provided, then extract its details and match 
 them against the arguments that user provides.
 
-#### **--name / -n**
+#### Arguments
 
-Name of the child repository to be stored
-
-#### **--url / -u**
-
-URL of the child repository to be stored
-
-#### **--path / -p**
-
-Relative local path within the project directory to clone the child repository to
-
-#### **--overwrite / -o**
-
-Indicates that Gameta should overwrite the repository details in the .meta file
-if they exist
+* **--name / -n**: Name of the child repository to be stored
+* **--url / -u**: URL of the child repository to be stored
+* **--path / -p**: Relative local path within the project directory to clone the child repository to
+* --overwrite / -o: Indicates that Gameta should overwrite the repository details in the .meta file
+    if they exist
 
 ### gameta repo delete
 
 Deletes an existing child repository from the .meta file and its local clone.
 
-#### **--name / -n**
+#### Arguments
 
-Name of the child repository to be deleted
-
-#### --clear / -c
-
-Indicates that Gameta should also clear the local clone of the repository
+* **--name / -n**: Name of the child repository to be deleted
+* --clear / -c: Indicates that Gameta should also clear the local clone of 
+  the repository
 
 ### gameta repo update
 
 Updates repository details and syncs the changes locally
 
-#### **--name / -n**
+#### Arguments
 
-Name of the child repository to be updated
-
-#### --new-name / -e
-
-New repository name to be updated to
-
-#### --new-url / -u
-
-New repository URL to be updated to
-
-#### --new-path / -p
-
-New local relative path within the project directory to update to
-
-#### --sync / -s
-
-Syncs all updates physically
+* **--name / -n**: Name of the child repository to be updated
+* --new-name / -e: New repository name to be updated to
+* --new-url / -u: New repository URL to be updated to
+* --new-path / -p: New local relative path within the project directory to update to
+* --sync / -s: Syncs all updates physically
 
 ### gameta repo ls
 
@@ -116,25 +94,19 @@ Tags subcommand group, contains the following commands:
 
 Adds/updates tags of a particular repository.
 
-#### **--name / -n**
+#### Arguments
 
-Name of the child repository to add tags to
-
-#### **_--tags / -t_**
-
-Tags to be added to the child repository
+* **--name / -n**: Name of the child repository to add tags to
+* **_--tags / -t_**: Tags to be added to the child repository
 
 ### gameta tags delete
 
 Deletes selected tags from a particular repository.
 
-#### **--name / -n**
+#### Arguments
 
-Name of the child repository to delete tags from
-
-#### **_--tags / -t_**
-
-Tags to be deleted from the child repository
+* **--name / -n**: Name of the child repository to delete tags from
+* **_--tags / -t_**: Tags to be deleted from the child repository
 
 ## gameta params
 
@@ -150,79 +122,52 @@ Adds a new set of parameters to all repositories, this can be done in 2 ways:
 1. User-prompt for each repository (default)
 2. Providing a default value that will be applied to all repositories
 
-!!! note
+___
+**Note**
 
-    If users choose a dict/list parameter types, then they need to input their
-    parameter values as JSON decodable strings e.g. '{"hello": "world"}' or
-    '["hello", "world"]'
+If users choose a dict/list parameter types, then they need to input their
+parameter values as JSON decodable strings e.g. `'{"hello": "world"}'` or
+`'["hello", "world"]'`
+___
 
-#### **--param / -p**
+#### Arguments
 
-Name of the parameter to be added to each repository
-
-#### --type / -t
-
-Parameter type to be added for each repository, users can only choose one
-of the following: 
-
-1. int
-2. float
-3. str (default)
-4. bool
-5. dict
-6. list
-
-#### --value / -v
-
-Default value to be added for each repository in the event users input an
-invalid command when prompted or skip prompt entirely. Defaults to None
-
-#### --skip-prompt / -y
-
-Skips user prompt and adds the default value to all parameter fields
+* **--param / -p**: Name of the parameter to be added to each repository
+* --type / -t: Parameter type to be added for each repository, users can only choose one
+    of the following: int, float, str (default), bool, dict, list
+* --value / -v: Default value to be added for each repository in the event users input an
+    invalid command when prompted or skip prompt entirely. Defaults to None
+* --skip-prompt / -y: Skips user prompt and adds the default value to all parameter fields
 
 ### gameta params delete
 
 Deletes a parameter set from all repositories.
 
-#### **--param / -p**
-
-Name of the parameter to be deleted
+#### Arguments
+ 
+* **--param / -p**: Name of the parameter to be deleted
 
 ## gameta apply
 
 Applies a set of CLI commands to a specified set of repositories (see 
 [Applying Commands])
 
-### **_--command / -c_**
+### Arguments
 
-Commands to be applied
+* **_--command / -c_**: Commands to be applied
+* _--tags / -t_: Tagged repositories to apply commands to
+* _--repositories / -r_: Names of specific repositories to apply commands to
+* --shell / -s: Indicates that the command should be executed in a separate shell
+* --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
+    command in other repositories
+* --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
+    executing commands in child repositories 
 
-### _--tags / -t_
-
-Tagged repositories to apply commands to
-
-### _--repositories / -r_
-
-Names of specific repositories to apply commands to
-
-### --shell / -s
-
-Indicates that the command should be executed in a separate shell
-
-!!! note
-
-    This is required if the command to be rendered is a piped command
-
-### --verbose / -v
-
-Indicates that Gameta should display the CLI output when it executes a
-command in other repositories
-
-### --raise-errors / -e
-
-Indicates that Gameta should terminate and raise errors that occur when
-executing commands in child repositories 
+___
+**Note**
+   
+The shell flag is required if the command to be rendered is a piped command
+___
 
 ## gameta cmd
 
@@ -244,4 +189,4 @@ Deletes a command from the command cache
 
 Executes a cached command from the command cache
 
-[Applying Commands]: user_guide/applying_commands.md
+[Applying Commands]: applying_commands.md
