@@ -1,4 +1,6 @@
-MIT License
+# License (MIT)
+
+---
 
 Copyright (c) 2020 David Lee
 
