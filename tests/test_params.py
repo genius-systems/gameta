@@ -31,7 +31,7 @@ class TestAdd(TestCase):
                 "Usage: add [OPTIONS]\n"
                 "Try 'add --help' for help.\n"
                 "\n"
-                "Error: Missing option '--parameter' / '-p'.\n"
+                "Error: Missing option '--param' / '-p'.\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -414,7 +414,7 @@ class TestDelete(TestCase):
                 "Usage: delete [OPTIONS]\n"
                 "Try 'delete --help' for help.\n"
                 "\n"
-                "Error: Missing option '--parameter' / '-p'.\n"
+                "Error: Missing option '--param' / '-p'.\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
