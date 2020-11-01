@@ -2,7 +2,8 @@ from typing import List, Dict
 
 import click
 
-from . import gameta_cli, gameta_context, GametaContext
+from .cli import gameta_cli
+from .context import gameta_context, GametaContext
 
 
 __all__ = ['tags_cli']

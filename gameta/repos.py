@@ -6,7 +6,8 @@ from typing import Dict, Optional
 import click
 from git import Repo, GitError
 
-from . import gameta_cli, gameta_context, GametaContext
+from .cli import gameta_cli
+from .context import gameta_context, GametaContext
 
 
 __all__ = ['repo_cli']

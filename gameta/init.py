@@ -3,9 +3,10 @@ from typing import Optional
 
 import click
 
-from git import Repo, InvalidGitRepositoryError, GitError
+from git import Repo, InvalidGitRepositoryError
 
-from . import gameta_cli, gameta_context, GametaContext
+from .cli import gameta_cli
+from .context import gameta_context, GametaContext
 
 
 __all__ = ['init', 'sync']

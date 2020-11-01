@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 from click import Context
 from click.testing import CliRunner
-from gameta import GametaContext
 
+from gameta.context import GametaContext
 from gameta.tags import add, delete
 
 
@@ -17,7 +17,7 @@ class TestAdd(TestCase):
         self.runner = CliRunner()
         self.add = add
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -37,7 +37,7 @@ class TestAdd(TestCase):
                 "Error: Missing option '--name' / '-n'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -65,7 +65,7 @@ class TestAdd(TestCase):
                 f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -90,7 +90,7 @@ class TestAdd(TestCase):
                 f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_with_no_tags_initially(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -140,7 +140,7 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -191,7 +191,7 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_with_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -248,7 +248,7 @@ class TestDelete(TestCase):
         self.runner = CliRunner()
         self.delete = delete
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -268,7 +268,7 @@ class TestDelete(TestCase):
                 "Error: Missing option '--name' / '-n'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -296,7 +296,7 @@ class TestDelete(TestCase):
                 f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -321,7 +321,7 @@ class TestDelete(TestCase):
                 f"Error: Repository {params['name']} does not exist in .meta file\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_with_no_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -371,7 +371,7 @@ class TestDelete(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -422,7 +422,7 @@ class TestDelete(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_with_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
