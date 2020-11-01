@@ -62,7 +62,44 @@ class TestApply(TestCase):
                 "Executing git fetch --all --tags --prune in gitdb\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_multiple_commands_to_all_repositories(self, mock_ensure_object):
+        params = {
+            'commands': (
+                'git fetch --all --tags --prune origin',
+                'git checkout {branch}'
+            )
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output['projects']['gameta'].update({"branch": "master"})
+                    output['projects']['gitdb'].update({'branch': 'gitdb2'})
+                    output['projects']['GitPython'].update({'branch': 'py2'})
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.apply, ['--command', params['commands'][0], '--command', params['commands'][1], '-v']
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
+                "Executing git fetch --all --tags --prune in gameta\n"
+                "Executing git fetch --all --tags --prune in GitPython\n"
+                "Executing git fetch --all --tags --prune in gitdb\n"
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_tagged_repositories(self, mock_ensure_object):
         params = {
             'commands': ('git fetch --all --tags --prune', ),
