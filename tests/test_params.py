@@ -7,7 +7,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from gameta import GametaContext
-from gameta.parameters import add, delete
+from gameta.params import add, delete
 
 
 class TestAdd(TestCase):
@@ -30,7 +30,7 @@ class TestAdd(TestCase):
                 "Usage: add [OPTIONS]\n"
                 "Try 'add --help' for help.\n"
                 "\n"
-                "Error: Missing option '--parameter' / '-p'.\n"
+                "Error: Missing option '--param' / '-p'.\n"
             )
 
     @patch('gameta.click.Context.ensure_object')
@@ -413,7 +413,7 @@ class TestDelete(TestCase):
                 "Usage: delete [OPTIONS]\n"
                 "Try 'delete --help' for help.\n"
                 "\n"
-                "Error: Missing option '--parameter' / '-p'.\n"
+                "Error: Missing option '--param' / '-p'.\n"
             )
 
     @patch('gameta.click.Context.ensure_object')
