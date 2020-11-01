@@ -6,7 +6,7 @@ from unittest import TestCase
 from click import ClickException
 from click.testing import CliRunner
 
-from gameta import GametaContext
+from gameta.context import GametaContext
 
 
 class TestGametaContext(TestCase):

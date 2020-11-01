@@ -8,8 +8,8 @@ from unittest.mock import patch
 
 from click import Context
 from click.testing import CliRunner
-from gameta import GametaContext
 
+from gameta.context import GametaContext
 from gameta.repos import add, delete, ls, update
 
 
@@ -18,7 +18,7 @@ class TestAdd(TestCase):
         self.runner = CliRunner()
         self.add = add
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -38,7 +38,7 @@ class TestAdd(TestCase):
                 "Error: Missing option '--name' / '-n'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_added_to_meta_file_and_create_gitignore_and_clone(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -88,7 +88,7 @@ class TestAdd(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_added_to_meta_file_and_add_path_to_gitignore_and_clone(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -139,7 +139,7 @@ class TestAdd(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertTrue('GitPython/\n' in set(g.readlines()))
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_invalid_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -185,7 +185,7 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_already_exists_in_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -240,7 +240,7 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_already_exists_in_meta_file_overwritten(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -297,7 +297,7 @@ class TestAdd(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_already_exists_locally(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -350,7 +350,7 @@ class TestAdd(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_already_exists_locally_and_in_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -406,7 +406,7 @@ class TestAdd(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_repository_already_exists_locally_parameters_differ(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -455,7 +455,7 @@ class TestDelete(TestCase):
         self.runner = CliRunner()
         self.delete = delete
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -475,7 +475,7 @@ class TestDelete(TestCase):
                 "Error: Missing option '--name' / '-n'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_deleted_and_cleared_gitignore_does_not_exist(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
@@ -524,7 +524,7 @@ class TestDelete(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertCountEqual(g.readlines(), [])
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_deleted_and_cleared_gitignore_exist_but_does_not_contain_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
@@ -574,7 +574,7 @@ class TestDelete(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertFalse("GitPython/\n" in g.readlines())
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_deleted_and_cleared_gitignore_exist_and_contains_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
@@ -628,7 +628,7 @@ class TestDelete(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertFalse("GitPython/\n" in g.readlines())
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_deleted_but_not_cleared(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
@@ -674,7 +674,7 @@ class TestDelete(TestCase):
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_repository_does_not_exist(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
@@ -714,7 +714,7 @@ class TestLs(TestCase):
         self.runner = CliRunner()
         self.ls = ls
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_ls_repositories_available(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -747,7 +747,7 @@ class TestLs(TestCase):
                 "genisys\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_ls_no_repositories_available(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -775,7 +775,7 @@ class TestUpdate(TestCase):
         self.runner = CliRunner()
         self.update = update
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -795,7 +795,7 @@ class TestUpdate(TestCase):
                 "Error: Missing option '--name' / '-n'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_name_does_not_exist_in_repo(self, mock_ensure_object):
         params = {
             'name': 'test'
@@ -815,7 +815,7 @@ class TestUpdate(TestCase):
                 f'Error: Repository {params["name"]} does not exist in the .meta file, please add it first\n'
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_all_parameters_updated_gitignore_created(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -869,7 +869,7 @@ class TestUpdate(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertTrue("core/GitPython/\n" in g.readlines())
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_all_parameters_updated_gitignore_exists_but_does_not_contain_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -924,7 +924,7 @@ class TestUpdate(TestCase):
             with open(join(f, '.gitignore'), 'r') as g:
                 self.assertTrue("core/GitPython/\n" in g.readlines())
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_all_parameters_updated_gitignore_exists_and_contains_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -987,7 +987,7 @@ class TestUpdate(TestCase):
                 self.assertTrue("core/gitdb/\n" in output)
                 self.assertTrue("core/GitPython/\n" in output)
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_all_parameters_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -1052,7 +1052,7 @@ class TestUpdate(TestCase):
             self.assertTrue(exists(join(f, 'core', 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'core', 'GitPython')) for i in ['git', 'doc']))
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_no_new_path_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -1115,7 +1115,7 @@ class TestUpdate(TestCase):
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc']))
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_no_new_url_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
@@ -1179,7 +1179,7 @@ class TestUpdate(TestCase):
             self.assertTrue(exists(join(f, 'core', 'gitpython')))
             self.assertTrue(all(i in listdir(join(f, 'core', 'gitpython')) for i in ['git', 'doc', 'test']))
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_update_only_name_change_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
