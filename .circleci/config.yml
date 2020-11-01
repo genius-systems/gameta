@@ -12,6 +12,23 @@ jobs:
       - run:
           name: Test
           command: tox
+  docs:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Deactivate Poetry's virtualenv
+          command: poetry config virtualenvs.create false
+      - run:
+          name: Install Python dependencies
+          command: poetry install
+      - run:
+          name: Build documentation
+          command: cd docs && mkdocs build
   deploy:
     docker:
       - image: "fkrull/multi-python:bionic"
