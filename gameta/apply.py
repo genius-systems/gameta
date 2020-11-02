@@ -1,5 +1,5 @@
 import subprocess
-from typing import List
+from typing import List, Tuple
 
 import click
 
@@ -21,7 +21,7 @@ __all__ = ['apply']
 @gameta_context
 def apply(
         context: GametaContext,
-        commands: List[str],
+        commands: Tuple[str],
         tags: List[str],
         repositories: List[str],
         verbose: bool,
@@ -33,7 +33,7 @@ def apply(
     \f
     Args:
         context (GametaContext): Gameta Context
-        commands (List[str]): CLI command to be applied
+        commands (Tuple[str]): CLI command to be applied
         tags (List[str]): Repository tags to apply command to
         repositories (List[str]): Repositories to apply command to
         verbose (bool): Flag to indicate that output should be displayed as the command is applied
@@ -67,7 +67,7 @@ def apply(
             f"Applying '{commands}' to repos {repos if repos else list(context.repositories.keys())}"
             f"{' in a separate shell' if shell else ''}"
         )
-        for repo, c in context.apply(commands, repos=repos, shell=shell):
+        for repo, c in context.apply(list(commands), repos=repos, shell=shell):
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
                 if verbose:

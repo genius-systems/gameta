@@ -66,7 +66,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_nonexistent_repository(self, mock_ensure_object):
+    def test_add_tags_to_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -91,7 +91,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_with_no_tags_initially(self, mock_ensure_object):
+    def test_add_no_tags_initially(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -144,7 +144,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
+    def test_add_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -198,7 +198,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_with_duplicate_tags(self, mock_ensure_object):
+    def test_add_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -306,7 +306,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_nonexistent_repository(self, mock_ensure_object):
+    def test_delete_tags_from_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -331,7 +331,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_with_no_tags(self, mock_ensure_object):
+    def test_delete_no_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -384,60 +384,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
-        params = {
-            'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
-        }
-        with self.runner.isolated_filesystem() as f:
-            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
-                template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
-                output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
-                        "url": 'https://github.com/gitpython-developers/GitPython.git',
-                        'path': 'GitPython',
-                        '__metarepo__': False
-                    }
-                    json.dump(output, m2)
-            context = GametaContext()
-            context.project_dir = f
-            context.load()
-            mock_ensure_object.return_value = context
-            result = self.runner.invoke(
-                self.delete,
-                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
-            )
-            self.assertEqual(result.exit_code, 0)
-            self.assertEqual(
-                result.output,
-                f"Deleting tags {params['tags']} from {params['name']}\n"
-                f"Successfully deleted tags from repository {params['name']}\n"
-            )
-            with open(join(f, '.meta'), 'r') as m:
-                self.assertEqual(
-                    json.load(m),
-                    {
-                        "projects": {
-                            "gameta": {
-                                "path": ".",
-                                "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git",
-                                '__metarepo__': True
-                            },
-                            'GitPython': {
-                                "url": 'https://github.com/gitpython-developers/GitPython.git',
-                                'path': 'GitPython',
-                                'tags': [],
-                                '__metarepo__': False
-                            }
-                        }
-                    }
-                )
-
-    @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_with_disjoint_set_of_tags(self, mock_ensure_object):
+    def test_delete_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -491,7 +438,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_with_duplicate_tags(self, mock_ensure_object):
+    def test_delete_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -539,6 +486,52 @@ class TestDelete(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['f'],
                                 '__metarepo__': False
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
+        params = {
+            'name': 'gameta',
+            'tags': ('metarepo', 'b', 'c')
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output['projects']['gameta'].update({
+                        'tags': ['metarepo', 'a', 'b', 'c']
+                    })
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                "Unable to delete the metarepo tag from metarepo, removing it before deleting other tags\n"
+                f"Successfully deleted tags from repository {params['name']}\n"
+            )
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertCountEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo", "a"],
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
