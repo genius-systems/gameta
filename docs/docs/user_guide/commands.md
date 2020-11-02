@@ -166,7 +166,8 @@ Applies a set of CLI commands to a specified set of repositories (see
 ___
 **Note**
    
-The shell flag is required if the command to be rendered is a piped command
+The shell flag is required if the command to be rendered is a piped command, it will also
+be automatically added if multiple commands are provided
 ___
 
 ## gameta cmd

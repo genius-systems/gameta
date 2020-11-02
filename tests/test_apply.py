@@ -66,8 +66,9 @@ class TestApply(TestCase):
     def test_apply_multiple_commands_to_all_repositories(self, mock_ensure_object):
         params = {
             'commands': (
-                'git fetch --all --tags --prune origin',
-                'git checkout {branch}'
+                'git fetch --all --tags --prune',
+                'git checkout {branch}',
+                'git pull {repo} {new_branch}'
             )
         }
         with self.runner.isolated_filesystem() as f:
@@ -79,24 +80,46 @@ class TestApply(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({"branch": "master"})
-                    output['projects']['gitdb'].update({'branch': 'gitdb2'})
-                    output['projects']['GitPython'].update({'branch': 'py2'})
+                    output['projects']['gameta'].update(
+                        {"branch": "master", 'new_branch': 'develop', 'repo': 'origin'}
+                    )
+                    output['projects']['gitdb'].update(
+                        {'branch': 'master', 'new_branch': 'gitdb2', 'repo': 'origin'}
+                    )
+                    output['projects']['GitPython'].update(
+                        {'branch': 'master', 'new_branch': 'master', 'repo': 'origin'}
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
+
+            output = [c for repo, c in context.apply(list(params['commands']), shell=True)]
             result = self.runner.invoke(
-                self.apply, ['--command', params['commands'][0], '--command', params['commands'][1], '-v']
+                self.apply,
+                [
+                    '--command', params['commands'][0],
+                    '--command', params['commands'][1],
+                    '--command', params['commands'][2],
+                ]
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                "Multiple commands detected, executing in a separate shell\n"
+                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb'] in a separate shell\n"
+                f"Executing {' '.join(output[0])} in gameta\n"
+                f"Executing {' '.join(output[1])} in GitPython\n"
+                f"Executing {' '.join(output[2])} in gitdb\n"
+                
+                # This error is thrown because the gitdb2 branch has an unrelated history from master branch which
+                # git refuses to merge, not because the command execution was unsuccessful
+                "Error CalledProcessError.Command '['/bin/bash', '-c', "
+                "' git fetch --all --tags --prune && git checkout master && git pull origin gitdb2']' "
+                "returned non-zero exit status 128. occurred when executing command "
+                "/bin/bash -c  git fetch --all --tags --prune && git checkout master && git pull origin gitdb2 in "
+                "gitdb, continuing execution\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')

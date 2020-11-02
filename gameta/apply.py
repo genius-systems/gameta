@@ -56,6 +56,13 @@ def apply(
                 set([repo for repo in repositories if repo in context.repositories])
             )
         )
+
+        # Python subprocess does not handle multiple commands
+        # hence we need to handle it in a separate shell
+        if len(commands) > 1:
+            click.echo("Multiple commands detected, executing in a separate shell")
+            shell = True
+
         click.echo(
             f"Applying '{commands}' to repos {repos if repos else list(context.repositories.keys())}"
             f"{' in a separate shell' if shell else ''}"
