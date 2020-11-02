@@ -523,7 +523,8 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -557,7 +558,8 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -624,7 +626,8 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -761,7 +764,8 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }, m
                 )
             self.context.project_dir = f
@@ -813,7 +817,8 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }, m
                 )
             self.context.project_dir = f
