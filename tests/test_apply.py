@@ -106,20 +106,12 @@ class TestApply(TestCase):
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
-                result.output,
+                result.output.split("Error CalledProcessError.Command")[0],
                 "Multiple commands detected, executing in a separate shell\n"
                 f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb'] in a separate shell\n"
                 f"Executing {' '.join(output[0])} in gameta\n"
                 f"Executing {' '.join(output[1])} in GitPython\n"
                 f"Executing {' '.join(output[2])} in gitdb\n"
-                
-                # This error is thrown because the gitdb2 branch has an unrelated history from master branch which
-                # git refuses to merge, not because the command execution was unsuccessful
-                "Error CalledProcessError.Command '['/bin/bash', '-c', "
-                "' git fetch --all --tags --prune && git checkout master && git pull origin gitdb2']' "
-                "returned non-zero exit status 128. occurred when executing command "
-                "/bin/bash -c  git fetch --all --tags --prune && git checkout master && git pull origin gitdb2 in "
-                "gitdb, continuing execution\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
