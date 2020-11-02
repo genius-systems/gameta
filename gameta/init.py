@@ -3,9 +3,10 @@ from typing import Optional
 
 import click
 
-from git import Repo, InvalidGitRepositoryError, GitError
+from git import Repo, InvalidGitRepositoryError
 
-from . import gameta_cli, gameta_context, GametaContext
+from .cli import gameta_cli
+from .context import gameta_context, GametaContext
 
 
 __all__ = ['init', 'sync']
@@ -56,7 +57,8 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
         context.repositories[name] = {
             'url': url,
             'path': '.',
-            'tags': ['metarepo']
+            'tags': ['metarepo'],
+            '__metarepo__': True
         }
         context.export()
         click.echo(f"Successfully initialised {name} as a metarepo")
@@ -85,7 +87,7 @@ def sync(context: GametaContext) -> None:
         for repo, details in context.repositories.items():
 
             # We assume the metarepo has already been cloned
-            if abspath(details["path"]) == context.project_dir:
+            if context.is_primary_metarepo(repo):
                 continue
 
             Repo.clone_from(details['url'], details['path'])

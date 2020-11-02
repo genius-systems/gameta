@@ -6,7 +6,7 @@ from unittest import TestCase
 from click import ClickException
 from click.testing import CliRunner
 
-from gameta import GametaContext
+from gameta.context import GametaContext
 
 
 class TestGametaContext(TestCase):
@@ -115,6 +115,77 @@ class TestGametaContext(TestCase):
         self.context.remove_gitignore('test')
         self.assertEqual(self.context.gitignore_data, ['test_path/\n', 'another_test_path/\n', 'this/is/a/test/\n'])
 
+    def test_gameta_context_is_primary_metarepo(self):
+        with self.runner.isolated_filesystem() as f:
+            self.context.repositories = {
+                "gameta": {
+                    "url": "https://github.com/testing/gameta.git",
+                    "path": ".",
+                    "tags": [
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
+                },
+                "genisys": {
+                    "url": "https://github.com/testing/genisys.git",
+                    "path": "core/genisys",
+                    "tags": [
+                        "core",
+                        "templating"
+                    ],
+                    '__metarepo__': False
+                },
+                "genisys-testing": {
+                    "url": "https://github.com/testing/genisys-testing.git",
+                    "path": "core/genisys-testing",
+                    "tags": [
+                        "core",
+                        "testing",
+                        "developer"
+                    ],
+                    '__metarepo__': False
+                }
+            }
+            self.context.project_dir = f
+            self.assertTrue(self.context.is_primary_metarepo('gameta'))
+            self.assertFalse(self.context.is_primary_metarepo('genisys'))
+            self.assertFalse(self.context.is_primary_metarepo('genisys-testing'))
+
+    def test_gameta_context_is_primary_metarepo_repo_does_not_exist(self):
+        with self.runner.isolated_filesystem() as f:
+            self.context.repositories = {
+                "gameta": {
+                    "url": "https://github.com/testing/gameta.git",
+                    "path": ".",
+                    "tags": [
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
+                },
+                "genisys": {
+                    "url": "https://github.com/testing/genisys.git",
+                    "path": "core/genisys",
+                    "tags": [
+                        "core",
+                        "templating"
+                    ],
+                    '__metarepo__': False
+                },
+                "genisys-testing": {
+                    "url": "https://github.com/testing/genisys-testing.git",
+                    "path": "core/genisys-testing",
+                    "tags": [
+                        "core",
+                        "testing",
+                        "developer"
+                    ],
+                    '__metarepo__': False
+                }
+            }
+            self.context.project_dir = f
+            with self.assertRaises(KeyError):
+                self.context.is_primary_metarepo('test')
+
     def test_gameta_context_tokenise(self):
         self.assertEqual(
             self.context.tokenise('git clone https://github.com/libgit2/libgit2'),
@@ -160,8 +231,9 @@ class TestGametaContext(TestCase):
                 "url": "https://github.com/testing/gameta.git",
                 "path": ".",
                 "tags": [
-                    "meta"
-                ]
+                    "metarepo"
+                ],
+                '__metarepo__': True
             },
             "genisys": {
                 "url": "https://github.com/testing/genisys.git",
@@ -169,7 +241,8 @@ class TestGametaContext(TestCase):
                 "tags": [
                     "core",
                     "templating"
-                ]
+                ],
+                '__metarepo__': False
             },
             "genisys-testing": {
                 "url": "https://github.com/testing/genisys-testing.git",
@@ -178,7 +251,8 @@ class TestGametaContext(TestCase):
                     "core",
                     "testing",
                     "developer"
-                ]
+                ],
+                '__metarepo__': False
             }
         }
         self.context.generate_tags()
@@ -189,7 +263,7 @@ class TestGametaContext(TestCase):
                 'testing': ['genisys-testing'],
                 'developer': ['genisys-testing'],
                 'templating': ['genisys'],
-                'meta': ['gameta']
+                'metarepo': ['gameta']
             }
         )
 
@@ -211,8 +285,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
                             },
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",
@@ -220,7 +295,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -229,7 +305,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m
@@ -243,8 +320,9 @@ class TestGametaContext(TestCase):
                         "url": "https://github.com/testing/gameta.git",
                         "path": ".",
                         "tags": [
-                            "meta"
-                        ]
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
                     },
                     "genisys": {
                         "url": "https://github.com/testing/genisys.git",
@@ -252,7 +330,8 @@ class TestGametaContext(TestCase):
                         "tags": [
                             "core",
                             "templating"
-                        ]
+                        ],
+                        '__metarepo__': False
                     },
                     "genisys-testing": {
                         "url": "https://github.com/testing/genisys-testing.git",
@@ -261,7 +340,8 @@ class TestGametaContext(TestCase):
                             "core",
                             "testing",
                             "developer"
-                        ]
+                        ],
+                        '__metarepo__': False
                     }
                 }
             )
@@ -272,7 +352,7 @@ class TestGametaContext(TestCase):
                     'testing': ['genisys-testing'],
                     'developer': ['genisys-testing'],
                     'templating': ['genisys'],
-                    'meta': ['gameta']
+                    'metarepo': ['gameta']
                 }
             )
             self.assertTrue(self.context.is_metarepo)
@@ -287,8 +367,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
                             },
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",
@@ -296,7 +377,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -305,7 +387,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m
@@ -324,8 +407,9 @@ class TestGametaContext(TestCase):
                         "url": "https://github.com/testing/gameta.git",
                         "path": ".",
                         "tags": [
-                            "meta"
-                        ]
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
                     },
                     "genisys": {
                         "url": "https://github.com/testing/genisys.git",
@@ -333,7 +417,8 @@ class TestGametaContext(TestCase):
                         "tags": [
                             "core",
                             "templating"
-                        ]
+                        ],
+                        '__metarepo__': False
                     },
                     "genisys-testing": {
                         "url": "https://github.com/testing/genisys-testing.git",
@@ -342,7 +427,8 @@ class TestGametaContext(TestCase):
                             "core",
                             "testing",
                             "developer"
-                        ]
+                        ],
+                        '__metarepo__': False
                     }
                 }
             )
@@ -353,7 +439,7 @@ class TestGametaContext(TestCase):
                     'testing': ['genisys-testing'],
                     'developer': ['genisys-testing'],
                     'templating': ['genisys'],
-                    'meta': ['gameta']
+                    'metarepo': ['gameta']
                 }
             )
             self.assertTrue(self.context.is_metarepo)
@@ -379,8 +465,9 @@ class TestGametaContext(TestCase):
                             "url": "https://github.com/testing/gameta.git",
                             "path": ".",
                             "tags": [
-                                "meta"
-                            ]
+                                "metarepo"
+                            ],
+                            '__metarepo__': True
                         },
                         "genisys": {
                             "url": "https://github.com/testing/genisys.git",
@@ -388,7 +475,8 @@ class TestGametaContext(TestCase):
                             "tags": [
                                 "core",
                                 "templating"
-                            ]
+                            ],
+                            '__metarepo__': False
                         },
                         "genisys-testing": {
                             "url": "https://github.com/testing/genisys-testing.git",
@@ -397,7 +485,8 @@ class TestGametaContext(TestCase):
                                 "core",
                                 "testing",
                                 "developer"
-                            ]
+                            ],
+                            '__metarepo__': False
                         }
                     },
                     m
@@ -414,8 +503,9 @@ class TestGametaContext(TestCase):
                     "url": "https://github.com/testing/gameta.git",
                     "path": ".",
                     "tags": [
-                        "meta"
-                    ]
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
                 }
             }
             self.context.export()
@@ -429,8 +519,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -446,8 +537,9 @@ class TestGametaContext(TestCase):
                     "url": "https://github.com/testing/gameta.git",
                     "path": ".",
                     "tags": [
-                        "meta"
-                    ]
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
                 }
             }
             self.context.export()
@@ -461,8 +553,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -478,7 +571,7 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
+                                    "metarepo"
                                 ]
                             }
                         }
@@ -491,7 +584,8 @@ class TestGametaContext(TestCase):
                     "tags": [
                         "core",
                         "templating"
-                    ]
+                    ],
+                    '__metarepo__': False
                 },
                 "genisys-testing": {
                     "url": "https://github.com/testing/genisys-testing.git",
@@ -500,7 +594,8 @@ class TestGametaContext(TestCase):
                         "core",
                         "testing",
                         "developer"
-                    ]
+                    ],
+                    '__metarepo__': False
                 }
             }
             self.context.export()
@@ -516,7 +611,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -525,7 +621,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -543,8 +640,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
                             },
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",
@@ -552,7 +650,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -561,7 +660,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m
@@ -589,8 +689,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",
@@ -598,7 +699,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -607,7 +709,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m
@@ -635,8 +738,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/testing/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",
@@ -644,7 +748,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/testing/genisys-testing.git",
@@ -653,7 +758,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m
@@ -684,8 +790,9 @@ class TestGametaContext(TestCase):
                                 "url": "https://github.com/test/gameta.git",
                                 "path": ".",
                                 "tags": [
-                                    "meta"
-                                ]
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys": {
                                 "url": "https://github.com/test/genisys.git",
@@ -693,7 +800,8 @@ class TestGametaContext(TestCase):
                                 "tags": [
                                     "core",
                                     "templating"
-                                ]
+                                ],
+                                '__metarepo__': False
                             },
                             "genisys-testing": {
                                 "url": "https://github.com/test/genisys-testing.git",
@@ -702,7 +810,8 @@ class TestGametaContext(TestCase):
                                     "core",
                                     "testing",
                                     "developer"
-                                ]
+                                ],
+                                '__metarepo__': False
                             }
                         }
                     }, m

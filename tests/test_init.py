@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta import GametaContext
+from gameta.context import GametaContext
 from gameta.init import init, sync
 
 
@@ -18,7 +18,7 @@ class TestInit(TestCase):
         self.runner = CliRunner()
         self.init = init
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_init_with_default_values_folder_is_not_a_git_repo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             context = GametaContext()
@@ -32,7 +32,7 @@ class TestInit(TestCase):
                 f"Error: {f} is not a valid git repo, initialise it with -g flag\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_init_with_git_is_true_folder_is_not_a_git_repo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             context = GametaContext()
@@ -54,13 +54,14 @@ class TestInit(TestCase):
                             basename(f): {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': None
+                                'url': None,
+                                '__metarepo__': True
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_init_with_default_values_folder_is_a_git_repo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -83,13 +84,14 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_init_with_default_values_folder_is_a_metarepo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -114,13 +116,14 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_init_with_overwrite_folder_is_a_metarepo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -145,7 +148,8 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -157,7 +161,7 @@ class TestSync(TestCase):
         self.runner = CliRunner()
         self.sync = sync
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_sync_empty_meta_file(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -179,7 +183,7 @@ class TestSync(TestCase):
                 f'Syncing all child repositories in metarepo {f}\n'
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_sync_all_repos(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:

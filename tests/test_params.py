@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta import GametaContext
+from gameta.context import GametaContext
 from gameta.params import add, delete
 
 
@@ -15,7 +15,7 @@ class TestAdd(TestCase):
         self.runner = CliRunner()
         self.add = add
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
@@ -33,7 +33,7 @@ class TestAdd(TestCase):
                 "Error: Missing option '--param' / '-p'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_skip_user_prompt_default_values(self, mock_ensure_object):
         params = {
             'parameter': 'test'
@@ -63,25 +63,28 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: None,
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: None,
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: None,
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_skip_user_prompt_user_provided_default_value(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -112,25 +115,28 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['value'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_skip_user_prompt_default_type_not_in_choice(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -153,7 +159,7 @@ class TestAdd(TestCase):
                 "(choose from int, float, str, bool, dict, list)\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_user_prompt_all_value_prompted(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -193,25 +199,28 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['user_prompt'][1],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_user_prompt_skipping_with_user_provided_default_value(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -252,25 +261,28 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_user_prompt_complex_user_input(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -312,25 +324,28 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['user_prompt'][1],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_user_prompt_user_input_does_not_match_required_type(self, mock_ensure_object):
         params = {
             'parameter': 'test',
@@ -374,19 +389,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -398,7 +416,7 @@ class TestDelete(TestCase):
         self.runner = CliRunner()
         self.delete = delete
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_add_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
@@ -416,7 +434,7 @@ class TestDelete(TestCase):
                 "Error: Missing option '--param' / '-p'.\n"
             )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_parameters_parameter_does_not_exist(self, mock_ensure_object):
         params = {
             'parameter': 'test'
@@ -442,23 +460,26 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_parameters_all_parameters_deleted(self, mock_ensure_object):
         params = {
             'parameter': 'test'
@@ -490,23 +511,26 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_parameters_partial_parameter_deleted(self, mock_ensure_object):
         params = {
             'parameter': 'test'
@@ -537,23 +561,26 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
                 )
 
-    @patch('gameta.click.Context.ensure_object')
+    @patch('gameta.cli.click.Context.ensure_object')
     def test_delete_parameters_attempting_to_delete_reserved_parameters(self, mock_ensure_object):
         params = {
             'parameter': 'url'
@@ -574,7 +601,8 @@ class TestDelete(TestCase):
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Error: Parameter {params['parameter']} is a reserved parameter ['url', 'path', 'tags']\n"
+                f"Error: Parameter {params['parameter']} is a reserved parameter "
+                f"['url', 'path', 'tags', '__metarepo__']\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -585,19 +613,22 @@ class TestDelete(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
-                                'test': {'a': [4, 5, 6]}
+                                'test': {'a': [4, 5, 6]},
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git',
-                                'test': {'a': [1, 2, 3]}
+                                'test': {'a': [1, 2, 3]},
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
-                                'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}
+                                'test': {'a': [1, 6, 7], 'c': [4, 2, 8]},
+                                '__metarepo__': False
                             }
                         }
                     }
