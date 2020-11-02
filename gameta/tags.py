@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 import click
 
@@ -61,14 +61,14 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
 @click.option('--name', '-n', type=str, required=True, help='Name of the repository to delete tags from')
 @click.option('--tags', '-t', type=str, required=True, multiple=True, help='Tags to delete from the repository')
 @gameta_context
-def delete(context: GametaContext, name: str, tags: List[str]) -> None:
+def delete(context: GametaContext, name: str, tags: Tuple[str]) -> None:
     """
     Deletes a set of tags from a repository
     \f
     Args:
         context (GametaContext): Gameta Context
         name (str): Name of the repository to delete tags from
-        tags (List[str]): Tags to delete from the repository
+        tags (Tuple[str]): Tags to delete from the repository
 
     Returns:
         None
@@ -79,6 +79,11 @@ def delete(context: GametaContext, name: str, tags: List[str]) -> None:
     click.echo(f"Deleting tags {tags} from {name}")
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in .meta file")
+
+    tags: List[str] = list(tags)
+    if context.is_primary_metarepo(name) and 'metarepo' in tags:
+        click.echo("Unable to delete the metarepo tag from metarepo, removing it before deleting other tags")
+        tags.remove('metarepo')
 
     try:
         repo_details: Dict = context.repositories[name]
