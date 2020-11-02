@@ -75,11 +75,13 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -126,11 +128,13 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -179,7 +183,8 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -201,7 +206,8 @@ class TestAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        "tags": ['a', 'b', 'c']
+                        "tags": ['a', 'b', 'c'],
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -229,12 +235,14 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                "tags": ['a', 'b', 'c']
+                                "tags": ['a', 'b', 'c'],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -284,11 +292,13 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 'path': 'GitPython',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -337,11 +347,13 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -368,6 +380,7 @@ class TestAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -396,11 +409,13 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "GitPython": {
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -443,7 +458,8 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -515,7 +531,8 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -565,7 +582,8 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -619,7 +637,8 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -668,7 +687,8 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -702,7 +722,8 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -850,17 +871,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "core/GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/jantman/GitPython.git"
+                                "url": "https://github.com/jantman/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -905,17 +929,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "core/GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/jantman/GitPython.git"
+                                "url": "https://github.com/jantman/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -966,17 +993,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "core/GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/jantman/GitPython.git"
+                                "url": "https://github.com/jantman/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -1033,17 +1063,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "core/GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/jantman/GitPython.git"
+                                "url": "https://github.com/jantman/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -1097,17 +1130,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/jantman/GitPython.git"
+                                "url": "https://github.com/jantman/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -1160,17 +1196,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "core/gitpython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/gitpython-developers/GitPython.git"
+                                "url": "https://github.com/gitpython-developers/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -1223,17 +1262,20 @@ class TestUpdate(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             "test": {
                                 "path": "GitPython",
                                 "tags": ["a", "b", "c"],
-                                "url": "https://github.com/gitpython-developers/GitPython.git"
+                                "url": "https://github.com/gitpython-developers/GitPython.git",
+                                '__metarepo__': False
                             },
                             "gitdb": {
                                 "path": "core/gitdb",
                                 "tags": ["a", "c", "d"],
-                                "url": "https://github.com/gitpython-developers/gitdb.git"
+                                "url": "https://github.com/gitpython-developers/gitdb.git",
+                                '__metarepo__': False
                             }
                         }
                     }
