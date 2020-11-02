@@ -53,6 +53,9 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
     Examples:
         $ gameta repo add -n repo_name -u https://github.com/git_user/repo_name.git -p path/to/repo
         $ gameta repo add -n repo_name -u https://github.com/git_user/repo_name.git -p path/to/repo -o
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     clone_path: str = normpath(join(context.project_dir, path))
     click.echo(f"Adding git repository {name}, {url} to {clone_path}")
@@ -115,6 +118,9 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
     Examples:
         $ gameta repo delete -n repo_name
         $ gameta repo delete -n repo_name -c  # Clears the local repository
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     try:
         click.echo(f"Deleting repository {name} from .meta file")
@@ -175,6 +181,9 @@ def update(
                              -p /path/to/repo
         $ gameta repo update -n orig_repo_name -e new_repo_name -u https://github.com/git_user/repo_name.git
                              -p /path/to/repo -s  # Syncs all changes
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in the .meta file, please add it first")
@@ -238,6 +247,9 @@ def ls(context: GametaContext) -> None:
 
     Examples:
         $ gameta repo ls
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Listing repositories managed in metarepo {context.project_dir}")
     for repo in context.repositories:
