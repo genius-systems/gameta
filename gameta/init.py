@@ -87,7 +87,7 @@ def sync(context: GametaContext) -> None:
         for repo, details in context.repositories.items():
 
             # We assume the metarepo has already been cloned
-            if abspath(details["path"]) == context.project_dir:
+            if context.is_primary_metarepo(repo):
                 continue
 
             Repo.clone_from(details['url'], details['path'])

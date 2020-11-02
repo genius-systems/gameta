@@ -3,7 +3,7 @@ import shlex
 from contextlib import contextmanager
 from copy import deepcopy
 from os import getenv, getcwd, chdir
-from os.path import join, basename, normpath
+from os.path import join, basename, normpath, abspath
 from typing import Optional, List, Generator, Dict, Tuple
 
 import click
@@ -29,7 +29,7 @@ class GametaContext(object):
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
     """
-    reserved_params = ['url', 'path', 'tags']
+    reserved_params = ['url', 'path', 'tags', '__metarepo__']
 
     def __init__(self):
         self.is_metarepo: bool = False
@@ -97,6 +97,18 @@ class GametaContext(object):
             self.gitignore_data.remove(path + '/\n')
         except ValueError:
             return
+
+    def is_primary_metarepo(self, repo: str) -> bool:
+        """
+        Returns a boolean if the repository is a primary meta-repository
+
+        Args:
+            repo (str): Repository to check
+
+        Returns:
+            bool: Flag to indicate if repository is a primary meta-repository
+        """
+        return abspath(self.repositories[repo]["path"]) == self.project_dir
 
     def load(self) -> None:
         """
