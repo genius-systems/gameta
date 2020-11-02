@@ -115,8 +115,76 @@ class TestGametaContext(TestCase):
         self.context.remove_gitignore('test')
         self.assertEqual(self.context.gitignore_data, ['test_path/\n', 'another_test_path/\n', 'this/is/a/test/\n'])
 
-    # def test_gameta_context_is_primary_metarepo(self):
-    #     self.context.
+    def test_gameta_context_is_primary_metarepo(self):
+        with self.runner.isolated_filesystem() as f:
+            self.context.repositories = {
+                "gameta": {
+                    "url": "https://github.com/testing/gameta.git",
+                    "path": ".",
+                    "tags": [
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
+                },
+                "genisys": {
+                    "url": "https://github.com/testing/genisys.git",
+                    "path": "core/genisys",
+                    "tags": [
+                        "core",
+                        "templating"
+                    ],
+                    '__metarepo__': False
+                },
+                "genisys-testing": {
+                    "url": "https://github.com/testing/genisys-testing.git",
+                    "path": "core/genisys-testing",
+                    "tags": [
+                        "core",
+                        "testing",
+                        "developer"
+                    ],
+                    '__metarepo__': False
+                }
+            }
+            self.context.project_dir = f
+            self.assertTrue(self.context.is_primary_metarepo('gameta'))
+            self.assertFalse(self.context.is_primary_metarepo('genisys'))
+            self.assertFalse(self.context.is_primary_metarepo('genisys-testing'))
+
+    def test_gameta_context_is_primary_metarepo_repo_does_not_exist(self):
+        with self.runner.isolated_filesystem() as f:
+            self.context.repositories = {
+                "gameta": {
+                    "url": "https://github.com/testing/gameta.git",
+                    "path": ".",
+                    "tags": [
+                        "metarepo"
+                    ],
+                    '__metarepo__': True
+                },
+                "genisys": {
+                    "url": "https://github.com/testing/genisys.git",
+                    "path": "core/genisys",
+                    "tags": [
+                        "core",
+                        "templating"
+                    ],
+                    '__metarepo__': False
+                },
+                "genisys-testing": {
+                    "url": "https://github.com/testing/genisys-testing.git",
+                    "path": "core/genisys-testing",
+                    "tags": [
+                        "core",
+                        "testing",
+                        "developer"
+                    ],
+                    '__metarepo__': False
+                }
+            }
+            self.context.project_dir = f
+            with self.assertRaises(KeyError):
+                self.context.is_primary_metarepo('test')
 
     def test_gameta_context_tokenise(self):
         self.assertEqual(
