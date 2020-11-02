@@ -139,7 +139,8 @@ class TestAdd(TestCase):
                                 'tags': ['a', 'b', 'c'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -193,7 +194,8 @@ class TestAdd(TestCase):
                                 'tags': ['a', 'b', 'c', 'd', 'e', 'f'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -247,7 +249,8 @@ class TestAdd(TestCase):
                                 'tags': ['a', 'b', 'c', 'f'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -379,7 +382,8 @@ class TestDelete(TestCase):
                                 'tags': [],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -433,7 +437,8 @@ class TestDelete(TestCase):
                                 'tags': ['d', 'e', 'f'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -487,7 +492,8 @@ class TestDelete(TestCase):
                                 'tags': ['f'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -533,6 +539,7 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )

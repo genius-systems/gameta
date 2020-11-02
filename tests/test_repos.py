@@ -83,7 +83,8 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -136,7 +137,8 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -186,7 +188,8 @@ class TestAdd(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -244,7 +247,8 @@ class TestAdd(TestCase):
                                 "tags": ['a', 'b', 'c'],
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -300,7 +304,8 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -355,7 +360,8 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -417,7 +423,8 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -461,7 +468,8 @@ class TestAdd(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -534,7 +542,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -585,7 +594,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -640,7 +650,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -690,7 +701,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -725,7 +737,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -760,7 +773,8 @@ class TestDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -921,7 +935,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -979,7 +994,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -1043,7 +1059,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -1113,7 +1130,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertFalse(exists(join(f, 'GitPython')))
@@ -1180,7 +1198,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, 'GitPython')))
@@ -1246,7 +1265,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertFalse(exists(join(f, 'GitPython')))
@@ -1312,7 +1332,8 @@ class TestUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
             self.assertTrue(exists(join(f, 'GitPython')))

@@ -36,6 +36,7 @@ class GametaContext(object):
         self.gitignore_data: List[str] = []
         self.project_dir: Optional[str] = None
         self.gameta_data: Dict = {}
+        self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
         self.tags: Dict[str, List[str]] = {}
 
@@ -121,6 +122,7 @@ class GametaContext(object):
             with open(self.meta, 'r') as f:
                 self.gameta_data = json.load(f)
                 self.repositories = self.gameta_data['projects']
+                self.commands = self.gameta_data.get('commands', {})
             self.is_metarepo = True
         except FileNotFoundError:
             return
@@ -146,6 +148,7 @@ class GametaContext(object):
         """
         try:
             self.gameta_data['projects'] = self.repositories
+            self.gameta_data['commands'] = self.commands
             with open(self.meta, 'w+') as f:
                 json.dump(self.gameta_data, f)
         except Exception as e:

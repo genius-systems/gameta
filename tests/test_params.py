@@ -81,7 +81,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -133,7 +134,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -217,7 +219,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -279,7 +282,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -342,7 +346,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -407,7 +412,8 @@ class TestAdd(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -476,7 +482,8 @@ class TestDelete(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -527,7 +534,8 @@ class TestDelete(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -577,7 +585,8 @@ class TestDelete(TestCase):
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -631,6 +640,7 @@ class TestDelete(TestCase):
                                 'test': {'a': [1, 6, 7], 'c': [4, 2, 8]},
                                 '__metarepo__': False
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )

@@ -18,5 +18,6 @@
       "tags": ["a", "c", "d"],
       "url": "https://github.com/gitpython-developers/gitdb.git"
     }
-  }
+  },
+  "commands": {}
 }
