@@ -64,19 +64,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: None,
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: None,
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: None,
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -113,19 +116,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['value'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -194,19 +200,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['user_prompt'][1],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -253,19 +262,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -313,19 +325,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['user_prompt'][1],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -375,19 +390,22 @@ class TestAdd(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 params['parameter']: params['value'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 params['parameter']: params['user_prompt'][0],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 params['parameter']: params['user_prompt'][2],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -443,17 +461,20 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -491,17 +512,20 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -538,17 +562,20 @@ class TestDelete(TestCase):
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
-                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                                'url': 'https://github.com/gitpython-developers/GitPython.git',
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
-                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                                'url': 'https://github.com/gitpython-developers/gitdb.git',
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -575,7 +602,8 @@ class TestDelete(TestCase):
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Error: Parameter {params['parameter']} is a reserved parameter ['url', 'path', 'tags']\n"
+                f"Error: Parameter {params['parameter']} is a reserved parameter "
+                f"['url', 'path', 'tags', '__metarepo__']\n"
             )
             with open(join(f, '.meta'), 'r') as m:
                 self.assertEqual(
@@ -586,19 +614,22 @@ class TestDelete(TestCase):
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
                                 'url': 'https://github.com/gitpython-developers/GitPython.git',
-                                'test': {'a': [4, 5, 6]}
+                                'test': {'a': [4, 5, 6]},
+                                '__metarepo__': False
                             },
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git',
-                                'test': {'a': [1, 2, 3]}
+                                'test': {'a': [1, 2, 3]},
+                                '__metarepo__': True
                             },
                             'gitdb': {
                                 'path': 'core/gitdb',
                                 'tags': ['a', 'c', 'd'],
                                 'url': 'https://github.com/gitpython-developers/gitdb.git',
-                                'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}
+                                'test': {'a': [1, 6, 7], 'c': [4, 2, 8]},
+                                '__metarepo__': False
                             }
                         }
                     }

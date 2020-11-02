@@ -57,7 +57,8 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
         context.repositories[name] = {
             'url': url,
             'path': '.',
-            'tags': ['metarepo']
+            'tags': ['metarepo'],
+            '__metarepo__': True
         }
         context.export()
         click.echo(f"Successfully initialised {name} as a metarepo")

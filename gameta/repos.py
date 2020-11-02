@@ -85,6 +85,7 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
         context.repositories[name] = {
             'url': url,
             'path': path,
+            '__metarepo__': False
         }
         context.add_gitignore(path)
         context.export()
@@ -121,6 +122,9 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
             click.echo(f"Repository {name} does not exist in the .meta file, ignoring")
             return
 
+        if context.is_primary_metarepo(name):
+            raise click.ClickException(f"Repository {name} is a metarepo")
+
         if clear:
             click.echo(f"Clearing repository {name} locally")
             rmtree(join(context.project_dir, context.repositories[name]["path"]), ignore_errors=True)
@@ -128,6 +132,8 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
         del context.repositories[name]
         context.export()
         click.echo(f"Repository {name} successfully deleted")
+    except click.ClickException:
+        raise
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 

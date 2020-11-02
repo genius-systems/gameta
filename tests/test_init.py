@@ -54,7 +54,8 @@ class TestInit(TestCase):
                             basename(f): {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': None
+                                'url': None,
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -83,7 +84,8 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -114,7 +116,8 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }
@@ -145,7 +148,8 @@ class TestInit(TestCase):
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
-                                'url': 'git@github.com:genius-systems/gameta.git'
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
                             }
                         }
                     }

@@ -105,6 +105,7 @@ class TestAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -129,12 +130,14 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': ['a', 'b', 'c']
+                                'tags': ['a', 'b', 'c'],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -155,7 +158,8 @@ class TestAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['d', 'e', 'f']
+                        'tags': ['d', 'e', 'f'],
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -180,12 +184,14 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': ['a', 'b', 'c', 'd', 'e', 'f']
+                                'tags': ['a', 'b', 'c', 'd', 'e', 'f'],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -206,7 +212,8 @@ class TestAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['c', 'b', 'f']
+                        'tags': ['c', 'b', 'f'],
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -231,12 +238,14 @@ class TestAdd(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': ['a', 'b', 'c', 'f']
+                                'tags': ['a', 'b', 'c', 'f'],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -336,6 +345,7 @@ class TestDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -360,12 +370,67 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': []
+                                'tags': [],
+                                '__metarepo__': False
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
+        params = {
+            'name': 'GitPython',
+            'tags': ('a', 'b', 'c')
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output['projects']['GitPython'] = {
+                        "url": 'https://github.com/gitpython-developers/GitPython.git',
+                        'path': 'GitPython',
+                        '__metarepo__': False
+                    }
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.delete,
+                ['--name', params['name'], '-t', params['tags'][0], '-t', params['tags'][1], '-t', params['tags'][2]]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Deleting tags {params['tags']} from {params['name']}\n"
+                f"Successfully deleted tags from repository {params['name']}\n"
+            )
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
+                            },
+                            'GitPython': {
+                                "url": 'https://github.com/gitpython-developers/GitPython.git',
+                                'path': 'GitPython',
+                                'tags': [],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -386,7 +451,8 @@ class TestDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['d', 'e', 'f']
+                        'tags': ['d', 'e', 'f'],
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -411,12 +477,14 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': ['d', 'e', 'f']
+                                'tags': ['d', 'e', 'f'],
+                                '__metarepo__': False
                             }
                         }
                     }
@@ -437,7 +505,8 @@ class TestDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['c', 'b', 'f']
+                        'tags': ['c', 'b', 'f'],
+                        '__metarepo__': False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -462,12 +531,14 @@ class TestDelete(TestCase):
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
-                                "url": "git@github.com:genius-systems/gameta.git"
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
                             },
                             'GitPython': {
                                 "url": 'https://github.com/gitpython-developers/GitPython.git',
                                 'path': 'GitPython',
-                                'tags': ['f']
+                                'tags': ['f'],
+                                '__metarepo__': False
                             }
                         }
                     }
