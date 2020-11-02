@@ -122,12 +122,14 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
             click.echo(f"Repository {name} does not exist in the .meta file, ignoring")
             return
 
+        # Prevent user from deleting primary metarepo
         if context.is_primary_metarepo(name):
-            raise click.ClickException(f"Repository {name} is a metarepo")
+            raise click.ClickException(f"Cannot delete repository {name} as it is a metarepo")
 
         if clear:
             click.echo(f"Clearing repository {name} locally")
             rmtree(join(context.project_dir, context.repositories[name]["path"]), ignore_errors=True)
+
         context.remove_gitignore(context.repositories[name]["path"])
         del context.repositories[name]
         context.export()

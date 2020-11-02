@@ -729,6 +729,41 @@ class TestDelete(TestCase):
                     }
                 )
 
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_delete_repository_attempting_to_delete_metarepo(self, mock_ensure_object):
+        params = {
+            'name': 'gameta'
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Deleting repository {params['name']} from .meta file\n"
+                f"Error: Cannot delete repository {params['name']} as it is a metarepo\n"
+            )
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "projects": {
+                            "gameta": {
+                                "path": ".",
+                                "tags": ["metarepo"],
+                                "url": "git@github.com:genius-systems/gameta.git",
+                                '__metarepo__': True
+                            }
+                        }
+                    }
+                )
+
 
 class TestLs(TestCase):
     def setUp(self) -> None:
