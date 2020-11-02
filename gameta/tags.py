@@ -43,6 +43,9 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
 
     Examples:
         $ gameta tags add -n repo_name -t tag1 -t tag2 -t tag3
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Adding tags {tags} to {name}")
     if name not in context.repositories:
@@ -75,6 +78,9 @@ def delete(context: GametaContext, name: str, tags: Tuple[str]) -> None:
 
     Examples:
         $ gameta tags delete -n repo_name -t tag1 -t tag2 -t tag3
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Deleting tags {tags} from {name}")
     if name not in context.repositories:
