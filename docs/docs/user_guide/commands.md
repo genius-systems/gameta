@@ -64,8 +64,7 @@ Deletes an existing child repository from the .meta file and its local clone.
 #### Arguments
 
 * **--name / -n**: Name of the child repository to be deleted
-* --clear / -c: Indicates that Gameta should also clear the local clone of 
-  the repository
+* --no-clear / -c: Indicates that Gameta should not clear the local clone of the repository
 
 ### gameta repo update
 
@@ -77,7 +76,7 @@ Updates repository details and syncs the changes locally
 * --new-name / -e: New repository name to be updated to
 * --new-url / -u: New repository URL to be updated to
 * --new-path / -p: New local relative path within the project directory to update to
-* --sync / -s: Syncs all updates physically
+* --no-sync / -s: Does not apply updates locally
 
 ### gameta repo ls
 
@@ -154,20 +153,20 @@ Applies a set of CLI commands to a specified set of repositories (see
 
 ### Arguments
 
-* **_--command / -c_**: Commands to be applied
-* _--tags / -t_: Tagged repositories to apply commands to
-* _--repositories / -r_: Names of specific repositories to apply commands to
-* --shell / -s: Indicates that the command should be executed in a separate shell
+* **_--command / -c_**: CLI commands to be applied
+* _--tags / -t_: Tagged repositories to apply CLI commands to
+* _--repositories / -r_: Names of specific repositories to apply CLI commands to
+* --shell / -s: Indicates that the CLI commands should be executed in a separate shell
 * --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
-    command in other repositories
-* --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
-    executing commands in child repositories 
+    CLI command in other repositories
+* --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
+    when executing CLI commands in child repositories 
 
 ___
 **Note**
    
-The shell flag is required if the command to be rendered is a piped command, it will also
-be automatically added if multiple commands are provided
+The shell flag is required if the CLI command to be rendered is a piped CLI command, it 
+will also be automatically added if multiple CLI commands are provided
 ___
 
 ## gameta cmd
@@ -176,18 +175,68 @@ Command subcommand group, contains the following commands:
 
 1. gameta cmd add
 2. gameta cmd delete
-3. gameta cmd exec
+3. gameta cmd update
+4. gameta cmd ls
+5. gameta cmd exec
 
 ### gameta cmd add
 
-Adds a command to the command cache within the .meta file
+Adds a Gameta command to the Gameta command store within the .meta file
+
+___
+**Note**
+
+A Gameta command is a `gameta apply` command consisting of a set of CLI commands, tags, 
+repositories and flags (shell, verbose, raise errors) that control its execution
+___
+
+#### Arguments 
+* **--name / -n**: Name 
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+    with new data
+* **_--command / -c_**: CLI commands to be applied
+* _--tags / -t_: Tagged repositories to apply CLI commands to
+* _--repositories / -r_: Names of specific repositories to apply CLI commands to
+* --shell / -s: Indicates that the CLI command should be executed in a separate shell
+* --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
+    CLI command in other repositories
+* --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
+    executing CLI commands in child repositories 
 
 ### gameta cmd delete
 
-Deletes a command from the command cache
+Deletes a Gameta command from the Gameta command store
+
+#### Arguments
+* **--name / -n**: Name of the Gameta command to be deleted
+
+### gameta cmd update
+
+Updates a Gameta command that exists in the Gameta command store
+
+#### Arguments
+* **--name / -n**: Gameta command name to be updated
+* _--command / -c_: New CLI commands to be executed
+* _--tags / -t_: New repository tags apply CLI commands to
+* _--repositories / -r_: New repositories to apply CLI commands to
+* --verbose / -v: Display execution output when CLI commands are applied
+* --no-verbose / -nv: Do not display execution output when CLI commands are applied
+* --shell / -s: Execute CLI commands in a separate shell
+* --no-verbose / -nv: Do not execute CLI commands in a separate shell
+* --raise-errors / -e: Raise errors that occur when CLI commands are executed and 
+    terminate
+* --no-errors / -ne: Do not raise errors that occur when CLI commands are executed 
+    and terminate
+
+### gameta cmd ls
+
+Lists all existing Gameta commands in the Gameta command store
 
 ### gameta cmd exec
 
-Executes a cached command from the command cache
+Executes a series of Gameta command from the command store
+
+#### Arguments
+* **_--commands / -c_**: Gameta commands to be executed
 
 [Applying Commands]: applying_commands.md

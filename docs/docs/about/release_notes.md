@@ -25,6 +25,7 @@ The current members of the Gameta team.
 
 * Added init command to initialise an empty repository
 * Added the sync command to sync changes locally
-* Added the repos CLI commands to add, delete, update and list repositories
+* Added the repo CLI commands to add, delete, update and list repositories
 * Added the tags CLI commands to add and delete repository tags
-* Added the parameters command to add and delete repository parameters
+* Added the params CLI commands to add and delete repository parameters
+* Added the cmd CLI commands to add, delete, update, list and execute Gameta commands
