@@ -52,6 +52,19 @@ workflows:
             branches:
               ignore:
                 - gh-pages
+            tags:
+              only: /^*.*.*/
+      - docs:
+          &deploy-config
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^*.*.*/
+      - deploy:
+        <<: *deploy-config
   nightly:
     triggers:
       - schedule:
@@ -63,19 +76,3 @@ workflows:
                 - develop
     jobs:
       - test
-  deploy:
-    jobs:
-      - test:
-          &tag-config
-          filters:
-            branches:
-              ignore:
-                - gh-pages
-              only:
-                - master
-            tags:
-              only: /^*.*.*/
-      - docs:
-          <<: *tag-config
-      - deploy:
-          <<: *tag-config
