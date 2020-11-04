@@ -141,12 +141,14 @@ def delete(context: GametaContext, name: str) -> None:
 @click.option('--name', '-n', type=str, required=True, help='Gameta command name to be added to the store')
 @click.option('--command', '-c', 'commands', type=str, default=None, multiple=True,
               help='New CLI commands to be executed')
-@click.option('--tags', '-t', type=str, multiple=True, default=None, help='Repository tags to apply CLI commands to')
+@click.option('--tags', '-t', type=str, multiple=True, default=None,
+              help='New repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=None,
-              help='Repositories to apply CLI commands to')
+              help='New repositories to apply CLI commands to')
 @click.option('--verbose/--no-verbose', '-v/-nv', is_flag=True, default=None,
               help='Display execution output when CLI command is applied')
-@click.option('--shell/--no-shell', '-s/-ns', is_flag=True, default=None, help='Execute CLI commands in a separate shell')
+@click.option('--shell/--no-shell', '-s/-ns', is_flag=True, default=None,
+              help='Execute CLI commands in a separate shell')
 @click.option('--raise-errors/--no-errors', '-e/-ne', is_flag=True, default=None,
               help='Raise errors that occur when executing CLI commands and terminate execution')
 @gameta_context
