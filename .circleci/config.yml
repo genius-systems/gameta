@@ -61,8 +61,8 @@ workflows:
       - docs:
           context:
             - "Genisys Context"
-          requires:
-            - test
+#          requires:
+#            - test
 #          filters: &deploy-config
 #            branches:
 #              ignore: /.*/
