@@ -41,3 +41,4 @@ from .init import *
 from .repos import *
 from .tags import *
 from .apply import *
+from .cmd import *
