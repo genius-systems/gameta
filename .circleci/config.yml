@@ -21,14 +21,11 @@ jobs:
           name: Install dependencies
           command: pip install -U pip poetry
       - run:
-          name: Deactivate Poetry's virtualenv
-          command: poetry config virtualenvs.create false
-      - run:
           name: Install Python dependencies
-          command: poetry install
+          command: poetry config virtualenvs.create false && poetry install
       - run:
           name: Build documentation
-          command: cd docs && mkdocs build
+          command: cd docs && mkdocs gh-deploy
   deploy:
     docker:
       - image: "fkrull/multi-python:bionic"
@@ -38,11 +35,8 @@ jobs:
           name: Install dependencies
           command: pip install -U pip poetry
       - run:
-          name: Deactivate Poetry's virtualenv
-          command: poetry config virtualenvs.create false
-      - run:
           name: Install Python dependencies
-          command: poetry install
+          command: poetry config virtualenvs.create false && poetry install
       - run:
           name: Build
           command: poetry build
@@ -53,7 +47,10 @@ jobs:
 workflows:
   main:
     jobs:
-      - test
+      - test:
+          branches:
+            ignore:
+              - gh-pages
   nightly:
     triggers:
       - schedule:
@@ -63,6 +60,18 @@ workflows:
               only:
                 - master
                 - develop
-                - staging
     jobs:
       - test
+  tag:
+    jobs:
+      - test:
+          filters: &tags-filter
+            branches:
+              ignore:
+                - gh-pages
+            tags:
+              only: /*./
+      - docs:
+          <<: *tags-filter
+      - deploy
+          <<: *tags-filter
