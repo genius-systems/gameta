@@ -6,7 +6,6 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-
 from gameta.context import GametaContext
 from gameta.params import add, delete
 
