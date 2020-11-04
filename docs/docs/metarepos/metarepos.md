@@ -2,11 +2,16 @@
 # What is a Metarepo?
 
 A metarepo is a repository that contains links to other related 
-repositories and usually serves as consolidating repository for a
+repositories. It does not contain the source code of the related
+repositories, but can acquire this whenever required. Gameta stores
+links to the git repositories of the child repositories and clones
+them whenever a sync command is run.
+ 
+Metarepos can serve as a consolidating repository for a
 particular system, project or organisation i.e. system-level 
 dependencies, build, deployment and release scripts are stored here.
 A nice article discussing metarepos can be found 
-[here](https://notes.burke.libbey.me/metarepo/) 
+[here](https://notes.burke.libbey.me/metarepo/).
 
 ## Monorepos
 

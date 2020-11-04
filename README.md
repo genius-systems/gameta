@@ -2,7 +2,7 @@
 
 Gameta is a powerful CLI tool that helps you to manage 
 [meta-repositories](https://genius-systems.github.io/gameta/metarepos/metarepos)
-or metarepos. It allows you to creates links to related repositories, 
+or metarepos. It allows you to create links to related repositories, 
 make changes and sync them, and provides functionality to customise and 
 apply other CLI commands to these repositories.
 
@@ -13,7 +13,7 @@ complex software.
 
 ## System Requirements
 
-Gameta requries Python 3.7+, it is designed to be multi-platform but currently
+Gameta requires Python 3.7+, it is designed to be multi-platform but currently is
 only tested in Linux environments.
 
 ## Installation
