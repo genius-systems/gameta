@@ -63,7 +63,7 @@ workflows:
                 - develop
     jobs:
       - test
-  tag:
+  deploy:
     jobs:
       - test:
           &tag-config
@@ -71,6 +71,8 @@ workflows:
             branches:
               ignore:
                 - gh-pages
+              only:
+                - master
             tags:
               only: /^*.*.*/
       - docs:
