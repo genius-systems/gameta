@@ -101,7 +101,8 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
 
 @repo_cli.command()
 @click.option('--name', '-n', type=str, required=True, help='Name of the repository to be deleted')
-@click.option('--clear/--no-clear', ' /-c', is_flag=True, default=True, help='Clear the repository folder locally')
+@click.option(' /--no-clear', ' /-c', 'clear', is_flag=True, default=True,
+              help='Do not clear the repository folder locally')
 @gameta_context
 def delete(context: GametaContext, name: str, clear: bool) -> None:
     """
@@ -110,7 +111,7 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
     Args:
         context (GametaContext): Gameta Context
         name (str): Name of the repository to be deleted
-        clear (bool): Flag to indicate if repository should be cleared locally
+        clear (bool): Flag to indicate if repository should be cleared locally, defaults to true
 
     Returns:
         None
@@ -152,7 +153,7 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
 @click.option('--new-url', '-u', type=str, default=None, help='New repository URL')
 @click.option('--new-path', '-p', type=str, default=None,
               help='New relative path to clone the repository to')
-@click.option('--sync/--no-sync', ' /-s', is_flag=True, default=True, help='Perform all updates locally')
+@click.option(' /--no-sync', ' /-s', 'sync', is_flag=True, default=True, help='Does not sync all updates locally')
 @gameta_context
 def update(
         context: GametaContext,
@@ -171,7 +172,7 @@ def update(
         new_name (Optional[str]): New repository name
         new_url (Optional[str]): New repository URL
         new_path (Optional[str]): New relative path
-        sync (bool): Sync all updates
+        sync (bool): Sync all updates, defaults to True
 
     Returns:
         None
