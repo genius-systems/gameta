@@ -12,13 +12,13 @@ from gameta.context import GametaContext
 from gameta.tags import add, delete
 
 
-class TestAdd(TestCase):
+class TestTagsAdd(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.add = add
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_key_parameters_not_provided(self, mock_ensure_object):
+    def test_tags_add_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -38,7 +38,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_empty_meta_file(self, mock_ensure_object):
+    def test_tags_add_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -66,7 +66,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_tags_to_nonexistent_repository(self, mock_ensure_object):
+    def test_tags_add_tags_to_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -91,7 +91,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_no_tags_initially(self, mock_ensure_object):
+    def test_tags_add_no_tags_initially(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -145,7 +145,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_disjoint_set_of_tags(self, mock_ensure_object):
+    def test_tags_add_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -200,7 +200,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_duplicate_tags(self, mock_ensure_object):
+    def test_tags_add_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -255,13 +255,13 @@ class TestAdd(TestCase):
                 )
 
 
-class TestDelete(TestCase):
+class TestTagsDelete(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.delete = delete
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_key_parameters_not_provided(self, mock_ensure_object):
+    def test_tags_delete_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -281,7 +281,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_empty_meta_file(self, mock_ensure_object):
+    def test_tags_delete_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -309,7 +309,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_tags_from_nonexistent_repository(self, mock_ensure_object):
+    def test_tags_delete_tags_from_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -334,7 +334,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_no_tags(self, mock_ensure_object):
+    def test_tags_delete_no_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -388,7 +388,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_disjoint_set_of_tags(self, mock_ensure_object):
+    def test_tags_delete_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -443,7 +443,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_duplicate_tags(self, mock_ensure_object):
+    def test_tags_delete_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'tags': ('a', 'b', 'c')
@@ -498,7 +498,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
+    def test_tags_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
         params = {
             'name': 'gameta',
             'tags': ('metarepo', 'b', 'c')

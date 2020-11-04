@@ -11,13 +11,13 @@ from gameta.context import GametaContext
 from gameta.params import add, delete
 
 
-class TestAdd(TestCase):
+class TestParamsAdd(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.add = add
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_missing_key_parameters(self, mock_ensure_object):
+    def test_params_add_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
             context = GametaContext()
@@ -35,7 +35,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_skip_user_prompt_default_values(self, mock_ensure_object):
+    def test_params_add_parameters_skip_user_prompt_default_values(self, mock_ensure_object):
         params = {
             'parameter': 'test'
         }
@@ -87,7 +87,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_skip_user_prompt_user_provided_default_value(self, mock_ensure_object):
+    def test_params_add_parameters_skip_user_prompt_user_provided_default_value(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'value': 'hello_world'
@@ -140,7 +140,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_skip_user_prompt_default_type_not_in_choice(self, mock_ensure_object):
+    def test_params_add_parameters_skip_user_prompt_default_type_not_in_choice(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'type': 'test'
@@ -163,7 +163,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_user_prompt_all_value_prompted(self, mock_ensure_object):
+    def test_params_add_parameters_user_prompt_all_value_prompted(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'value': 'hello_world',
@@ -225,7 +225,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_user_prompt_skipping_with_user_provided_default_value(self, mock_ensure_object):
+    def test_params_add_parameters_user_prompt_skipping_with_user_provided_default_value(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'value': 'hello_world',
@@ -288,7 +288,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_user_prompt_complex_user_input(self, mock_ensure_object):
+    def test_params_add_parameters_user_prompt_complex_user_input(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'value': 'hello_world',
@@ -352,7 +352,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_user_prompt_user_input_does_not_match_required_type(self, mock_ensure_object):
+    def test_params_add_parameters_user_prompt_user_input_does_not_match_required_type(self, mock_ensure_object):
         params = {
             'parameter': 'test',
             'value': 'hello_world',
@@ -418,13 +418,13 @@ class TestAdd(TestCase):
                 )
 
 
-class TestDelete(TestCase):
+class TestParamsDelete(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.delete = delete
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_parameters_missing_key_parameters(self, mock_ensure_object):
+    def test_params_delete_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
             context = GametaContext()
@@ -442,7 +442,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_parameters_parameter_does_not_exist(self, mock_ensure_object):
+    def test_params_delete_parameters_parameter_does_not_exist(self, mock_ensure_object):
         params = {
             'parameter': 'test'
         }
@@ -488,7 +488,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_parameters_all_parameters_deleted(self, mock_ensure_object):
+    def test_params_delete_parameters_all_parameters_deleted(self, mock_ensure_object):
         params = {
             'parameter': 'test'
         }
@@ -540,7 +540,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_parameters_partial_parameter_deleted(self, mock_ensure_object):
+    def test_params_delete_parameters_partial_parameter_deleted(self, mock_ensure_object):
         params = {
             'parameter': 'test'
         }
@@ -591,7 +591,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_parameters_attempting_to_delete_reserved_parameters(self, mock_ensure_object):
+    def test_params_delete_parameters_attempting_to_delete_reserved_parameters(self, mock_ensure_object):
         params = {
             'parameter': 'url'
         }
