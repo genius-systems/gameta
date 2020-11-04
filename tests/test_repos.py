@@ -13,13 +13,13 @@ from gameta.context import GametaContext
 from gameta.repos import add, delete, ls, update
 
 
-class TestAdd(TestCase):
+class TestReposAdd(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.add = add
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_key_parameters_not_provided(self, mock_ensure_object):
+    def test_repos_add_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -39,7 +39,7 @@ class TestAdd(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_added_to_meta_file_and_create_gitignore_and_clone(self, mock_ensure_object):
+    def test_repos_add_repository_added_to_meta_file_and_create_gitignore_and_clone(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/GitPython.git',
@@ -92,7 +92,7 @@ class TestAdd(TestCase):
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_added_to_meta_file_and_add_path_to_gitignore_and_clone(self, mock_ensure_object):
+    def test_repos_add_repository_added_to_meta_file_and_add_path_to_gitignore_and_clone(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/GitPython.git',
@@ -146,7 +146,7 @@ class TestAdd(TestCase):
                 self.assertTrue('GitPython/\n' in set(g.readlines()))
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_invalid_repository(self, mock_ensure_object):
+    def test_repos_add_invalid_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://test.git',
@@ -194,7 +194,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_already_exists_in_meta_file(self, mock_ensure_object):
+    def test_repos_add_repository_already_exists_in_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/GitPython.git',
@@ -253,7 +253,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_already_exists_in_meta_file_overwritten(self, mock_ensure_object):
+    def test_repos_add_repository_already_exists_in_meta_file_overwritten(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/gitdb.git',
@@ -313,7 +313,7 @@ class TestAdd(TestCase):
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_already_exists_locally(self, mock_ensure_object):
+    def test_repos_add_repository_already_exists_locally(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/GitPython.git',
@@ -369,7 +369,7 @@ class TestAdd(TestCase):
                 self.assertCountEqual(g.readlines(), ['GitPython/\n'])
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_already_exists_locally_and_in_meta_file(self, mock_ensure_object):
+    def test_repos_add_repository_already_exists_locally_and_in_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://github.com/gitpython-developers/GitPython.git',
@@ -429,7 +429,7 @@ class TestAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_add_repository_already_exists_locally_parameters_differ(self, mock_ensure_object):
+    def test_repos_add_repository_already_exists_locally_parameters_differ(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'url': 'https://test.git',
@@ -474,13 +474,13 @@ class TestAdd(TestCase):
                 )
 
 
-class TestDelete(TestCase):
+class TestReposDelete(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.delete = delete
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_key_parameters_not_provided(self, mock_ensure_object):
+    def test_repos_delete_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -500,7 +500,7 @@ class TestDelete(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_deleted_and_cleared_gitignore_does_not_exist(self, mock_ensure_object):
+    def test_repos_delete_repository_deleted_and_cleared_gitignore_does_not_exist(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
         }
@@ -522,7 +522,7 @@ class TestDelete(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
+            result = self.runner.invoke(self.delete, ['--name', params['name']])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -551,7 +551,7 @@ class TestDelete(TestCase):
                 self.assertCountEqual(g.readlines(), [])
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_deleted_and_cleared_gitignore_exist_but_does_not_contain_path(self, mock_ensure_object):
+    def test_repos_delete_repository_deleted_and_cleared_gitignore_exist_but_does_not_contain_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
         }
@@ -574,7 +574,7 @@ class TestDelete(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
+            result = self.runner.invoke(self.delete, ['--name', params['name']])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -603,7 +603,7 @@ class TestDelete(TestCase):
                 self.assertFalse("GitPython/\n" in g.readlines())
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_deleted_and_cleared_gitignore_exist_and_contains_path(self, mock_ensure_object):
+    def test_repos_delete_repository_deleted_and_cleared_gitignore_exist_and_contains_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
         }
@@ -630,7 +630,7 @@ class TestDelete(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
+            result = self.runner.invoke(self.delete, ['--name', params['name']])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -659,7 +659,7 @@ class TestDelete(TestCase):
                 self.assertFalse("GitPython/\n" in g.readlines())
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_deleted_but_not_cleared(self, mock_ensure_object):
+    def test_repos_delete_repository_deleted_but_not_cleared(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
         }
@@ -681,7 +681,7 @@ class TestDelete(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.delete, ['--name', params['name']])
+            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -707,7 +707,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_does_not_exist(self, mock_ensure_object):
+    def test_repos_delete_repository_does_not_exist(self, mock_ensure_object):
         params = {
             'name': 'GitPython'
         }
@@ -743,7 +743,7 @@ class TestDelete(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_delete_repository_attempting_to_delete_metarepo(self, mock_ensure_object):
+    def test_repos_delete_repository_attempting_to_delete_metarepo(self, mock_ensure_object):
         params = {
             'name': 'gameta'
         }
@@ -755,7 +755,7 @@ class TestDelete(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.delete, ['--name', params['name'], '-c'])
+            result = self.runner.invoke(self.delete, ['--name', params['name']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -779,13 +779,13 @@ class TestDelete(TestCase):
                 )
 
 
-class TestLs(TestCase):
+class TestRepoLs(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.ls = ls
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_ls_repositories_available(self, mock_ensure_object):
+    def test_repos_ls_repositories_available(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -818,7 +818,7 @@ class TestLs(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_ls_no_repositories_available(self, mock_ensure_object):
+    def test_repos_ls_no_repositories_available(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -840,13 +840,13 @@ class TestLs(TestCase):
             )
 
 
-class TestUpdate(TestCase):
+class TestRepoUpdate(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
         self.update = update
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_key_parameters_not_provided(self, mock_ensure_object):
+    def test_repos_update_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
@@ -866,7 +866,7 @@ class TestUpdate(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_name_does_not_exist_in_repo(self, mock_ensure_object):
+    def test_repos_update_name_does_not_exist_in_repo(self, mock_ensure_object):
         params = {
             'name': 'test'
         }
@@ -886,7 +886,7 @@ class TestUpdate(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_all_parameters_updated_gitignore_created(self, mock_ensure_object):
+    def test_repos_update_all_parameters_updated_gitignore_created(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -903,7 +903,13 @@ class TestUpdate(TestCase):
             mock_ensure_object.return_value = context
             result = self.runner.invoke(
                 self.update,
-                ['--name', params['name'], '-e', params['new_name'], '-u', params['new_url'], '-p', params['new_path']]
+                [
+                    '--name', params['name'],
+                    '-e', params['new_name'],
+                    '-u', params['new_url'],
+                    '-p', params['new_path'],
+                    '-s'
+                ]
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
@@ -944,7 +950,7 @@ class TestUpdate(TestCase):
                 self.assertTrue("core/GitPython/\n" in g.readlines())
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_all_parameters_updated_gitignore_exists_but_does_not_contain_path(self, mock_ensure_object):
+    def test_repos_update_all_parameters_updated_gitignore_exists_but_does_not_contain_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -962,7 +968,13 @@ class TestUpdate(TestCase):
             mock_ensure_object.return_value = context
             result = self.runner.invoke(
                 self.update,
-                ['--name', params['name'], '-e', params['new_name'], '-u', params['new_url'], '-p', params['new_path']]
+                [
+                    '--name', params['name'],
+                    '-e', params['new_name'],
+                    '-u', params['new_url'],
+                    '-p', params['new_path'],
+                    '-s'
+                ]
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
@@ -1003,7 +1015,7 @@ class TestUpdate(TestCase):
                 self.assertTrue("core/GitPython/\n" in g.readlines())
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_all_parameters_updated_gitignore_exists_and_contains_path(self, mock_ensure_object):
+    def test_repos_update_all_parameters_updated_gitignore_exists_and_contains_path(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -1027,7 +1039,13 @@ class TestUpdate(TestCase):
             mock_ensure_object.return_value = context
             result = self.runner.invoke(
                 self.update,
-                ['--name', params['name'], '-e', params['new_name'], '-u', params['new_url'], '-p', params['new_path']]
+                [
+                    '--name', params['name'],
+                    '-e', params['new_name'],
+                    '-u', params['new_url'],
+                    '-p', params['new_path'],
+                    '-s'
+                ]
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
@@ -1070,7 +1088,7 @@ class TestUpdate(TestCase):
                 self.assertTrue("core/GitPython/\n" in output)
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_all_parameters_updated_with_physical_sync(self, mock_ensure_object):
+    def test_repos_update_all_parameters_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -1093,8 +1111,7 @@ class TestUpdate(TestCase):
                     '--name', params['name'],
                     '-e', params['new_name'],
                     '-u', params['new_url'],
-                    '-p', params['new_path'],
-                    '-s'
+                    '-p', params['new_path']
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -1139,7 +1156,7 @@ class TestUpdate(TestCase):
             self.assertTrue(all(i in listdir(join(f, 'core', 'GitPython')) for i in ['git', 'doc']))
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_no_new_path_updated_with_physical_sync(self, mock_ensure_object):
+    def test_repos_update_no_new_path_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -1161,8 +1178,7 @@ class TestUpdate(TestCase):
                 [
                     '--name', params['name'],
                     '-e', params['new_name'],
-                    '-u', params['new_url'],
-                    '-s'
+                    '-u', params['new_url']
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -1206,7 +1222,7 @@ class TestUpdate(TestCase):
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc']))
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_no_new_url_updated_with_physical_sync(self, mock_ensure_object):
+    def test_repos_update_no_new_url_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -1228,8 +1244,7 @@ class TestUpdate(TestCase):
                 [
                     '--name', params['name'],
                     '-e', params['new_name'],
-                    '-p', params['new_path'],
-                    '-s'
+                    '-p', params['new_path']
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -1274,7 +1289,7 @@ class TestUpdate(TestCase):
             self.assertTrue(all(i in listdir(join(f, 'core', 'gitpython')) for i in ['git', 'doc', 'test']))
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_update_only_name_change_updated_with_physical_sync(self, mock_ensure_object):
+    def test_repos_update_only_name_change_updated_with_physical_sync(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
             'new_name': 'test',
@@ -1295,8 +1310,7 @@ class TestUpdate(TestCase):
                 self.update,
                 [
                     '--name', params['name'],
-                    '-e', params['new_name'],
-                    '-s'
+                    '-e', params['new_name']
                 ]
             )
             self.assertEqual(result.exit_code, 0)
