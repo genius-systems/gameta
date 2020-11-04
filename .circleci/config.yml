@@ -48,9 +48,10 @@ workflows:
   main:
     jobs:
       - test:
-          branches:
-            ignore:
-              - gh-pages
+          filters:
+            branches:
+              ignore:
+                - gh-pages
   nightly:
     triggers:
       - schedule:
@@ -65,14 +66,14 @@ workflows:
   tag:
     jobs:
       - test:
-          &tags-filter
+          &tag-config
           filters:
             branches:
               ignore:
                 - gh-pages
             tags:
-              only: /*./
+              only: /^*.*.*/
       - docs:
-          <<: *tags-filter
-      - deploy
-          <<: *tags-filter
+          <<: *tag-config
+      - deploy:
+          <<: *tag-config
