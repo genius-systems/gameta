@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="David Lee">
-  
   <link rel="shortcut icon" href="../../img/favicon.ico">
   <title>Command Reference - Gameta</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +24,7 @@
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
   <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
@@ -36,7 +35,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="../.." class="icon icon-home"> Gameta</a>
         <div role="search">
@@ -47,116 +45,84 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../metarepos/metarepos/">Metarepos</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">User Guide</span></p>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Command Reference</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-init">gameta init</a>
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../metarepos/metarepos/">Metarepos</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Command Reference</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#command-reference">Command Reference</a></li>
+    
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#arguments">Arguments</a>
-    </li>
+        
+            <li><a class="toctree-l4" href="#gameta-init">gameta init</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-sync">gameta sync</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-repo">gameta repo</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-tags">gameta tags</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-params">gameta params</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-apply">gameta apply</a></li>
+        
+            <li><a class="toctree-l4" href="#gameta-cmd">gameta cmd</a></li>
+        
         </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-sync">gameta sync</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-repo">gameta repo</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-repo-add">gameta repo add</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_1">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-repo-delete">gameta repo delete</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_2">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-repo-update">gameta repo update</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_3">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-repo-ls">gameta repo ls</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-tags">gameta tags</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-tags-add">gameta tags add</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_4">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-tags-delete">gameta tags delete</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_5">Arguments</a>
-    </li>
-        </ul>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-params">gameta params</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-params-add">gameta params add</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_6">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-params-delete">gameta params delete</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#arguments_7">Arguments</a>
-    </li>
-        </ul>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-apply">gameta apply</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#arguments_8">Arguments</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#gameta-cmd">gameta cmd</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-cmd-add">gameta cmd add</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-cmd-delete">gameta cmd delete</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#gameta-cmd-exec">gameta cmd exec</a>
-    </li>
-        </ul>
-    </li>
+    
+
     </ul>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../applying_commands/">Applying Commands</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../best_practices/">Best Practices</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">About</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/contributing/">Contributing</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/license/">License</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/release_notes/">Release Notes</a>
-                    </li>
-                </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../applying_commands/">Applying Commands</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../best_practices/">Best Practices</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../about/contributing/">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/license/">License</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/release_notes/">Release Notes</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -188,7 +154,6 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
@@ -248,8 +213,7 @@ them against the arguments that user provides.</p>
 <h4 id="arguments_2">Arguments</h4>
 <ul>
 <li><strong>--name / -n</strong>: Name of the child repository to be deleted</li>
-<li>--clear / -c: Indicates that Gameta should also clear the local clone of 
-  the repository</li>
+<li>--no-clear / -c: Indicates that Gameta should not clear the local clone of the repository</li>
 </ul>
 <h3 id="gameta-repo-update">gameta repo update</h3>
 <p>Updates repository details and syncs the changes locally</p>
@@ -259,7 +223,7 @@ them against the arguments that user provides.</p>
 <li>--new-name / -e: New repository name to be updated to</li>
 <li>--new-url / -u: New repository URL to be updated to</li>
 <li>--new-path / -p: New local relative path within the project directory to update to</li>
-<li>--sync / -s: Syncs all updates physically</li>
+<li>--no-sync / -s: Does not apply updates locally</li>
 </ul>
 <h3 id="gameta-repo-ls">gameta repo ls</h3>
 <p>Lists all repositories added</p>
@@ -321,33 +285,81 @@ parameter values as JSON decodable strings e.g. <code>'{"hello": "world"}'</code
 <a href="../applying_commands/">Applying Commands</a>)</p>
 <h3 id="arguments_8">Arguments</h3>
 <ul>
-<li><strong><em>--command / -c</em></strong>: Commands to be applied</li>
-<li><em>--tags / -t</em>: Tagged repositories to apply commands to</li>
-<li><em>--repositories / -r</em>: Names of specific repositories to apply commands to</li>
-<li>--shell / -s: Indicates that the command should be executed in a separate shell</li>
+<li><strong><em>--command / -c</em></strong>: CLI commands to be applied</li>
+<li><em>--tags / -t</em>: Tagged repositories to apply CLI commands to</li>
+<li><em>--repositories / -r</em>: Names of specific repositories to apply CLI commands to</li>
+<li>--shell / -s: Indicates that the CLI commands should be executed in a separate shell</li>
 <li>--verbose / -v: Indicates that Gameta should display the CLI output when it executes a
-    command in other repositories</li>
-<li>--raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
-    executing commands in child repositories </li>
+    CLI command in other repositories</li>
+<li>--raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
+    when executing CLI commands in child repositories </li>
 </ul>
 <hr />
 <p><strong>Note</strong></p>
-<p>The shell flag is required if the command to be rendered is a piped command, it will also
-be automatically added if multiple commands are provided</p>
+<p>The shell flag is required if the CLI command to be rendered is a piped CLI command, it 
+will also be automatically added if multiple CLI commands are provided</p>
 <hr />
 <h2 id="gameta-cmd">gameta cmd</h2>
 <p>Command subcommand group, contains the following commands:</p>
 <ol>
 <li>gameta cmd add</li>
 <li>gameta cmd delete</li>
+<li>gameta cmd update</li>
+<li>gameta cmd ls</li>
 <li>gameta cmd exec</li>
 </ol>
 <h3 id="gameta-cmd-add">gameta cmd add</h3>
-<p>Adds a command to the command cache within the .meta file</p>
+<p>Adds a Gameta command to the Gameta command store within the .meta file</p>
+<hr />
+<p><strong>Note</strong></p>
+<p>A Gameta command is a <code>gameta apply</code> command consisting of a set of CLI commands, tags, 
+repositories and flags (shell, verbose, raise errors) that control its execution</p>
+<hr />
+<h4 id="arguments_9">Arguments</h4>
+<ul>
+<li><strong>--name / -n</strong>: Name </li>
+<li>--overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+    with new data</li>
+<li><strong><em>--command / -c</em></strong>: CLI commands to be applied</li>
+<li><em>--tags / -t</em>: Tagged repositories to apply CLI commands to</li>
+<li><em>--repositories / -r</em>: Names of specific repositories to apply CLI commands to</li>
+<li>--shell / -s: Indicates that the CLI command should be executed in a separate shell</li>
+<li>--verbose / -v: Indicates that Gameta should display the CLI output when it executes a
+    CLI command in other repositories</li>
+<li>--raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
+    executing CLI commands in child repositories </li>
+</ul>
 <h3 id="gameta-cmd-delete">gameta cmd delete</h3>
-<p>Deletes a command from the command cache</p>
+<p>Deletes a Gameta command from the Gameta command store</p>
+<h4 id="arguments_10">Arguments</h4>
+<ul>
+<li><strong>--name / -n</strong>: Name of the Gameta command to be deleted</li>
+</ul>
+<h3 id="gameta-cmd-update">gameta cmd update</h3>
+<p>Updates a Gameta command that exists in the Gameta command store</p>
+<h4 id="arguments_11">Arguments</h4>
+<ul>
+<li><strong>--name / -n</strong>: Gameta command name to be updated</li>
+<li><em>--command / -c</em>: New CLI commands to be executed</li>
+<li><em>--tags / -t</em>: New repository tags apply CLI commands to</li>
+<li><em>--repositories / -r</em>: New repositories to apply CLI commands to</li>
+<li>--verbose / -v: Display execution output when CLI commands are applied</li>
+<li>--no-verbose / -nv: Do not display execution output when CLI commands are applied</li>
+<li>--shell / -s: Execute CLI commands in a separate shell</li>
+<li>--no-verbose / -nv: Do not execute CLI commands in a separate shell</li>
+<li>--raise-errors / -e: Raise errors that occur when CLI commands are executed and 
+    terminate</li>
+<li>--no-errors / -ne: Do not raise errors that occur when CLI commands are executed 
+    and terminate</li>
+</ul>
+<h3 id="gameta-cmd-ls">gameta cmd ls</h3>
+<p>Lists all existing Gameta commands in the Gameta command store</p>
 <h3 id="gameta-cmd-exec">gameta cmd exec</h3>
-<p>Executes a cached command from the command cache</p>
+<p>Executes a series of Gameta command from the command store</p>
+<h4 id="arguments_12">Arguments</h4>
+<ul>
+<li><strong><em>--commands / -c</em></strong>: Gameta commands to be executed</li>
+</ul>
               
             </div>
           </div>
@@ -370,7 +382,7 @@ be automatically added if multiple commands are provided</p>
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -380,7 +392,7 @@ be automatically added if multiple commands are provided</p>
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/genius-systems/gameta/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -396,11 +408,6 @@ be automatically added if multiple commands are provided</p>
     <script>var base_url = '../..';</script>
     <script src="../../js/theme.js" defer></script>
       <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>

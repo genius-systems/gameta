@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="David Lee">
-  
   <link rel="shortcut icon" href="../../img/favicon.ico">
   <title>Best Practices - Gameta</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +24,7 @@
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
   <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
@@ -36,7 +35,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="../.." class="icon icon-home"> Gameta</a>
         <div role="search">
@@ -47,34 +45,74 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../metarepos/metarepos/">Metarepos</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">User Guide</span></p>
-                <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="../commands/">Command Reference</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../applying_commands/">Applying Commands</a>
-                    </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Best Practices</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">About</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/contributing/">Contributing</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/license/">License</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/release_notes/">Release Notes</a>
-                    </li>
-                </ul>
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../metarepos/metarepos/">Metarepos</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../commands/">Command Reference</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../applying_commands/">Applying Commands</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Best Practices</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#best-practices">Best Practices</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#standardise-your-devops-practices">Standardise your DevOps practices</a></li>
+        
+            <li><a class="toctree-l4" href="#group-related-repositories-with-tags">Group related repositories with tags</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../about/contributing/">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/license/">License</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/release_notes/">Release Notes</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -106,13 +144,59 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
             <div class="section">
               
-                
+                <h1 id="best-practices">Best Practices</h1>
+<p>This section contains some tips and strategies to leverage Gameta's functionalities.</p>
+<h2 id="standardise-your-devops-practices">Standardise your DevOps practices</h2>
+<p>Standardising your DevOps practices for all your repositories will allow you to easily 
+run tests, builds and other DevOps functionalities with <code>gameta apply</code></p>
+<h2 id="group-related-repositories-with-tags">Group related repositories with tags</h2>
+<p>Tag repositories to group related repositories e.g. Python, Backend, Frontend and 
+apply commands to these. </p>
+<p>For example, if you have these repositories:</p>
+<ol>
+<li>backend_app_1 (written in Go)</li>
+<li>backend_app_2 (written in NodeJS)</li>
+<li>backend_app_3 (written in Go)</li>
+<li>frontend (written in NodeJS)</li>
+</ol>
+<p>You could use the following tags to help organise your repositories:</p>
+<table>
+<thead>
+<tr>
+<th>Applications</th>
+<th>Tags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backend_app_1</td>
+<td>go, backend</td>
+</tr>
+<tr>
+<td>backend_app_2</td>
+<td>nodejs, backend</td>
+</tr>
+<tr>
+<td>backend_app_3</td>
+<td>go, backend</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>nodejs, frontend</td>
+</tr>
+</tbody>
+</table>
+<p>And the following commands to help manage your DevOps operations:</p>
+<pre><code class="bash">gameta apply -c run_go_tests -t go
+gameta apply -c run_nodejs_tests -t nodejs
+gameta apply -c build_go_backend -t go
+gameta apply -c build_nodejs_backend -r backend_app_3
+</code></pre>
               
             </div>
           </div>
@@ -135,7 +219,7 @@
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -145,7 +229,7 @@
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/genius-systems/gameta/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -161,11 +245,6 @@
     <script>var base_url = '../..';</script>
     <script src="../../js/theme.js" defer></script>
       <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>
