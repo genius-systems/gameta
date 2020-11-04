@@ -6,5 +6,6 @@
       "tags": ["metarepo"],
       "url": "git@github.com:genius-systems/gameta.git"
     }
-  }
+  },
+  "commands": {}
 }

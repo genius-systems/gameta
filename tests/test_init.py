@@ -33,7 +33,7 @@ class TestInit(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_init_with_git_is_true_folder_is_not_a_git_repo(self, mock_ensure_object):
+    def test_init_with_git_folder_is_not_a_git_repo(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
             context = GametaContext()
             context.project_dir = f
@@ -57,7 +57,8 @@ class TestInit(TestCase):
                                 'url': None,
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -87,7 +88,8 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -119,7 +121,8 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -151,7 +154,8 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
@@ -169,7 +173,8 @@ class TestSync(TestCase):
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
-                        'projects': {}
+                        'projects': {},
+                        "commands": {}
                     }, m
                 )
             context = GametaContext()

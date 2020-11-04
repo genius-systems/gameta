@@ -39,7 +39,8 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_all_repositories(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
+            'commands': ['git fetch --all --tags --prune'],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -56,20 +57,22 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_multiple_commands_to_all_repositories(self, mock_ensure_object):
         params = {
-            'commands': (
+            'commands': [
                 'git fetch --all --tags --prune',
                 'git checkout {branch}',
                 'git pull {repo} {new_branch}'
-            )
+            ],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
+
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -108,17 +111,18 @@ class TestApply(TestCase):
             self.assertEqual(
                 result.output.split("Error CalledProcessError.Command")[0],
                 "Multiple commands detected, executing in a separate shell\n"
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb'] in a separate shell\n"
-                f"Executing {' '.join(output[0])} in gameta\n"
-                f"Executing {' '.join(output[1])} in GitPython\n"
-                f"Executing {' '.join(output[2])} in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
+                f"Executing {' '.join(output[0])} in {params['actual_repositories'][0]}\n"
+                f"Executing {' '.join(output[1])} in {params['actual_repositories'][1]}\n"
+                f"Executing {' '.join(output[2])} in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_tagged_repositories(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
-            'tags': ('c', )
+            'commands': ['git fetch --all --tags --prune'],
+            'tags': ['c'],
+            'actual_repositories': ['GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -135,16 +139,17 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_tagged_repositories_that_do_not_exist(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
-            'tags': ('hello', 'world')
+            'commands': ['git fetch --all --tags --prune'],
+            'tags': ['hello', 'world'],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -163,17 +168,18 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_specified_repositories(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
-            'repositories': ('GitPython', )
+            'commands': ['git fetch --all --tags --prune', ],
+            'repositories': ['GitPython'],
+            'actual_repositories': ['GitPython']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -192,15 +198,16 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['GitPython']\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
+                f"Applying {params['commands']} to repos {params['repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_specified_repositories_that_do_not_exist(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
-            'repositories': ('hello', 'world')
+            'commands': ['git fetch --all --tags --prune'],
+            'repositories': ['hello', 'world'],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -220,18 +227,19 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_merged_tags_and_repos(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
-            'tags': ('metarepo', ),
-            'repositories': ('gitdb', )
+            'commands': ['git fetch --all --tags --prune', ],
+            'tags': ['metarepo'],
+            'repositories': ['gitdb'],
+            'actual_repositories': ['gameta', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -251,15 +259,16 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_in_separate_shell(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', ),
+            'commands': ['git fetch --all --tags --prune'],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -276,10 +285,10 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb'] in a separate shell\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in gameta\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in GitPython\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in gitdb\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
+                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
+                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -305,7 +314,8 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_verbose(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', )
+            'commands': ['git fetch --all --tags --prune'],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -322,14 +332,14 @@ class TestApply(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Applying '{params['commands']}' to repos ['gameta', 'GitPython', 'gitdb']\n"
-                "Executing git fetch --all --tags --prune in gameta\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
                 "Fetching origin\n"
                 "\n"
-                "Executing git fetch --all --tags --prune in GitPython\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
                 "Fetching origin\n"
                 "\n"
-                "Executing git fetch --all --tags --prune in gitdb\n"
+                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
                 "Fetching origin\n"
                 "\n"
             )

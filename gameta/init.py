@@ -32,6 +32,9 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
         $ gameta init  # With default values
         $ gameta init -g  # Initialises the current working directory as a git repository
         $ gameta init -o  # Overwrites the existing .meta file if it exists
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Initialising metarepo in {context.project_dir}")
 
@@ -80,6 +83,9 @@ def sync(context: GametaContext) -> None:
 
     Examples:
         $ gameta sync
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Syncing all child repositories in metarepo {context.project_dir}")
 

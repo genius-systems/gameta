@@ -58,6 +58,9 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
     Examples:
         $ gameta parameters add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
         $ gameta parameters add -p test -t str -v hello_world -u  # Prompts user input for parameter values
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(f"Adding parameter {param}")
     parameter_type: Type[T] = getattr(builtins, ptype, str)
@@ -115,6 +118,9 @@ def delete(context: GametaContext, param: str) -> None:
 
     Returns:
         None
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     if param in context.reserved_params:
         raise click.ClickException(f"Parameter {param} is a reserved parameter {context.reserved_params}")
