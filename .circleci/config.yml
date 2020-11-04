@@ -55,16 +55,18 @@ workflows:
             tags:
               only: /^*.*.*/
       - docs:
-          &deploy-config
           requires:
             - test
-          filters:
+          filters: &deploy-config
             branches:
               ignore: /.*/
             tags:
               only: /^*.*.*/
       - deploy:
-        <<: *deploy-config
+          requires:
+            - docs
+          filters:
+            <<: *deploy-config
   nightly:
     triggers:
       - schedule:
