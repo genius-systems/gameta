@@ -1,6 +1,7 @@
 # Gameta
 
-Gameta is a powerful CLI tool that helps you to manage [meta-repositories] 
+Gameta is a powerful CLI tool that helps you to manage 
+[meta-repositories](https://genius-systems.github.io/gameta/metarepos/metarepos)
 or metarepos. It allows you to creates links to related repositories, 
 make changes and sync them, and provides functionality to customise and 
 apply other CLI commands to these repositories.
@@ -113,7 +114,4 @@ The command above applies the following to all repositories:
 
 ## Documentation 
 
-Documentation can be found at [Gameta Docs]
-
-[meta-repositories] https://genius-systems.github.io/gameta/metarepos/metarepos
-[Gameta Docs]: https://genius-systems.github.io/gameta
+Documentation can be found at [Gameta Docs](https://genius-systems.github.io/gameta)
