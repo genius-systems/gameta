@@ -1,0 +1,81 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.2.0
+
+jobs:
+  test:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Test
+          command: tox
+  docs:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Install Python dependencies
+          command: poetry config virtualenvs.create false && poetry install
+      - run:
+          name: Build documentation
+          command: cd docs && mkdocs gh-deploy
+  deploy:
+    docker:
+      - image: "fkrull/multi-python:bionic"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -U pip poetry
+      - run:
+          name: Install Python dependencies
+          command: poetry config virtualenvs.create false && poetry install
+      - run:
+          name: Build
+          command: poetry build
+      - run:
+          name: Publish
+          command: poetry publish
+
+workflows:
+  main:
+    jobs:
+      - test:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+    jobs:
+      - test
+  deploy:
+    jobs:
+      - test:
+          &tag-config
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+              only:
+                - master
+            tags:
+              only: /^*.*.*/
+      - docs:
+          <<: *tag-config
+      - deploy:
+          <<: *tag-config

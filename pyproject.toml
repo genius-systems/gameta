@@ -1,0 +1,56 @@
+[build-system]
+requires = [ "poetry>=0.12",]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "gameta"
+version = "0.1.0"
+description = "Tool for managing meta-repositories"
+license = "MIT"
+authors = [ "David Lee <ltw_david@hotmail.com>",]
+exclude = [ "tests", ]
+packages = [
+    {include = "gameta"},
+]
+
+readme = "README.md"
+repository = "https://github.com/genius-systems/gameta"
+homepage = "https://genius-systems.github.io/gameta"
+documentation = "https://genius-systems.github.io/gameta"
+
+keywords = ["metarepositories", "repositories", "shell", "git"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Terminals"
+]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py37,py38
+
+[testenv]
+commands = python -m unittest discover -v -s ./tests -t .
+"""
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+Click = "^7.1.2"
+colorama = "^0.4.3"
+gitpython = "^3.1.9"
+
+[tool.poetry.dev-dependencies]
+mkdocs = "^1.1.2"
+tox = "^3.16.1"
+tox-pyenv = "^1.1.0"
+
+[tool.poetry.scripts]
+gameta = "gameta.cli:gameta_cli"
