@@ -28,7 +28,7 @@ jobs:
           command: pip install -U pip mkdocs
       - run:
           name: Build documentation
-          command: cd docs && mkdocs gh-deploy
+          command: cd docs && mkdocs gh-deploy --force
   deploy:
     docker:
       - image: "fkrull/multi-python:bionic"
