@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="David Lee">
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Contributing - Gameta</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Contributing";
+    var mkdocs_page_input_path = "about/contributing.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Gameta</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../metarepos/metarepos/">Metarepos</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">User Guide</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../user_guide/commands/">Command Reference</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../user_guide/applying_commands/">Applying Commands</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../user_guide/best_practices/">Best Practices</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">About</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Contributing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reporting-an-issue">Reporting an Issue</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing-the-development-version">Testing the Development Version</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installing-for-development">Installing for Development</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-the-tests">Running the tests</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#submitting-pull-requests">Submitting Pull Requests</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../license/">License</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../release_notes/">Release Notes</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Gameta</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>About &raquo;</li>
+        
+      
+    
+    <li>Contributing</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/genius-systems/gameta/edit/master/docs/about/contributing.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="contributing-to-gameta">Contributing to Gameta</h1>
+<p>Gameta welcomes, and depends, on contributions from developers and users in
+the open source community. Contributions can be made in a number of ways, a
+few examples are:</p>
+<ul>
+<li>Code patches via pull requests</li>
+<li>Documentation improvements</li>
+<li>Bug reports and patch reviews</li>
+</ul>
+<h2 id="code-of-conduct">Code of Conduct</h2>
+<p>Everyone interacting in the Gameta's codebases, issue trackers, chat
+rooms, and mailing lists is expected to follow the <a href="https://www.pypa.io/en/latest/code-of-conduct/">PyPA Code of Conduct</a>.</p>
+<h2 id="reporting-an-issue">Reporting an Issue</h2>
+<p>Please include as much detail as you can. Let us know your platform and 
+Gameta version. If you get an error please include the full error and 
+traceback.</p>
+<h2 id="testing-the-development-version">Testing the Development Version</h2>
+<p>If you want to just install and try out the latest development version of
+Gameta you can do so with the following command. This can be useful if you
+want to provide feedback for a new feature or want to confirm if a bug you
+have encountered is fixed in the git master. It is <strong>strongly</strong> recommended
+that you do this within a <a href="https://virtualenv.pypa.io/en/latest/user_guide.html">virtualenv</a>.</p>
+<pre><code class="language-bash">pip install git+https://github.com/genius-systems/gameta.git@master
+</code></pre>
+<h2 id="installing-for-development">Installing for Development</h2>
+<p>First you'll need to fork and clone the repository. Once you have a local
+copy, run the following command. It is <strong>strongly</strong> recommended that you do
+this within a <a href="https://virtualenv.pypa.io/en/latest/user_guide.html">virtualenv</a>.</p>
+<pre><code class="language-bash">pip install --editable .
+</code></pre>
+<p>This will install Gameta in development mode which binds the <code>gameta</code> command
+to the git repository.</p>
+<h2 id="running-the-tests">Running the tests</h2>
+<p>To run the tests, it is recommended that you use <a href="https://tox.readthedocs.io/en/latest/">tox</a>.</p>
+<p>Install Tox using <a href="https://pip.pypa.io/en/stable/">pip</a> by running the command <code>pip install tox</code>.
+Then the test suite can be run with the command <code>tox</code> in the
+root of your Gameta repository.</p>
+<p>It will attempt to run the tests against all of the Python versions we 
+support. So don't be concerned if you are missing some and they fail. 
+The rest will be verified when you submit a pull request.</p>
+<h2 id="submitting-pull-requests">Submitting Pull Requests</h2>
+<p>Once you are happy with your changes or you are ready for some feedback, push
+it to your fork and send a pull request. For a change to be accepted it will
+most likely need to have tests and documentation if it is a new feature.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../license/" class="btn btn-neutral float-right" title="License">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../user_guide/best_practices/" class="btn btn-neutral" title="Best Practices"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/genius-systems/gameta/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../../user_guide/best_practices/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../license/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
