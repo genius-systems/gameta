@@ -35,7 +35,7 @@ classifiers = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py37,py38
+envlist = py37,py38,py39
 
 [testenv]
 commands = python -m unittest discover -v -s ./tests -t .
