@@ -65,7 +65,8 @@ workflows:
   tag:
     jobs:
       - test:
-          filters: &tags-filter
+          &tags-filter
+          filters:
             branches:
               ignore:
                 - gh-pages
