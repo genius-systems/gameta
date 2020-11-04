@@ -22,7 +22,7 @@ jobs:
           command: pip3 install -U pip poetry
       - run:
           name: Install Python dependencies
-          command: poetry config virtualenvs.create false && poetry install
+          command: poetry config virtualenvs.create false && poetry install -vvv
       - run:
           name: Build documentation
           command: cd docs && mkdocs gh-deploy
@@ -36,7 +36,7 @@ jobs:
           command: pip3 install -U pip poetry
       - run:
           name: Install Python dependencies
-          command: poetry config virtualenvs.create false && poetry install
+          command: poetry config virtualenvs.create false && poetry install -vvv
       - run:
           name: Build
           command: poetry build
@@ -57,16 +57,16 @@ workflows:
       - docs:
           requires:
             - test
-          filters: &deploy-config
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^*.*.*/
-      - deploy:
-          requires:
-            - docs
-          filters:
-            <<: *deploy-config
+#          filters: &deploy-config
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^*.*.*/
+#      - deploy:
+#          requires:
+#            - docs
+#          filters:
+#            <<: *deploy-config
   nightly:
     triggers:
       - schedule:
