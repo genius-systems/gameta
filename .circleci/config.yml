@@ -16,44 +16,59 @@ jobs:
     docker:
       - image: "fkrull/multi-python:bionic"
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "57:f7:e0:ef:ee:9e:70:05:1e:67:78:e3:38:e2:e2:4e"
       - checkout
       - run:
+          name: Setting up Virtual Environment
+          command: python3.7 -m venv venv && source venv/bin/activate
+      - run:
           name: Install dependencies
-          command: pip install -U pip poetry
-      - run:
-          name: Deactivate Poetry's virtualenv
-          command: poetry config virtualenvs.create false
-      - run:
-          name: Install Python dependencies
-          command: poetry install
+          command: pip install -U pip mkdocs
       - run:
           name: Build documentation
-          command: cd docs && mkdocs build
+          command: cd docs && mkdocs gh-deploy
   deploy:
     docker:
       - image: "fkrull/multi-python:bionic"
     steps:
       - checkout
       - run:
+          name: Setting up Virtual Environment
+          command: python3.7 -m venv venv && source venv/bin/activate
+      - run:
           name: Install dependencies
-          command: pip install -U pip poetry
-      - run:
-          name: Deactivate Poetry's virtualenv
-          command: poetry config virtualenvs.create false
-      - run:
-          name: Install Python dependencies
-          command: poetry install
-      - run:
-          name: Build
-          command: poetry build
+          command: pip3 install -U pip poetry
       - run:
           name: Publish
-          command: poetry publish
+          command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
 
 workflows:
   main:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+            tags:
+              only: /^*.*.*/
+      - docs:
+          requires:
+            - test
+          filters: &deploy-config
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^*.*.*/
+      - deploy:
+          context:
+            - "Genisys Context"
+          requires:
+            - docs
+          filters:
+            <<: *deploy-config
   nightly:
     triggers:
       - schedule:
@@ -62,7 +77,5 @@ workflows:
             branches:
               only:
                 - master
-                - develop
-                - staging
     jobs:
       - test

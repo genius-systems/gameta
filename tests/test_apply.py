@@ -84,7 +84,7 @@ class TestApply(TestCase):
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
                     output['projects']['gameta'].update(
-                        {"branch": "master", 'new_branch': 'develop', 'repo': 'origin'}
+                        {"branch": "master", 'new_branch': 'master', 'repo': 'origin'}
                     )
                     output['projects']['gitdb'].update(
                         {'branch': 'master', 'new_branch': 'gitdb2', 'repo': 'origin'}

@@ -4,8 +4,8 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "gameta"
-version = "0.1.2"
-description = "Genisys tool for handling meta-repositories"
+version = "0.1.0"
+description = "Tool for managing meta-repositories"
 license = "MIT"
 authors = [ "David Lee <ltw_david@hotmail.com>",]
 exclude = [ "tests", ]
@@ -13,11 +13,29 @@ packages = [
     {include = "gameta"},
 ]
 
+readme = "README.md"
+repository = "https://github.com/genius-systems/gameta"
+homepage = "https://genius-systems.github.io/gameta"
+documentation = "https://genius-systems.github.io/gameta"
+
+keywords = ["metarepositories", "repositories", "shell", "git"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Terminals"
+]
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py37,py38
+envlist = py37,py38,py39
 
 [testenv]
 commands = python -m unittest discover -v -s ./tests -t .
