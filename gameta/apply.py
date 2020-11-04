@@ -70,7 +70,7 @@ def apply(
             shell = True
 
         click.echo(
-            f"Applying '{commands}' to repos {repos if repos else list(context.repositories.keys())}"
+            f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
             f"{' in a separate shell' if shell else ''}"
         )
         for repo, c in context.apply(list(commands), repos=repos, shell=shell):
