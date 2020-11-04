@@ -27,9 +27,6 @@ jobs:
           name: Install dependencies
           command: pip install -U pip mkdocs
       - run:
-          name: Test
-          command: echo $PYPI_USER
-      - run:
           name: Build documentation
           command: cd docs && mkdocs gh-deploy
   deploy:
@@ -45,36 +42,33 @@ jobs:
           command: pip3 install -U pip poetry
       - run:
           name: Publish
-          command: echo $PYPI_USER
-#          command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
+          command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
 
 workflows:
   main:
     jobs:
-#      - test:
-#          filters:
-#            branches:
-#              ignore:
-#                - gh-pages
-#            tags:
-#              only: /^*.*.*/
+      - test:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+            tags:
+              only: /^*.*.*/
       - docs:
+          requires:
+            - test
+          filters: &deploy-config
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^*.*.*/
+      - deploy:
           context:
             - "Genisys Context"
-#          requires:
-#            - test
-#          filters: &deploy-config
-#            branches:
-#              ignore: /.*/
-#            tags:
-#              only: /^*.*.*/
-#      - deploy:
-#          context:
-#            - "Genisys Context"
-#          requires:
-#            - docs
-#          filters:
-#            <<: *deploy-config
+          requires:
+            - docs
+          filters:
+            <<: *deploy-config
   nightly:
     triggers:
       - schedule:
