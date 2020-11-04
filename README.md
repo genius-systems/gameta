@@ -113,4 +113,6 @@ The command above applies the following to all repositories:
 
 ## Documentation 
 
-Documentation can be found here
+Documentation can be found at [Gameta Docs]
+
+[Gameta Docs]: https://genius-systems.github.io/gameta
