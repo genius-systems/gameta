@@ -16,7 +16,7 @@ packages = [
 readme = "README.md"
 repository = "https://github.com/genius-systems/gameta"
 homepage = "https://genius-systems.github.io/gameta"
-docs = "https://genius-systems.github.io/gameta"
+documentation = "https://genius-systems.github.io/gameta"
 
 keywords = ["metarepositories", "repositories", "shell", "git"]
 classifiers = [
