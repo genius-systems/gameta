@@ -18,8 +18,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Setting up Virtual Environment
+          command: python3.7 -m venv venv && source venv/bin/activate
+      - run:
           name: Install dependencies
-          command: pip3 install -U pip mkdocs
+          command: pip install -U pip mkdocs
+      - run:
+          name: Test
+          command: echo $PYPI_USER
       - run:
           name: Build documentation
           command: cd docs && mkdocs gh-deploy
@@ -29,14 +35,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Setting up Virtual Environment
+          command: python3.7 -m venv venv && source venv/bin/activate
+      - run:
           name: Install dependencies
           command: pip3 install -U pip poetry
       - run:
-          name: Build
-          command: poetry build
-      - run:
           name: Publish
-          command: poetry publish
+          command: echo $PYPI_USER
+#          command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
 
 workflows:
   main:
@@ -49,6 +56,8 @@ workflows:
             tags:
               only: /^*.*.*/
       - docs:
+          context:
+            - "Genisys Context"
           requires:
             - test
 #          filters: &deploy-config
@@ -57,6 +66,8 @@ workflows:
 #            tags:
 #              only: /^*.*.*/
 #      - deploy:
+#          context:
+#            - "Genisys Context"
 #          requires:
 #            - docs
 #          filters:
