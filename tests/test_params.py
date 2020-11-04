@@ -6,8 +6,9 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+
 from gameta.context import GametaContext
-from gameta.parameters import add, delete
+from gameta.params import add, delete
 
 
 class TestAdd(TestCase):

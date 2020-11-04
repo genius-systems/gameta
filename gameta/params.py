@@ -14,7 +14,7 @@ __all__ = ['parameters_cli']
 T = TypeVar('T', int, float, str, bool, dict, list)
 
 
-@gameta_cli.group('parameters')
+@gameta_cli.group('params')
 @gameta_context
 def parameters_cli(context: GametaContext) -> None:
     """
@@ -31,21 +31,21 @@ def parameters_cli(context: GametaContext) -> None:
 
 
 @parameters_cli.command()
-@click.option('--parameter', '-p', type=str, required=True, help="Parameter name to be added to all child repositories")
+@click.option('--param', '-p', type=str, required=True, help="Parameter name to be added to all child repositories")
 @click.option('--type', '-t', 'ptype', type=click.Choice(['int', 'float', 'str', 'bool', 'dict', 'list']),
               default='str', help='Parameter type to be added')
 @click.option('--value', '-v', type=str, default=None, help="Default value to be used for all child repositories")
 @click.option('--skip-prompt', '-y', 'skip_prompt', is_flag=True, default=False,
               help="Skip user prompt and use default values for all")
 @gameta_context
-def add(context: GametaContext, parameter: str, ptype: Optional[str], value: Optional[str], skip_prompt: bool) -> None:
+def add(context: GametaContext, param: str, ptype: Optional[str], value: Optional[str], skip_prompt: bool) -> None:
     """
     Adds/updates a parameter to all child repositories in the .meta file, users will automatically be prompted to enter
     the parameter value corresponding to each repository. They can provide a type and value parameter to skip this step.
     \f
     Args:
         context (GametaContext): Gameta Context
-        parameter (str): Parameter name to be added to all child repositories
+        param (str): Parameter name to be added to all child repositories
         ptype (Optional[str]): Parameter type to be added
         value (Optional[str]): Default value to be used for all child repositories, value will be rendered with type
                                chosen
@@ -59,7 +59,7 @@ def add(context: GametaContext, parameter: str, ptype: Optional[str], value: Opt
         $ gameta parameters add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
         $ gameta parameters add -p test -t str -v hello_world -u  # Prompts user input for parameter values
     """
-    click.echo(f"Adding parameter {parameter}")
+    click.echo(f"Adding parameter {param}")
     parameter_type: Type[T] = getattr(builtins, ptype, str)
 
     def prompt_type_parser(input_value: str) -> T:
@@ -93,40 +93,40 @@ def add(context: GametaContext, parameter: str, ptype: Optional[str], value: Opt
                     click.echo(f"Value {pvalue} (type: {type(pvalue)}) entered is not the required type "
                                f"{parameter_type}, defaulting to default value {value}")
                     pvalue = value
-            details[parameter] = pvalue
-            click.echo(f"Adding {parameter} value {pvalue} for {repo}")
+            details[param] = pvalue
+            click.echo(f"Adding {param} value {pvalue} for {repo}")
         context.export()
-        click.echo(f"Successfully added parameter {parameter} to .meta file")
+        click.echo(f"Successfully added parameter {param} to .meta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
 @parameters_cli.command()
-@click.option('--parameter', '-p', type=str, required=True,
+@click.option('--param', '-p', type=str, required=True,
               help="Parameter name to be deleted from all child repositories")
 @gameta_context
-def delete(context: GametaContext, parameter: str) -> None:
+def delete(context: GametaContext, param: str) -> None:
     """
     Deletes a parameter from all child repositories
     \f
     Args:
         context (GametaContext): Gameta Context
-        parameter (str): Parameter name to be deleted from all child repositories
+        param (str): Parameter name to be deleted from all child repositories
 
     Returns:
         None
     """
-    if parameter in context.reserved_params:
-        raise click.ClickException(f"Parameter {parameter} is a reserved parameter {context.reserved_params}")
+    if param in context.reserved_params:
+        raise click.ClickException(f"Parameter {param} is a reserved parameter {context.reserved_params}")
 
     try:
-        click.echo(f"Deleting parameter {parameter}")
+        click.echo(f"Deleting parameter {param}")
         for repo, details in context.repositories.items():
             try:
-                del details[parameter]
+                del details[param]
             except KeyError:
                 continue
         context.export()
-        click.echo(f"Successfully deleted parameter {parameter} from .meta file")
+        click.echo(f"Successfully deleted parameter {param} from .meta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
