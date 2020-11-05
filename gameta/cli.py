@@ -41,4 +41,5 @@ from .init import *
 from .repos import *
 from .tags import *
 from .apply import *
+from .params import *
 from .cmd import *

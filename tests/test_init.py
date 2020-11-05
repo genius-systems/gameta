@@ -210,3 +210,31 @@ class TestSync(TestCase):
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
             self.assertCountEqual(listdir(join(f, 'core')), ['gitdb'])
             self.assertTrue(all(i in listdir(join(f, 'core', 'gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_sync_repo_already_exists(self, mock_ensure_object):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.sync)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Syncing all child repositories in metarepo {f}\n'
+                'Successfully synced GitPython to GitPython\n'
+                "An error occurred Cmd('git') failed due to: exit code(128)\n"
+                "  cmdline: git clone -v https://github.com/gitpython-developers/gitdb.git core/gitdb\n"
+                "  stderr: 'fatal: destination path 'core/gitdb' already exists and is not an empty directory.\n"
+                "', skipping repo\n"
+            )
+            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.meta'])
+            self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
+            self.assertCountEqual(listdir(join(f, 'core')), ['gitdb'])
+            self.assertTrue(all(i in listdir(join(f, 'core', 'gitdb')) for i in ['gitdb', 'doc', 'setup.py']))

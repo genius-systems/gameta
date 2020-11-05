@@ -6,7 +6,6 @@ from shutil import copyfile
 from unittest import TestCase
 from unittest.mock import patch
 
-from click import Context
 from click.testing import CliRunner
 
 from gameta.context import GametaContext
@@ -143,7 +142,7 @@ class TestReposAdd(TestCase):
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
             with open(join(f, '.gitignore'), 'r') as g:
-                self.assertTrue('GitPython/\n' in set(g.readlines()))
+                self.assertTrue('GitPython/\n' in g.readlines())
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_repos_add_invalid_repository(self, mock_ensure_object):

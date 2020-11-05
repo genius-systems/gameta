@@ -3,7 +3,7 @@ from typing import Optional
 
 import click
 
-from git import Repo, InvalidGitRepositoryError
+from git import Repo, InvalidGitRepositoryError, GitError
 
 from .cli import gameta_cli
 from .context import gameta_context, GametaContext
@@ -96,7 +96,11 @@ def sync(context: GametaContext) -> None:
             if context.is_primary_metarepo(repo):
                 continue
 
-            Repo.clone_from(details['url'], details['path'])
-            click.echo(f'Successfully synced {repo} to {details["path"]}')
+            try:
+                Repo.clone_from(details['url'], details['path'])
+                click.echo(f'Successfully synced {repo} to {details["path"]}')
+            except GitError as e:
+                click.echo(f"An error occurred {str(e)}, skipping repo")
+                continue
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")

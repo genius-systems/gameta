@@ -127,9 +127,18 @@ class GametaContext(object):
         except FileNotFoundError:
             return
         except Exception as e:
-            raise click.ClickException(f"Could not load .meta file: {e.__class__.__name__}.{str(e)}")
+            self.repositories = {}
+            self.commands = {}
+            click.echo(f"Could not load .meta file due to: {e.__class__.__name__}.{str(e)}")
+            return
 
-        self.generate_tags()
+        try:
+            self.generate_tags()
+        except Exception as e:
+            self.repositories = {}
+            self.commands = {}
+            click.echo(f"Malformed .meta file, error: {e.__class__.__name__}.{str(e)}")
+            return
 
         try:
             with open(self.gitignore, 'r') as f:
@@ -137,7 +146,9 @@ class GametaContext(object):
         except FileNotFoundError:
             return
         except Exception as e:
-            raise click.ClickException(f"Could not load .meta file: {e.__class__.__name__}.{str(e)}")
+            self.gitignore_data = []
+            click.ClickException(f"Could not load .gitignore file due to: {e.__class__.__name__}.{str(e)}")
+            return
 
     def export(self) -> None:
         """
