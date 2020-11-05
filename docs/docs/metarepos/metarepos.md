@@ -15,7 +15,7 @@ A nice article discussing metarepos can be found
 
 ## Monorepos
 
-A dichotomy exists in the way we store and manage code at present, at
+A dichotomy exists in the way we store and manage code at present. At
 one end of the spectrum we have the monorepo, a single repository 
 containing all source code within a project or organisation. The 
 monorepo has various advantages, for instance project discovery,
@@ -32,7 +32,7 @@ At the other end of the spectrum, we have the multirepo architecture,
 where source code is split across many repositories. In this paradigm,
 the advantages and disadvantages of the monorepo are reversed i.e. 
 the project is dissociated into smaller organised parts and these parts
-becomes easier to manage, whereas coordinating all of these fragmented 
+becomes easier to manage, whereas coordinating all these fragmented 
 pieces of software becomes a nightmare.
 
 ## Metarepos
