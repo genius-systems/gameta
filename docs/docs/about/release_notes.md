@@ -24,11 +24,10 @@ The current members of the Gameta team.
 ## Version 0.1.1 (2020-11-5)
 
 * Hot fixes for various issues:
-  * Handling of malformed .meta files
-   [link](https://github.com/genius-systems/gameta/issues/13)
+  * Handling of malformed .meta files [link](https://github.com/genius-systems/gameta/issues/13)
   * Params subgroup was not added [link](https://github.com/genius-systems/gameta/issues/11)
   * .gitignore was cleared when repos are added [link](https://github.com/genius-systems/gameta/issues/10)
-  * `gameta sync` throws error if repos are already present [link](https://github.com/genius-systems/gameta/issues/13)
+  * `gameta sync` throws error if repos are already present [link](https://github.com/genius-systems/gameta/issues/9)
       
 ## Version 0.1.0 (2020-10-30)
 
