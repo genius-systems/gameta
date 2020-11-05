@@ -3,7 +3,6 @@ from os import makedirs, listdir, symlink, getcwd, getenv
 from os.path import join, basename, exists
 from unittest import TestCase
 
-from click import ClickException
 from click.testing import CliRunner
 
 from gameta.context import GametaContext
@@ -271,9 +270,29 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             with open('.meta', 'w'):
                 pass
-            with self.assertRaises(ClickException):
-                self.context.project_dir = f
-                self.context.load()
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertEqual(self.context.repositories, {})
+            self.assertEqual(self.context.commands, {})
+
+    def test_gameta_load_malformed_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open('.meta', 'w') as m:
+                output = {
+                    'projects': {
+                        'test': 'malformed_metafile'
+                    },
+                    'commands': {
+                        'issues': 'issues'
+                    }
+                }
+                json.dump(output, m)
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertEqual(self.context.repositories, {})
+            self.assertEqual(self.context.commands, {})
 
     def test_gameta_load_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -307,6 +326,24 @@ class TestGametaContext(TestCase):
                                     "developer"
                                 ],
                                 '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
                             }
                         }
                     }, m
@@ -356,6 +393,27 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertTrue(self.context.is_metarepo)
+            self.assertCountEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
 
     def test_gameta_load_meta_and_gitignore_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -389,6 +447,24 @@ class TestGametaContext(TestCase):
                                     "developer"
                                 ],
                                 '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
                             }
                         }
                     }, m
@@ -443,6 +519,28 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertTrue(self.context.is_metarepo)
+
+            self.assertCountEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
             self.assertCountEqual(
                 self.context.gitignore_data,
                 ['HelloWorld\n', '.env\n', 'env\n']
@@ -453,8 +551,10 @@ class TestGametaContext(TestCase):
             self.context.project_dir = f
             self.context.load()
             self.assertEqual(self.context.repositories, {})
+            self.assertEqual(self.context.commands, {})
             self.assertEqual(self.context.tags, {})
             self.assertFalse(self.context.is_metarepo)
+            self.assertEqual(self.context.gitignore_data, [])
 
     def test_gameta_context_load_wrongly_formed_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -492,8 +592,10 @@ class TestGametaContext(TestCase):
                     m
                 )
             self.context.project_dir = f
-            with self.assertRaises(ClickException):
-                self.context.load()
+            self.context.load()
+            self.assertEqual(self.context.repositories, {})
+            self.assertEqual(self.context.commands, {})
+            self.assertEqual(self.context.gitignore_data, [])
 
     def test_gameta_context_export_meta_file_non_existent(self):
         with self.runner.isolated_filesystem() as f:
