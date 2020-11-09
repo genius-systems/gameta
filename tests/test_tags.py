@@ -41,7 +41,7 @@ class TestTagsAdd(TestCase):
     def test_tags_add_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -69,7 +69,7 @@ class TestTagsAdd(TestCase):
     def test_tags_add_tags_to_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -94,7 +94,7 @@ class TestTagsAdd(TestCase):
     def test_tags_add_no_tags_initially(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -148,7 +148,7 @@ class TestTagsAdd(TestCase):
     def test_tags_add_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -203,7 +203,7 @@ class TestTagsAdd(TestCase):
     def test_tags_add_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -284,7 +284,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_empty_meta_file(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -312,7 +312,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_tags_from_nonexistent_repository(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -337,7 +337,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_no_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -391,7 +391,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_disjoint_set_of_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -446,7 +446,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_duplicate_tags(self, mock_ensure_object):
         params = {
             'name': 'GitPython',
-            'tags': ('a', 'b', 'c')
+            'tags': ['a', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -501,7 +501,7 @@ class TestTagsDelete(TestCase):
     def test_tags_delete_attempt_to_delete_metarepo_tag(self, mock_ensure_object):
         params = {
             'name': 'gameta',
-            'tags': ('metarepo', 'b', 'c')
+            'tags': ['metarepo', 'b', 'c']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
