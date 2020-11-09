@@ -148,4 +148,4 @@ Multiple Gameta commands can be executed:
 gameta cmd exec -c hello -c world
 ```
 
-[Commands]: commands.md
+[Commands]: ../commands/0.2/commands.md

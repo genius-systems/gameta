@@ -8,9 +8,11 @@ theme: readthedocs
 
 nav:
   - Home: index.md
-  - Metarepos: metarepos/metarepos.md
+  - Metarepos: metarepos.md
+  - Command Reference:
+      - 0.1: commands/0.1/commands.md
+      - 0.2: commands/0.2/commands.md
   - User Guide:
-      - Command Reference: user_guide/commands.md
       - Applying Commands: user_guide/applying_commands.md
       - Best Practices: user_guide/best_practices.md
   - About:

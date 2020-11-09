@@ -10,6 +10,7 @@ first argument. There are several subcommand groups:
 5. gameta params
 6. gameta apply
 7. gameta cmd
+8. gameta const
 
 ___
 **Note**
@@ -17,6 +18,15 @@ ___
 Bolded flags/arguments indicate that they are required, while italicised 
 arguments indicate that they accept multiple arguments
 ___
+
+## gameta
+
+Main CLI group, loads .meta files and delegates subcommands to other groups
+
+### Arguments
+
+* --project-dir / -d: Absolute path to a metarepository, defaults to the current working 
+directory
 
 ## gameta init
 
@@ -239,4 +249,19 @@ Executes a series of Gameta command from the command store
 #### Arguments
 * **_--commands / -c_**: Gameta commands to be executed
 
-[Applying Commands]: applying_commands.md
+## gameta const
+
+Constant subcommand group, contains the following commands:
+
+1. gameta const add
+2. gameta const delete
+
+### gameta const add
+
+Adds/Updates constants in the constants store
+
+### gameta const delete
+
+Deletes an existing constant from the constants store
+
+[Applying Commands]: ../../user_guide/applying_commands.md

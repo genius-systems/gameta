@@ -120,5 +120,5 @@ Learn how to leverage on Gameta's capabilities in the [Best Practices] page
 
 [Best Practices]: user_guide/best_practices.md
 [Applying Commands]: user_guide/applying_commands.md
-[meta-repositories]: metarepos/metarepos.md
-[metarepos]: metarepos/metarepos.md
+[meta-repositories]: metarepos.md
+[metarepos]: metarepos.md
