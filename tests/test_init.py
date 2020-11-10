@@ -57,8 +57,7 @@ class TestInit(TestCase):
                                 'url': None,
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -88,8 +87,7 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -121,8 +119,7 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -154,8 +151,7 @@ class TestInit(TestCase):
                                 'url': 'git@github.com:genius-systems/gameta.git',
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 

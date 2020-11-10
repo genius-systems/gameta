@@ -1,10 +1,12 @@
 # Gameta
 
 Gameta is a powerful CLI tool that helps you to manage 
-[meta-repositories](https://genius-systems.github.io/gameta/metarepos/metarepos)
-or metarepos. It allows you to create links to related repositories, 
-make changes and sync them, and provides functionality to customise and 
-apply other CLI commands to these repositories.
+[meta-repositories](metarepos.md) or [metarepos](metarepos.md). It allows 
+you to create links to related repositories, make changes and sync them, and 
+provides functionality to customise and apply other CLI commands to these 
+repositories.
+
+## What is Gameta?
 
 Gameta is a play on the word gamete (reproductive cells), and similar 
 to how gametes form the building blocks for life, gameta helps to 
@@ -111,6 +113,15 @@ The command above applies the following to all repositories:
 
 1. Fetches all git updates, tags and prunes redundant git artifacts
 2. Merges changes on the default branch
+
+There's alot more that you can do with commands, see the 
+[Applying Commands](user_guide/applying_commands.md)
+page for more information
+
+## Best practices
+
+Learn how to leverage on Gameta's capabilities in the 
+[Best Practices](user_guide/best_practices.md) page
 
 ## Documentation 
 

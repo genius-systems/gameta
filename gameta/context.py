@@ -2,11 +2,14 @@ import json
 import shlex
 from contextlib import contextmanager
 from copy import deepcopy
-from os import getenv, getcwd, chdir
+from os import getenv, getcwd, chdir, environ
 from os.path import join, basename, normpath, abspath
-from typing import Optional, List, Generator, Dict, Tuple
+from typing import Optional, List, Generator, Dict, Tuple, Union
 
 import click
+
+
+from jsonschema.validators import Draft7Validator
 
 
 __all__ = [
@@ -23,22 +26,132 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
+        __schema__ (Dict): JSON Schema for Gameta .meta file
+        validators (Dict[str, jsonschema.Draft7Validator]): JSON Schema validators for each object component
+        reserved_params (Dict[str, List[str]): Reserved parameters for each object group
+
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
         gameta_data (Dict): Gameta data extracted and exported
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
+        constants (Dict[str, Union[str, int, bool, float]]): Gameta constants data extracted
+        commands (Dict): Gameta commands data extracted
+        gitignore_data (List[str]): Gitignore data extracted from the .gitignore file
+        env_vars (Dict): Extracted environment variables with keys prefixed with $
     """
-    reserved_params = ['url', 'path', 'tags', '__metarepo__']
+    __schema__: Dict = {
+        '$schema': "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+            "repositories": {
+                "$ref": "#/definitions/repositories"
+            },
+            "commands": {
+                "$ref": "#/definitions/commands"
+            },
+            "constants": {
+                "$ref": "#/definitions/constants"
+            },
+            "required": [
+                "repositories"
+            ]
+        },
+        'definitions': {
+            "repositories": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": ["string", "null"],
+                        "format": "uri"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "__metarepo__": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "url", "path", "__metarepo__"
+                ]
+            },
+            "commands": {
+                "type": "object",
+                "properties": {
+                    "commands": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                    },
+                    "raise_errors": {
+                        "type": "boolean"
+                    },
+                    "shell": {
+                        "type": "boolean"
+                    },
+                    "verbose": {
+                        "type": "boolean"
+                    },
+                    "repositories": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                    }
+                },
+                "minProperties": 6,
+                "maxProperties": 6,
+                "additionalProperties": False,
+            },
+            "constants": {
+                "type": "object",
+                "propertyNames": {
+                    "pattern": "^[A-Z0-9_-]"
+                }
+            }
+        }
+    }
+
+    validators = {
+        'meta': Draft7Validator(__schema__),
+        'repositories': Draft7Validator(__schema__['definitions']['repositories']),
+        'commands': Draft7Validator(__schema__['definitions']['commands']),
+        'constants': Draft7Validator(__schema__['definitions']['constants'])
+    }
+
+    reserved_params: Dict[str, List[str]] = {
+        'repositories': list(__schema__['definitions']['repositories']['properties'].keys()),
+        'commands': list(__schema__['definitions']['commands']['properties'].keys())
+    }
 
     def __init__(self):
-        self.is_metarepo: bool = False
-        self.gitignore_data: List[str] = []
         self.project_dir: Optional[str] = None
+        self.gitignore_data: List[str] = []
+        self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
+        self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
         self.tags: Dict[str, List[str]] = {}
+
+        self.env_vars: Dict = {
+            '$' + k.upper(): v
+            for k, v in environ.items()
+        }
 
     @property
     def project_name(self) -> str:
@@ -118,28 +231,45 @@ class GametaContext(object):
         Returns:
             None
         """
+        # Attempt to load .meta file
         try:
             with open(self.meta, 'r') as f:
                 self.gameta_data = json.load(f)
-                self.repositories = self.gameta_data['projects']
-                self.commands = self.gameta_data.get('commands', {})
-            self.is_metarepo = True
         except FileNotFoundError:
             return
         except Exception as e:
-            self.repositories = {}
-            self.commands = {}
             click.echo(f"Could not load .meta file due to: {e.__class__.__name__}.{str(e)}")
-            return
 
+        # Validate repositories
         try:
+            for repo in self.gameta_data['projects'].values():
+                self.validators['repositories'].validate(repo)
+            self.repositories = self.gameta_data['projects']
+            self.is_metarepo = True
             self.generate_tags()
         except Exception as e:
             self.repositories = {}
-            self.commands = {}
-            click.echo(f"Malformed .meta file, error: {e.__class__.__name__}.{str(e)}")
-            return
+            self.tags = {}
+            click.echo(f"Malformed repository element, error: {e.__class__.__name__}.{str(e)}")
 
+        # Validate commands
+        try:
+            for command in self.gameta_data.get('commands', {}).values():
+                self.validators['commands'].validate(command)
+            self.commands = self.gameta_data.get('commands', {})
+        except Exception as e:
+            self.commands = {}
+            click.echo(f"Malformed commands element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate constants
+        try:
+            self.validators['constants'].validate(self.gameta_data.get('constants', {}))
+            self.constants = self.gameta_data.get('constants', {})
+        except Exception as e:
+            self.constants = {}
+            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Load .gitignore
         try:
             with open(self.gitignore, 'r') as f:
                 self.gitignore_data = f.readlines()
@@ -147,8 +277,7 @@ class GametaContext(object):
             return
         except Exception as e:
             self.gitignore_data = []
-            click.ClickException(f"Could not load .gitignore file due to: {e.__class__.__name__}.{str(e)}")
-            return
+            click.echo(f"Could not load .gitignore file due to: {e.__class__.__name__}.{str(e)}")
 
     def export(self) -> None:
         """
@@ -159,9 +288,12 @@ class GametaContext(object):
         """
         try:
             self.gameta_data['projects'] = self.repositories
-            self.gameta_data['commands'] = self.commands
+            if self.commands:
+                self.gameta_data['commands'] = self.commands
+            if self.constants:
+                self.gameta_data['constants'] = self.constants
             with open(self.meta, 'w+') as f:
-                json.dump(self.gameta_data, f)
+                json.dump(self.gameta_data, f, indent=2)
         except Exception as e:
             raise click.ClickException(
                 f"Could not export gameta data to .meta file: {e.__class__.__name__}.{str(e)}"
@@ -212,8 +344,13 @@ class GametaContext(object):
             list(self.repositories.items())
 
         for repo, details in repositories:
-            with self.cd(details['path']):
-                repo_commands: List[str] = [c.format(**details) for c in deepcopy(commands)]
+            # Generate complete set of parameters for substitution
+            combined_details: Dict = deepcopy(details)
+            combined_details.update(self.constants)
+            combined_details.update(self.env_vars)
+
+            with self.cd(combined_details['path']):
+                repo_commands: List[str] = [c.format(**combined_details) for c in deepcopy(commands)]
                 command: List[str] = self.shell(repo_commands) if shell else self.tokenise(' && '.join(repo_commands))
                 yield repo, command
 

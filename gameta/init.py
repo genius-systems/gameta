@@ -1,4 +1,4 @@
-from os.path import splitext, basename, abspath
+from os.path import splitext, basename
 from typing import Optional
 
 import click

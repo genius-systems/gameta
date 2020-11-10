@@ -64,12 +64,12 @@ class TestApply(TestCase):
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_apply_multiple_commands_to_all_repositories(self, mock_ensure_object):
+    def test_apply_multiple_commands_to_all_repositories_with_parameter_substitution(self, mock_ensure_object):
         params = {
             'commands': [
                 'git fetch --all --tags --prune',
-                'git checkout {branch}',
-                'git pull {repo} {new_branch}'
+                'git checkout {BRANCH}',
+                'git pull {repo} {$BRANCH}',
             ],
             'actual_repositories': ['gameta', 'GitPython', 'gitdb']
 
@@ -83,19 +83,15 @@ class TestApply(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update(
-                        {"branch": "master", 'new_branch': 'master', 'repo': 'origin'}
-                    )
-                    output['projects']['gitdb'].update(
-                        {'branch': 'master', 'new_branch': 'gitdb2', 'repo': 'origin'}
-                    )
-                    output['projects']['GitPython'].update(
-                        {'branch': 'master', 'new_branch': 'master', 'repo': 'origin'}
-                    )
+                    output['projects']['gameta'].update({'repo': 'origin'})
+                    output['projects']['gitdb'].update({'repo': 'origin'})
+                    output['projects']['GitPython'].update({'repo': 'origin'})
+                    output.update({'constants': {'BRANCH': 'master'}})
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
             context.load()
+            context.env_vars['$BRANCH'] = 'master'
             mock_ensure_object.return_value = context
 
             output = [c for repo, c in context.apply(list(params['commands']), shell=True)]
@@ -109,7 +105,7 @@ class TestApply(TestCase):
             )
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
-                result.output.split("Error CalledProcessError.Command")[0],
+                result.output,
                 "Multiple commands detected, executing in a separate shell\n"
                 f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
                 f"Executing {' '.join(output[0])} in {params['actual_repositories'][0]}\n"

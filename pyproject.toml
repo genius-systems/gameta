@@ -4,8 +4,8 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "gameta"
-version = "0.1.0"
-description = "Tool for managing meta-repositories"
+version = "0.2.0"
+description = "CLI Tool for managing meta-repositories"
 license = "MIT"
 authors = [ "David Lee <ltw_david@hotmail.com>",]
 exclude = [ "tests", ]
@@ -20,7 +20,7 @@ documentation = "https://genius-systems.github.io/gameta"
 
 keywords = ["metarepositories", "repositories", "shell", "git"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
@@ -46,6 +46,7 @@ python = ">=3.7"
 Click = "^7.1.2"
 colorama = "^0.4.3"
 gitpython = "^3.1.9"
+jsonschema = "^3.2.0"
 
 [tool.poetry.dev-dependencies]
 mkdocs = "^1.1.2"

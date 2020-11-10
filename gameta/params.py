@@ -25,6 +25,9 @@ def parameters_cli(context: GametaContext) -> None:
 
     Returns:
         None
+
+    Raises:
+        click.ClickException: If we are not currently operating in a metarepo directory
     """
     if not context.is_metarepo:
         raise click.ClickException(f"{context.project_dir} is not a metarepo, initialise it with 'gameta init'")
@@ -122,8 +125,10 @@ def delete(context: GametaContext, param: str) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
-    if param in context.reserved_params:
-        raise click.ClickException(f"Parameter {param} is a reserved parameter {context.reserved_params}")
+    if param in context.reserved_params['repositories']:
+        raise click.ClickException(
+            f"Parameter {param} is a reserved parameter {context.reserved_params['repositories']}"
+        )
 
     try:
         click.echo(f"Deleting parameter {param}")

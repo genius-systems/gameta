@@ -24,6 +24,9 @@ def repo_cli(context: GametaContext) -> None:
 
     Returns:
         None
+
+    Raises:
+        click.ClickException: If we are not currently operating in a metarepo directory
     """
     if not context.is_metarepo:
         raise click.ClickException(f"{context.project_dir} is not a metarepo, initialise it with 'gameta init'")

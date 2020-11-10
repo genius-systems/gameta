@@ -20,6 +20,9 @@ def tags_cli(context: GametaContext) -> None:
 
     Returns:
         None
+
+    Raises:
+        click.ClickException: If we are not currently operating in a metarepo directory
     """
     if not context.is_metarepo:
         raise click.ClickException(f"{context.project_dir} is not a metarepo, initialise it with 'gameta init'")
@@ -47,7 +50,7 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
-    click.echo(f"Adding tags {tags} to {name}")
+    click.echo(f"Adding tags {list(tags)} to {name}")
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in .meta file")
 
@@ -82,7 +85,7 @@ def delete(context: GametaContext, name: str, tags: Tuple[str]) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
-    click.echo(f"Deleting tags {tags} from {name}")
+    click.echo(f"Deleting tags {list(tags)} from {name}")
     if name not in context.repositories:
         raise click.ClickException(f"Repository {name} does not exist in .meta file")
 

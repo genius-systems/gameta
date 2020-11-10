@@ -82,8 +82,7 @@ class TestReposAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -136,8 +135,7 @@ class TestReposAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -187,8 +185,7 @@ class TestReposAdd(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -246,8 +243,7 @@ class TestReposAdd(TestCase):
                                 "tags": ['a', 'b', 'c'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -267,6 +263,7 @@ class TestReposAdd(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
+                        "__metarepo__": False,
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -303,8 +300,7 @@ class TestReposAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -359,8 +355,7 @@ class TestReposAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -422,8 +417,7 @@ class TestReposAdd(TestCase):
                                 'path': 'GitPython',
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -467,8 +461,7 @@ class TestReposAdd(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -514,7 +507,8 @@ class TestReposDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['a', 'b', 'c']
+                        'tags': ['a', 'b', 'c'],
+                        "__metarepo__": False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -541,8 +535,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -565,7 +558,8 @@ class TestReposDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['a', 'b', 'c']
+                        'tags': ['a', 'b', 'c'],
+                        "__metarepo__": False
                     }
                     json.dump(output, m2)
             copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
@@ -593,8 +587,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -617,7 +610,8 @@ class TestReposDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['a', 'b', 'c']
+                        'tags': ['a', 'b', 'c'],
+                        "__metarepo__": False
                     }
                     json.dump(output, m2)
             with open(join(dirname(__file__), 'data', '.gitignore'), 'r') as g1:
@@ -649,8 +643,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -673,7 +666,8 @@ class TestReposDelete(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['a', 'b', 'c']
+                        'tags': ['a', 'b', 'c'],
+                        "__metarepo__": False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -700,8 +694,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -736,8 +729,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -772,8 +764,7 @@ class TestReposDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -794,12 +785,14 @@ class TestRepoLs(TestCase):
                     output['projects']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
-                        'tags': ['a', 'b', 'c']
+                        'tags': ['a', 'b', 'c'],
+                        "__metarepo__": False
                     }
                     output['projects']['genisys'] = {
                         "url": 'https://github.com/test/genisys.git',
                         "path": "core/genisys",
-                        'tags': ['c', 'd', 'e']
+                        'tags': ['c', 'd', 'e'],
+                        "__metarepo__": False
                     }
                     json.dump(output, m2)
             context = GametaContext()
@@ -940,8 +933,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -1005,8 +997,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -1076,8 +1067,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, '.gitignore')))
@@ -1146,8 +1136,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertFalse(exists(join(f, 'GitPython')))
@@ -1213,8 +1202,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, 'GitPython')))
@@ -1279,8 +1267,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertFalse(exists(join(f, 'GitPython')))
@@ -1345,8 +1332,7 @@ class TestRepoUpdate(TestCase):
                                 "url": "https://github.com/gitpython-developers/gitdb.git",
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
             self.assertTrue(exists(join(f, 'GitPython')))
