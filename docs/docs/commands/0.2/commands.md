@@ -286,12 +286,16 @@ below:
 4. *str*: String
 ___
 
-
 ### gameta const delete
 
 Deletes an existing constant from the constants store
 
 ### Arguments
 * **--name / -n**: Name of the Gameta constant to be deleted
+___
+**Note**
+   
+The constant name can be provided in either lowercase or uppercase.
+___
 
 [Applying Commands]: ../../user_guide/applying_commands.md

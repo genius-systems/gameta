@@ -484,6 +484,7 @@ class TestCommandDelete(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.delete, ['-n', params['name']])
+            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -502,7 +503,8 @@ class TestCommandDelete(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        }
+                        },
+                        "commands": {}
                     }
                 )
 
