@@ -68,6 +68,7 @@ class TestInit(TestCase):
                 template.extractall(f)
             context = GametaContext()
             context.project_dir = f
+            context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.init)
             self.assertEqual(result.exit_code, 0)
@@ -154,6 +155,41 @@ class TestInit(TestCase):
                         }
                     }
                 )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_init_does_not_clear_gitignore_file(self, mock_ensure_object):
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.init)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f'Initialising metarepo in {f}\n'
+                f"Successfully initialised gameta as a metarepo\n"
+            )
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'gameta': {
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git',
+                                '__metarepo__': True
+                            }
+                        }
+                    }
+                )
+            with open(join(f, '.gitignore'), 'r') as m1:
+                with open(join(dirname(__file__), 'data', '.gitignore'), 'r') as m2:
+                    self.assertEqual(m1.read(), m2.read())
 
 
 class TestSync(TestCase):
