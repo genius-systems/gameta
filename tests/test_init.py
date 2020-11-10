@@ -68,6 +68,7 @@ class TestInit(TestCase):
                 template.extractall(f)
             context = GametaContext()
             context.project_dir = f
+            context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.init)
             self.assertEqual(result.exit_code, 0)
@@ -163,6 +164,7 @@ class TestInit(TestCase):
             copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
             context = GametaContext()
             context.project_dir = f
+            context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.init)
             self.assertEqual(result.exit_code, 0)

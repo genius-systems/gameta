@@ -99,9 +99,8 @@ class GitIgnore(File):
             None
         """
         try:
-            with open(self.file, 'a') as f:
-                if self.context.gitignore_data:
-                    f.writelines(self.context.gitignore_data)
+            with open(self.file, 'w') as f:
+                f.writelines(self.context.gitignore_data)
         except Exception as e:
             click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
 
@@ -176,7 +175,7 @@ class Meta(File):
                 self.context.gameta_data['commands'] = self.context.commands
             if self.context.constants:
                 self.context.gameta_data['constants'] = self.context.constants
-            with open(self.file, 'w+') as f:
+            with open(self.file, 'w') as f:
                 json.dump(self.context.gameta_data, f, indent=2)
         except Exception as e:
             click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
