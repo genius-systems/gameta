@@ -1,7 +1,9 @@
 import json
 import zipfile
-from os.path import join, dirname
-from shutil import copyfile, copytree
+from os import listdir
+from os.path import join, dirname, exists
+from tempfile import mkdtemp
+from shutil import copyfile, copytree, rmtree
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -69,11 +71,12 @@ class TestApply(TestCase):
             'commands': [
                 'git fetch --all --tags --prune',
                 'git checkout {BRANCH}',
-                'git pull {repo} {$BRANCH}',
+                'mkdir {$TMP}/{test_dir}',
+                'cp -r . {$TMP}/{test_dir}'
             ],
             'actual_repositories': ['gameta', 'GitPython', 'gitdb']
-
         }
+        tempdir = mkdtemp()
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
@@ -83,15 +86,15 @@ class TestApply(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({'repo': 'origin'})
-                    output['projects']['gitdb'].update({'repo': 'origin'})
-                    output['projects']['GitPython'].update({'repo': 'origin'})
+                    output['projects']['gameta'].update({'test_dir': 'test_gameta'})
+                    output['projects']['gitdb'].update({'test_dir': 'test_gitdb'})
+                    output['projects']['GitPython'].update({'test_dir': 'test_gitpython'})
                     output.update({'constants': {'BRANCH': 'master'}})
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
             context.load()
-            context.env_vars['$BRANCH'] = 'master'
+            context.env_vars['$TMP'] = tempdir
             mock_ensure_object.return_value = context
 
             output = [c for repo, c in context.apply(list(params['commands']), shell=True)]
@@ -101,6 +104,7 @@ class TestApply(TestCase):
                     '--command', params['commands'][0],
                     '--command', params['commands'][1],
                     '--command', params['commands'][2],
+                    '--command', params['commands'][3],
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -112,6 +116,11 @@ class TestApply(TestCase):
                 f"Executing {' '.join(output[1])} in {params['actual_repositories'][1]}\n"
                 f"Executing {' '.join(output[2])} in {params['actual_repositories'][2]}\n"
             )
+            self.assertCountEqual(listdir(tempdir), ['test_gitdb', 'test_gitpython', 'test_gameta'])
+            self.assertTrue(all(i in listdir(join(tempdir, 'test_gameta')) for i in ['gameta', 'docs', 'tests']))
+            self.assertTrue(all(i in listdir(join(tempdir, 'test_gitpython')) for i in ['git', 'doc', 'test']))
+            self.assertTrue(all(i in listdir(join(tempdir, 'test_gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
+        rmtree(tempdir)
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_to_tagged_repositories(self, mock_ensure_object):

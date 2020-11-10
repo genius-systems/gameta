@@ -8,9 +8,6 @@ jobs:
     docker:
       - image: "fkrull/multi-python:bionic"
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "57:f7:e0:ef:ee:9e:70:05:1e:67:78:e3:38:e2:e2:4e"
       - checkout
       - run:
           name: Test
