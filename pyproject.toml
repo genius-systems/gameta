@@ -20,7 +20,7 @@ documentation = "https://genius-systems.github.io/gameta"
 
 keywords = ["metarepositories", "repositories", "shell", "git"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
