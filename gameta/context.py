@@ -1,5 +1,6 @@
 import json
 import shlex
+from abc import abstractmethod
 from contextlib import contextmanager
 from copy import deepcopy
 from os import getenv, getcwd, chdir, environ
@@ -21,6 +22,166 @@ __all__ = [
 SHELL = getenv('SHELL', '/bin/sh')
 
 
+class File(object):
+    """
+    Generic file interface for Gameta file formats
+
+    Attributes:
+        context (GametaContext): Reference to Gameta Context
+        file_name (str): Name of the reference file
+    """
+
+    def __init__(self, context: 'GametaContext', file_name: str):
+        self.context = context
+        self.file_name = file_name
+
+    @property
+    def file(self) -> str:
+        """
+        Returns the absolute path to the reference file
+
+        Returns:
+            str: Absolute path to the file
+        """
+        return join(self.context.project_dir, self.file_name)
+
+    @abstractmethod
+    def load(self) -> None:
+        """
+        Abstractmethod to load data and validate data from the file and populate the GametaContext
+
+        Returns:
+            None
+        """
+
+    @abstractmethod
+    def export(self) -> None:
+        """
+        Abstractmethod to export data from the GametaContext to the file
+
+        Returns:
+            None
+        """
+
+
+class GitIgnore(File):
+    """
+    Interface for the .gitignore file
+
+    Attributes:
+        context (GametaContext): Reference to Gameta Context
+        file_name (str): Reference to the .gitignore file
+    """
+    def __init__(self, context: 'GametaContext', file_name: str = '.gitignore'):
+        super(GitIgnore, self).__init__(context, file_name)
+
+    def load(self) -> None:
+        """
+        Loads data from the .gitignore file and populates the GametaContext
+
+        Returns:
+            None
+        """
+        try:
+            with open(self.file, 'r') as f:
+                self.context.gitignore_data = f.readlines()
+        except FileNotFoundError:
+            return
+        except Exception as e:
+            self.context.gitignore_data = []
+            click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
+
+    def export(self) -> None:
+        """
+        Exports data from the GametaContext to the .gitignore file
+
+        Returns:
+            None
+        """
+        try:
+            with open(self.file, 'a') as f:
+                if self.context.gitignore_data:
+                    f.writelines(self.context.gitignore_data)
+        except Exception as e:
+            click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
+
+
+class Meta(File):
+    """
+    Interface for the .meta file
+
+    Attributes:
+        context (GametaContext): Reference to Gameta Context
+        file_name (str): Reference to the .meta file
+    """
+
+    def __init__(self, context: 'GametaContext', file_name: str = '.meta'):
+        super(Meta, self).__init__(context, file_name)
+
+    def load(self) -> None:
+        """
+        Loads data from the .meta file, validates it and populates the GametaContext
+
+        Returns:
+            None
+        """
+        # Attempt to load .meta file
+        try:
+            with open(self.file_name, 'r') as f:
+                self.context.gameta_data = json.load(f)
+        except FileNotFoundError:
+            return
+        except Exception as e:
+            click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
+
+        # Validate repositories
+        try:
+            for repo in self.context.gameta_data['projects'].values():
+                self.context.validators['repositories'].validate(repo)
+            self.context.repositories = self.context.gameta_data['projects']
+            self.context.is_metarepo = True
+            self.context.generate_tags()
+        except Exception as e:
+            self.context.repositories = {}
+            self.context.tags = {}
+            click.echo(f"Malformed repository element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate commands
+        try:
+            for command in self.context.gameta_data.get('commands', {}).values():
+                self.context.validators['commands'].validate(command)
+            self.context.commands = self.context.gameta_data.get('commands', {})
+        except Exception as e:
+            self.context.commands = {}
+            click.echo(f"Malformed commands element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate constants
+        try:
+            self.context.validators['constants'].validate(self.context.gameta_data.get('constants', {}))
+            self.context.constants = self.context.gameta_data.get('constants', {})
+        except Exception as e:
+            self.context.constants = {}
+            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
+
+    def export(self) -> None:
+        """
+        Exports data from the GametaContext to the .meta file
+
+        Returns:
+            None
+        """
+        try:
+            self.context.gameta_data['projects'] = self.context.repositories
+            if self.context.commands:
+                self.context.gameta_data['commands'] = self.context.commands
+            if self.context.constants:
+                self.context.gameta_data['constants'] = self.context.constants
+            with open(self.file, 'w+') as f:
+                json.dump(self.context.gameta_data, f, indent=2)
+        except Exception as e:
+            click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
+
+
 class GametaContext(object):
     """
     GametaContext for the current Gameta session
@@ -39,6 +200,7 @@ class GametaContext(object):
         commands (Dict): Gameta commands data extracted
         gitignore_data (List[str]): Gitignore data extracted from the .gitignore file
         env_vars (Dict): Extracted environment variables with keys prefixed with $
+        files (Dict[str, File]): File formats supported
     """
     __schema__: Dict = {
         '$schema': "http://json-schema.org/draft-07/schema#",
@@ -153,6 +315,11 @@ class GametaContext(object):
             for k, v in environ.items()
         }
 
+        self.files: Dict[str, File] = {
+            'meta': Meta(self),
+            'gitignore': GitIgnore(self)
+        }
+
     @property
     def project_name(self) -> str:
         """
@@ -172,7 +339,7 @@ class GametaContext(object):
         Returns:
             str: Path to the project's .meta file
         """
-        return join(self.project_dir, '.meta')
+        return self.files['meta'].file
 
     @property
     def gitignore(self) -> str:
@@ -183,7 +350,7 @@ class GametaContext(object):
         Returns:
             str: Path to the project's .gitignore file
         """
-        return join(self.project_dir, '.gitignore')
+        return self.files['gitignore'].file
 
     def add_gitignore(self, path: str) -> None:
         """
@@ -226,86 +393,23 @@ class GametaContext(object):
 
     def load(self) -> None:
         """
-        Finds all repositories to manage and groups them into relative groups
+        Loads data from all supported file formats
 
         Returns:
             None
         """
-        # Attempt to load .meta file
-        try:
-            with open(self.meta, 'r') as f:
-                self.gameta_data = json.load(f)
-        except FileNotFoundError:
-            return
-        except Exception as e:
-            click.echo(f"Could not load .meta file due to: {e.__class__.__name__}.{str(e)}")
-
-        # Validate repositories
-        try:
-            for repo in self.gameta_data['projects'].values():
-                self.validators['repositories'].validate(repo)
-            self.repositories = self.gameta_data['projects']
-            self.is_metarepo = True
-            self.generate_tags()
-        except Exception as e:
-            self.repositories = {}
-            self.tags = {}
-            click.echo(f"Malformed repository element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Validate commands
-        try:
-            for command in self.gameta_data.get('commands', {}).values():
-                self.validators['commands'].validate(command)
-            self.commands = self.gameta_data.get('commands', {})
-        except Exception as e:
-            self.commands = {}
-            click.echo(f"Malformed commands element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Validate constants
-        try:
-            self.validators['constants'].validate(self.gameta_data.get('constants', {}))
-            self.constants = self.gameta_data.get('constants', {})
-        except Exception as e:
-            self.constants = {}
-            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Load .gitignore
-        try:
-            with open(self.gitignore, 'r') as f:
-                self.gitignore_data = f.readlines()
-        except FileNotFoundError:
-            return
-        except Exception as e:
-            self.gitignore_data = []
-            click.echo(f"Could not load .gitignore file due to: {e.__class__.__name__}.{str(e)}")
+        for file, interface in self.files.items():
+            interface.load()
 
     def export(self) -> None:
         """
-        Exports updated Gameta data to .meta file and gitignore data to the .gitignore file
+        Exports data to all supported file formats
 
         Returns:
             None
         """
-        try:
-            self.gameta_data['projects'] = self.repositories
-            if self.commands:
-                self.gameta_data['commands'] = self.commands
-            if self.constants:
-                self.gameta_data['constants'] = self.constants
-            with open(self.meta, 'w+') as f:
-                json.dump(self.gameta_data, f, indent=2)
-        except Exception as e:
-            raise click.ClickException(
-                f"Could not export gameta data to .meta file: {e.__class__.__name__}.{str(e)}"
-            )
-
-        try:
-            with open(self.gitignore, 'w+') as f:
-                f.writelines(self.gitignore_data)
-        except Exception as e:
-            raise click.ClickException(
-                f"Could not export gitignore data to .gitignore file: {e.__class__.__name__}.{str(e)}"
-            )
+        for file, interface in self.files.items():
+            interface.export()
 
     def generate_tags(self) -> None:
         """
