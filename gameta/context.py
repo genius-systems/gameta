@@ -293,7 +293,7 @@ class GametaContext(object):
             if self.constants:
                 self.gameta_data['constants'] = self.constants
             with open(self.meta, 'w+') as f:
-                json.dump(self.gameta_data, f)
+                json.dump(self.gameta_data, f, indent=2)
         except Exception as e:
             raise click.ClickException(
                 f"Could not export gameta data to .meta file: {e.__class__.__name__}.{str(e)}"
