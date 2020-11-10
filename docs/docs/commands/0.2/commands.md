@@ -260,8 +260,38 @@ Constant subcommand group, contains the following commands:
 
 Adds/Updates constants in the constants store
 
+___
+**Note**
+   
+Constants are applied consistently across all repositories, while parameters are unique
+to each repository. Hence to distinguish between parameters which are unique, constants
+are all converted to uppercase.
+___
+
+### Arguments
+* **--name / -n**: Name of the Gameta constant to be added
+* **--type / -t**: Type of the Gameta constant (int, float, bool and str) to be added
+* **--value / -v**: Value of the Gameta constant to be added
+
+___
+**Note**
+   
+Gameta constants only support basic types, these will be used to interpret the 
+constant value that the user inputs. Hence the type has to be one of the 4 types 
+below:
+
+1. *int*: Integer
+2. *float*: Floating Point
+3. *bool*: Boolean
+4. *str*: String
+___
+
+
 ### gameta const delete
 
 Deletes an existing constant from the constants store
+
+### Arguments
+* **--name / -n**: Name of the Gameta constant to be deleted
 
 [Applying Commands]: ../../user_guide/applying_commands.md
