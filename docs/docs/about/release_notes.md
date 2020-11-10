@@ -20,6 +20,13 @@ The current members of the Gameta team.
 
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
+
+## Version 0.2.1 (2020-11-10)
+
+* Hot fixes for various issues:
+  * Fixing bug where `gameta init` clears the entire .gitignore file [link](https://github.com/genius-systems/gameta/issues/10)
+  * Improving documentation
+
 ## Version 0.2.0 (2020-11-10)
 
 * Added functionality to extract and substitute environment variables [link](https://github.com/genius-systems/gameta/issues/16)
