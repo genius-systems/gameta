@@ -2,9 +2,9 @@ import json
 import shlex
 from contextlib import contextmanager
 from copy import deepcopy
-from os import getenv, getcwd, chdir
+from os import getenv, getcwd, chdir, environ
 from os.path import join, basename, normpath, abspath
-from typing import Optional, List, Generator, Dict, Tuple
+from typing import Optional, List, Generator, Dict, Tuple, Union
 
 import click
 
@@ -26,11 +26,19 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
+        __schema__ (Dict): JSON Schema for Gameta .meta file
+        validators (Dict[str, jsonschema.Draft7Validator]): JSON Schema validators for each object component
+        reserved_params (Dict[str, List[str]): Reserved parameters for each object group
+
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
         gameta_data (Dict): Gameta data extracted and exported
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
+        constants (Dict[str, Union[str, int, bool, float]]): Gameta constants data extracted
+        commands (Dict): Gameta commands data extracted
+        gitignore_data (List[str]): Gitignore data extracted from the .gitignore file
+        env_vars (Dict): Extracted environment variables with keys prefixed with $
     """
     __schema__: Dict = {
         '$schema': "http://json-schema.org/draft-07/schema#",
@@ -54,7 +62,7 @@ class GametaContext(object):
                 "type": "object",
                 "properties": {
                     "url": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "format": "uri"
                     },
                     "path": {
@@ -117,6 +125,7 @@ class GametaContext(object):
             }
         }
     }
+
     validators = {
         'meta': Draft7Validator(__schema__),
         'repositories': Draft7Validator(__schema__['definitions']['repositories']),
@@ -134,10 +143,15 @@ class GametaContext(object):
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
-        self.constants: Dict = {}
+        self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
         self.tags: Dict[str, List[str]] = {}
+
+        self.env_vars: Dict = {
+            '$' + k.upper(): v
+            for k, v in environ.items()
+        }
 
     @property
     def project_name(self) -> str:
@@ -330,8 +344,13 @@ class GametaContext(object):
             list(self.repositories.items())
 
         for repo, details in repositories:
-            with self.cd(details['path']):
-                repo_commands: List[str] = [c.format(**details) for c in deepcopy(commands)]
+            # Generate complete set of parameters for substitution
+            combined_details: Dict = deepcopy(details)
+            combined_details.update(self.constants)
+            combined_details.update(self.env_vars)
+
+            with self.cd(combined_details['path']):
+                repo_commands: List[str] = [c.format(**combined_details) for c in deepcopy(commands)]
                 command: List[str] = self.shell(repo_commands) if shell else self.tokenise(' && '.join(repo_commands))
                 yield repo, command
 

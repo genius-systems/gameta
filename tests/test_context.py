@@ -13,6 +13,10 @@ class TestGametaContext(TestCase):
         self.context = GametaContext()
         self.runner = CliRunner()
 
+    def test_gameta_context_environment_variables_properly_extracted(self):
+        self.assertTrue(all(i[0] == '$' for i in self.context.env_vars))
+        self.assertTrue('$HOME' in self.context.env_vars)
+
     def test_gameta_context_cd_to_valid_directory(self):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'test', 'hello', 'world'))
@@ -1317,6 +1321,196 @@ class TestGametaContext(TestCase):
                     ],
                     ['gameta', 'genisys', 'genisys-testing'],
                     self.context.apply(['git clone {url} {path}'])
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], test_output)
+
+    def test_gameta_context_apply_with_constants_substitution(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/test/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/test/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/test/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "constants": {
+                            "BRANCH": "hello"
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.load()
+            for cwd, test_output, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    [
+                        ['git', 'checkout', 'hello'],
+                        ['git', 'checkout', 'hello'],
+                        ['git', 'checkout', 'hello']
+                    ],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(['git checkout {BRANCH}'])
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], test_output)
+
+    def test_gameta_context_apply_with_environment_variable_substitution(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/test/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/test/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/test/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "constants": {
+                            "BRANCH": "hello"
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.env_vars['$BRANCH'] = "world"
+            self.context.load()
+            for cwd, test_output, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    [
+                        ['git', 'checkout', 'world'],
+                        ['git', 'checkout', 'world'],
+                        ['git', 'checkout', 'world']
+                    ],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(['git checkout {$BRANCH}'])
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(repo_command[1], test_output)
+
+    def test_gameta_context_apply_with_all_substitutions(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/test/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/test/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/test/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "constants": {
+                            "BRANCH": "hello"
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.env_vars['$ORIGIN'] = "world"
+            self.context.load()
+            for cwd, test_output, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    [
+                        [
+                            'git', 'clone', 'https://github.com/test/gameta.git', '.', '&&',
+                            'git', 'checkout', 'hello', '&&',
+                            'git', 'push', 'world', 'hello'
+                        ],
+                        [
+                            'git', 'clone', 'https://github.com/test/genisys.git', 'core/genisys', '&&',
+                            'git', 'checkout', 'hello', '&&',
+                            'git', 'push', 'world', 'hello'
+                        ],
+                        [
+                            'git', 'clone', 'https://github.com/test/genisys-testing.git', 'core/genisys-testing', '&&',
+                            'git', 'checkout', 'hello', '&&',
+                            'git', 'push', 'world', 'hello'
+                        ],
+                    ],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(
+                        ['git clone {url} {path}', 'git checkout {BRANCH}', 'git push {$ORIGIN} {BRANCH}']
+                    )
             ):
                 self.assertEqual(getcwd(), cwd)
                 self.assertEqual(repo, repo_command[0])
