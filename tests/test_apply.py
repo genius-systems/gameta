@@ -117,8 +117,9 @@ class TestApply(TestCase):
                 f"Executing {' '.join(output[2])} in {params['actual_repositories'][2]}\n"
             )
             self.assertCountEqual(listdir(tempdir), ['test_gitdb', 'test_gitpython', 'test_gameta'])
-            print(listdir(join(tempdir, 'test_gameta')))
-            self.assertTrue(all(i in listdir(join(tempdir, 'test_gameta')) for i in ['gameta', 'docs', 'tests']))
+            self.assertTrue(all(
+                i in listdir(join(tempdir, 'test_gameta')) for i in ['.git', '.meta', 'GitPython', 'core']
+            ))
             self.assertTrue(all(i in listdir(join(tempdir, 'test_gitpython')) for i in ['git', 'doc', 'test']))
             self.assertTrue(all(i in listdir(join(tempdir, 'test_gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
         rmtree(tempdir)
