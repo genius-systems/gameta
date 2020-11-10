@@ -46,6 +46,7 @@ python = ">=3.7"
 Click = "^7.1.2"
 colorama = "^0.4.3"
 gitpython = "^3.1.9"
+jsonschema = "^3.2.0"
 
 [tool.poetry.dev-dependencies]
 mkdocs = "^1.1.2"

@@ -268,7 +268,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_load_empty_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open('.meta', 'w'):
+            with open(join(f, '.meta'), 'w'):
                 pass
 
             self.context.project_dir = f
@@ -276,15 +276,35 @@ class TestGametaContext(TestCase):
             self.assertEqual(self.context.repositories, {})
             self.assertEqual(self.context.commands, {})
 
-    def test_gameta_load_malformed_meta_file(self):
+    def test_gameta_load_malformed_repositories_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 output = {
                     'projects': {
                         'test': 'malformed_metafile'
                     },
-                    'commands': {
-                        'issues': 'issues'
+                    "commands": {
+                        'hello_world': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        },
+                        'hello_world2': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        }
+                    },
+                    'constants': {
+                        'HELLO': 'world',
+                        "I": 'am',
+                        'A': 'test'
                     }
                 }
                 json.dump(output, m)
@@ -292,11 +312,128 @@ class TestGametaContext(TestCase):
             self.context.project_dir = f
             self.context.load()
             self.assertEqual(self.context.repositories, {})
-            self.assertEqual(self.context.commands, {})
+            self.assertEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
 
-    def test_gameta_load_meta_file(self):
+    def test_gameta_load_malformed_commands_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'invalid': 'commands'
+                        },
+                        'constants': {
+                            'HELLO': 'world',
+                            "I": 'am',
+                            'A': 'test'
+                        }
+                    }, m
+                )
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertCountEqual(
+                self.context.repositories,
+                {
+                    "gameta": {
+                        "url": "https://github.com/testing/gameta.git",
+                        "path": ".",
+                        "tags": [
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
+                    },
+                    "genisys": {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ],
+                        '__metarepo__': False
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ],
+                        '__metarepo__': False
+                    }
+                }
+            )
+            self.assertEqual(self.context.commands, {})
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
+
+    def test_gameta_load_malformed_constants_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "projects": {
@@ -345,6 +482,129 @@ class TestGametaContext(TestCase):
                                 'shell': False,
                                 'raise_errors': False
                             }
+                        },
+                        'constants': {
+                            'hello': 'world',
+                            "i": 'am',
+                            'a': 'test'
+                        }
+                    }, m
+                )
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertCountEqual(
+                self.context.repositories,
+                {
+                    "gameta": {
+                        "url": "https://github.com/testing/gameta.git",
+                        "path": ".",
+                        "tags": [
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
+                    },
+                    "genisys": {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ],
+                        '__metarepo__': False
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ],
+                        '__metarepo__': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
+            self.assertEqual(self.context.constants, {})
+
+
+    def test_gameta_load_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            }
+                        },
+                        'constants': {
+                            'HELLO': 'world',
+                            "I": 'am',
+                            'A': 'test'
                         }
                     }, m
                 )
@@ -414,10 +674,18 @@ class TestGametaContext(TestCase):
                     }
                 }
             )
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
 
     def test_gameta_load_meta_and_gitignore_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "projects": {
@@ -466,6 +734,11 @@ class TestGametaContext(TestCase):
                                 'shell': False,
                                 'raise_errors': False
                             }
+                        },
+                        'constants': {
+                            'HELLO': 'world',
+                            "I": 'am',
+                            'A': 'test'
                         }
                     }, m
                 )
@@ -477,6 +750,63 @@ class TestGametaContext(TestCase):
             self.context.project_dir = f
             self.context.load()
             self.assertCountEqual(
+                self.context.gameta_data,
+                {
+                    "projects": {
+                        "gameta": {
+                            "url": "https://github.com/testing/gameta.git",
+                            "path": ".",
+                            "tags": [
+                                "metarepo"
+                            ],
+                            '__metarepo__': True
+                        },
+                        "genisys": {
+                            "url": "https://github.com/testing/genisys.git",
+                            "path": "core/genisys",
+                            "tags": [
+                                "core",
+                                "templating"
+                            ],
+                            '__metarepo__': False
+                        },
+                        "genisys-testing": {
+                            "url": "https://github.com/testing/genisys-testing.git",
+                            "path": "core/genisys-testing",
+                            "tags": [
+                                "core",
+                                "testing",
+                                "developer"
+                            ],
+                            '__metarepo__': False
+                        }
+                    },
+                    "commands": {
+                        'hello_world': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        },
+                        'hello_world2': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        }
+                    },
+                    'constants': {
+                        'HELLO': 'world',
+                        "I": 'am',
+                        'A': 'test'
+                    }
+                }
+            )
+            self.assertCountEqual(
                 self.context.repositories,
                 {
                     "gameta": {
@@ -541,6 +871,16 @@ class TestGametaContext(TestCase):
                     }
                 }
             )
+
+            self.assertCountEqual(
+                self.context.constants,
+                {
+                    'HELLO': "world",
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
+
             self.assertCountEqual(
                 self.context.gitignore_data,
                 ['HelloWorld\n', '.env\n', 'env\n']
@@ -558,7 +898,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_wrongly_formed_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "gameta": {
@@ -625,8 +965,7 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -660,8 +999,7 @@ class TestGametaContext(TestCase):
                                 ],
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -700,7 +1038,30 @@ class TestGametaContext(TestCase):
                         "developer"
                     ],
                     '__metarepo__': False
+                },
+            }
+            self.context.commands = {
+                'hello_world': {
+                    'commands': ['git fetch --all --tags --prune', 'git pull'],
+                    'tags': [],
+                    'repositories': ['gitdb', 'GitPython'],
+                    'verbose': False,
+                    'shell': False,
+                    'raise_errors': False
+                },
+                'hello_world2': {
+                    'commands': ['git fetch --all --tags --prune', 'git pull'],
+                    'tags': [],
+                    'repositories': ['gitdb', 'GitPython'],
+                    'verbose': False,
+                    'shell': False,
+                    'raise_errors': False
                 }
+            }
+            self.context.constants = {
+                'HELLO': "world",
+                "I": 'am',
+                'A': 'test'
             }
             self.context.export()
             self.assertTrue(exists(join(f, '.meta')))
@@ -729,7 +1090,29 @@ class TestGametaContext(TestCase):
                                 '__metarepo__': False
                             }
                         },
-                        "commands": {}
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            }
+                        },
+                        "constants": {
+                            'HELLO': "world",
+                            "I": 'am',
+                            'A': 'test'
+                        }
                     }
                 )
 
@@ -786,7 +1169,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "projects": {
@@ -835,7 +1218,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "projects": {
@@ -888,7 +1271,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open('.meta', 'w') as m:
+            with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
                         "projects": {
