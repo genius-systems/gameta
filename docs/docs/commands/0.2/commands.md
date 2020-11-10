@@ -27,6 +27,7 @@ Main CLI group, loads .meta files and delegates subcommands to other groups
 
 * --project-dir / -d: Absolute path to a metarepository, defaults to the current working 
 directory
+* --version / -v: Prints the current version of Gameta
 
 ## gameta init
 
@@ -55,9 +56,15 @@ Repository subcommand group, contains the following commands:
 
 ### gameta repo add
 
-Adds a new child repository to the .meta file and clone it. If the repository
-is already cloned to the path provided, then extract its details and match 
-them against the arguments that user provides.
+Adds a new child repository to the .meta file and clone it. 
+
+___
+**Note**
+
+If the repository is already cloned to the path provided, then Gameta will 
+attempt to extract its details and match them against the arguments that user
+provides before adding it to the .meta file.
+___
 
 #### Arguments
 
@@ -111,6 +118,12 @@ Adds/updates tags of a particular repository.
 ### gameta tags delete
 
 Deletes selected tags from a particular repository.
+
+___
+**Note**
+
+The "metarepo" tag of the metarepo cannot be deleted 
+___
 
 #### Arguments
 
@@ -175,8 +188,9 @@ Applies a set of CLI commands to a specified set of repositories (see
 ___
 **Note**
    
-The shell flag is required if the CLI command to be rendered is a piped CLI command, it 
-will also be automatically added if multiple CLI commands are provided
+The shell flag is required if the CLI command to be rendered is a piped CLI command
+or if the `cd` command is used. It will also be automatically added if multiple CLI
+commands are provided.
 ___
 
 ## gameta cmd
@@ -244,14 +258,14 @@ Lists all existing Gameta commands in the Gameta command store
 
 ### gameta cmd exec
 
-Executes a series of Gameta command from the command store
+Executes a sequence of Gameta commands from the command store
 
 #### Arguments
 * **_--commands / -c_**: Gameta commands to be executed
 
 ## gameta const
 
-Constant subcommand group, contains the following commands:
+Constants subcommand group, contains the following commands:
 
 1. gameta const add
 2. gameta const delete

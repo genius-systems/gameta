@@ -13,7 +13,6 @@ You can determine your currently installed version using `gameta --version`:
 ```bash
 gameta --version
 ```
-    
 
 ## Maintenance team
 
@@ -21,7 +20,15 @@ The current members of the Gameta team.
 
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
-## Version 0.1.1 (2020-11-5)
+## Version 0.2.0 (2020-11-10)
+
+* Added functionality to extract and substitute environment variables
+* Added functionality to add, delete and substitute constants
+* Added functionality to print the current version of Gameta
+* Added functionality to validate .meta file contents against a JSON Schema
+* Updated documentation to present different CLI versions of Gameta
+
+## Version 0.1.1 (2020-11-5) (Deprecated by 2021-1-1)
 
 * Hot fixes for various issues:
   * Handling of malformed .meta files [link](https://github.com/genius-systems/gameta/issues/13)
@@ -29,7 +36,7 @@ The current members of the Gameta team.
   * .gitignore was cleared when repos are added [link](https://github.com/genius-systems/gameta/issues/10)
   * `gameta sync` throws error if repos are already present [link](https://github.com/genius-systems/gameta/issues/9)
       
-## Version 0.1.0 (2020-10-30)
+## Version 0.1.0 (2020-10-30) (Deprecated by 2021-1-1)
 
 * Added init command to initialise an empty repository
 * Added the sync command to sync changes locally

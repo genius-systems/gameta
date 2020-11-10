@@ -10,9 +10,8 @@ There are 3 parts to this section:
 ## Applying Commands
 
 By default, Gameta applies CLI commands to all repositories (metarepo and all 
-child repos). It also provides the flexibility to apply them to a 
-user-defined selection of these repositories. There are 2 ways users can
-select repositories:
+child repos). It also provides the flexibility to apply them to a user-defined
+selection of these repositories. There are 2 ways users can select repositories:
 
 1. Applying to Tagged Repositories
 2. Applying to Selected Repositories
@@ -64,14 +63,14 @@ gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 
 ## Parameterising Commands
 
-CLI Commands can be customised for each repository by adding parameters (see 
-[Commands]). These parameters will be substituted for a particular repository
-whenever it is executed. There are 3 types of parameters that can be substituted:
+CLI parameterisation is quintessential to support more complex operations. There are 3 
+types of parameters that can be substituted:
 
 1. *Parameters*: These are unique to each repository and are conventionally stored in
-lower case
+lower case. These are added via the `gameta params add` command (see [Commands]).
 2. *Constants*: The same constant value is applied to all repositories and are 
-conventionally stored in upper case
+conventionally stored in upper case. These are added via the `gameta const add` command
+(see [Commands]).
 3. *Environment Variables*: These are retrieved from the environment and are prefixed
 with a '$' e.g. $HELLO_WORLD
 
@@ -87,7 +86,7 @@ ___
 ### Parameterising with Parameters
 
 Consider the following .meta file below containing the "branch" parameter that specifies
-a branch:
+an existing git branch:
 
 ```json
 {
@@ -209,7 +208,7 @@ Consider the following .meta file below:
 ```
 
 Supposing you would like to build and deploy an environment with from branch specified
-via a CI/CD parameter $BRANCH, you can run the command below:
+via a CI/CD environment variable $BRANCH, you can run the command below:
 
 ```bash
 gameta apply -c "git checkout {$BRANCH}" -c "python setup.py bdist_wheel"
@@ -248,7 +247,7 @@ the name `hello` and run the following to invoke `hello`:
 gameta cmd exec -c hello 
 ``` 
 
-Multiple Gameta commands can be executed:
+Multiple Gameta commands can be stored and executed in sequence:
 
 ```bash
 gameta cmd exec -c hello -c world

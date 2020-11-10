@@ -5,6 +5,8 @@ or [metarepos]. It allows you to create links to related repositories,
 make changes and sync them, and provides functionality to customise and 
 apply other CLI commands to these repositories.
 
+## What is Gameta?
+
 Gameta is a play on the word gamete (reproductive cells), and similar 
 to how gametes form the building blocks for life, gameta helps to 
 manage the many repositories that form the building blocks for more

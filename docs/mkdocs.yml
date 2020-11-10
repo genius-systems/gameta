@@ -10,8 +10,8 @@ nav:
   - Home: index.md
   - Metarepos: metarepos.md
   - Command Reference:
-      - 0.1: commands/0.1/commands.md
       - 0.2: commands/0.2/commands.md
+      - 0.1: commands/0.1/commands.md
   - User Guide:
       - Applying Commands: user_guide/applying_commands.md
       - Best Practices: user_guide/best_practices.md
