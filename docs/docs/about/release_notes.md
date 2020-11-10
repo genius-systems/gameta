@@ -22,11 +22,12 @@ The current members of the Gameta team.
 
 ## Version 0.2.0 (2020-11-10)
 
-* Added functionality to extract and substitute environment variables
-* Added functionality to add, delete and substitute constants
+* Added functionality to extract and substitute environment variables [link](https://github.com/genius-systems/gameta/issues/16)
+* Added functionality to add, delete and substitute constants [link](https://github.com/genius-systems/gameta/issues/16)
 * Added functionality to print the current version of Gameta
 * Added functionality to validate .meta file contents against a JSON Schema
 * Updated documentation to present different CLI versions of Gameta
+* Pretty print JSON output to .meta file [link](https://github.com/genius-systems/gameta/issues/17)
 
 ## Version 0.1.1 (2020-11-5) (Deprecated by 2021-1-1)
 
