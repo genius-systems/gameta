@@ -12,6 +12,8 @@ jobs:
       - run:
           name: Test
           command: tox
+          environment:
+            HOME: "/home"
   docs:
     docker:
       - image: "fkrull/multi-python:bionic"
