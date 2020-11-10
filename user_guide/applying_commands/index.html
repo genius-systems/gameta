@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="David Lee">
-  
   <link rel="shortcut icon" href="../../img/favicon.ico">
   <title>Applying Commands - Gameta</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +24,7 @@
   
   <script src="../../js/jquery-2.1.1.min.js" defer></script>
   <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
@@ -36,7 +35,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="../.." class="icon icon-home"> Gameta</a>
         <div role="search">
@@ -47,48 +45,87 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../metarepos/metarepos/">Metarepos</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">User Guide</span></p>
-                <ul class="current">
-                    <li class="toctree-l1"><a class="reference internal" href="../commands/">Command Reference</a>
-                    </li>
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Applying Commands</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#applying-commands_1">Applying Commands</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#applying-to-tagged-repositories">Applying to Tagged Repositories</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#applying-to-selected-repositories">Applying to Selected Repositories</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#parameterising-commands">Parameterising Commands</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#using-gameta-commands">Using Gameta Commands</a>
-    </li>
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../metarepos/">Metarepos</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Command Reference</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../commands/0.2/commands/">0.2</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../commands/0.1/commands/">0.1</a>
+                </li>
     </ul>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../best_practices/">Best Practices</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">About</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/contributing/">Contributing</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/license/">License</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../../about/release_notes/">Release Notes</a>
-                    </li>
-                </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">User Guide</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Applying Commands</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#applying-commands">Applying Commands</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#applying-commands_1">Applying Commands</a></li>
+        
+            <li><a class="toctree-l4" href="#parameterising-commands">Parameterising Commands</a></li>
+        
+            <li><a class="toctree-l4" href="#using-gameta-commands">Using Gameta Commands</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../best_practices/">Best Practices</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">About</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../about/contributing/">Contributing</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/license/">License</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../about/release_notes/">Release Notes</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -120,7 +157,6 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
@@ -136,9 +172,8 @@ There are 3 parts to this section:</p>
 </ol>
 <h2 id="applying-commands_1">Applying Commands</h2>
 <p>By default, Gameta applies CLI commands to all repositories (metarepo and all 
-child repos). It also provides the flexibility to apply them to a 
-user-defined selection of these repositories. There are 2 ways users can
-select repositories:</p>
+child repos). It also provides the flexibility to apply them to a user-defined
+selection of these repositories. There are 2 ways users can select repositories:</p>
 <ol>
 <li>Applying to Tagged Repositories</li>
 <li>Applying to Selected Repositories</li>
@@ -147,7 +182,7 @@ select repositories:</p>
 <p>Tags provide a means to group and organise your child repositories and apply CLI
 commands selectively to these repositories. Supposing that one has the 
 following .meta file: </p>
-<pre><code class="language-json">{
+<pre><code class="json">{
   &quot;projects&quot;: {
     &quot;gameta&quot;: {
       &quot;path&quot;: &quot;.&quot;,
@@ -167,26 +202,46 @@ following .meta file: </p>
   }
 }
 </code></pre>
+
 <p>If you only want to build the Python repositories tagged with git, you can
 run the following command:</p>
-<pre><code class="language-bash">gameta apply -c &quot;python setup.py sdist bdist_wheel&quot; -t git
+<pre><code class="bash">gameta apply -c &quot;python setup.py sdist bdist_wheel&quot; -t git
 </code></pre>
+
 <h3 id="applying-to-selected-repositories">Applying to Selected Repositories</h3>
 <p>Users can apply a CLI command directly to a specified set of repositories, without
 needing to create tags. The same effect as described above can be achieved with
 the following command:</p>
-<pre><code class="language-bash">gameta apply -c &quot;python setup.py sdist bdist_wheel&quot; -r GitPython -r gitdb
+<pre><code class="bash">gameta apply -c &quot;python setup.py sdist bdist_wheel&quot; -r GitPython -r gitdb
 </code></pre>
+
 <h2 id="parameterising-commands">Parameterising Commands</h2>
-<p>CLI Commands can be customised for each repository by adding parameters (see 
-<a href="../commands/">Commands</a>). These parameters will be substituted for a particular repository
-whenever it is executed. Consider the following .meta file below containing
-the "branch" parameter that specifies the a branch:</p>
-<pre><code class="language-json">{
+<p>CLI parameterisation is quintessential to support more complex operations. There are 3 
+types of parameters that can be substituted:</p>
+<ol>
+<li><em>Parameters</em>: These are unique to each repository and are conventionally stored in
+lower case. These are added via the <code>gameta params add</code> command (see <a href="../../commands/0.2/commands/">Commands</a>).</li>
+<li><em>Constants</em>: The same constant value is applied to all repositories and are 
+conventionally stored in upper case. These are added via the <code>gameta const add</code> command
+(see <a href="../../commands/0.2/commands/">Commands</a>).</li>
+<li><em>Environment Variables</em>: These are retrieved from the environment and are prefixed
+with a '$' e.g. $HELLO_WORLD</li>
+</ol>
+<hr />
+<p><strong>Note</strong></p>
+<p>To specify any parameter, enclose it in {curly_brackets}. The {branch} expression 
+substitutes the branch parameter, the {BRANCH} expression substitutes the BRANCH 
+constant and the {$BRANCH} expression substitutes the $BRANCH environment variable.
+Multiple substitutions per command are supported.</p>
+<hr />
+<h3 id="parameterising-with-parameters">Parameterising with Parameters</h3>
+<p>Consider the following .meta file below containing the "branch" parameter that specifies
+an existing git branch:</p>
+<pre><code class="json">{
   &quot;projects&quot;: {
     &quot;gameta&quot;: {
       &quot;path&quot;: &quot;.&quot;,
-      &quot;branch&quot;: &quot;develop&quot;,
+      &quot;branch&quot;: &quot;feature_a&quot;,
       &quot;tags&quot;: [&quot;metarepo&quot;],
       &quot;url&quot;: &quot;git@github.com:genius-systems/gameta.git&quot;
     },
@@ -205,12 +260,14 @@ the "branch" parameter that specifies the a branch:</p>
   }
 }
 </code></pre>
-<p>Supposing you would like to build a system with code checked out from those
-branches, you can run this command below:</p>
-<pre><code class="language-bash">gameta apply -c &quot;git checkout {branch}&quot; -c &quot;python setup.py bdist_wheel&quot;
+
+<p>Supposing you would like to build and deploy a customised trunk configuration with code 
+checked out from those branches, you can run this command below:</p>
+<pre><code class="bash">gameta apply -c &quot;git checkout {branch}&quot; -c &quot;python setup.py bdist_wheel&quot;
 </code></pre>
+
 <p>This is the same as running the following bash commands:</p>
-<pre><code class="language-bash"># To build gameta
+<pre><code class="bash"># To build gameta
 git checkout develop &amp;&amp; python setup.py bdist_wheel
 
 # To build GitPython
@@ -219,12 +276,89 @@ cd GitPython &amp;&amp; git checkout master &amp;&amp; python setup.py bdist_whe
 # To build gitdb
 cd core/gitdb &amp;&amp; git checkout feature_a &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ../..
 </code></pre>
-<hr />
-<p><strong>Note</strong></p>
-<p>To specify a parameter, enclose it in {curly_brackets}. The {branch}
-expression substitutes the branch parameter; multiple substitutions
-are supported.</p>
-<hr />
+
+<h3 id="parameterising-with-constants">Parameterising with Constants</h3>
+<p>Consider the following .meta file below that contains the BRANCH constant that specifies
+a branch:</p>
+<pre><code class="json">{
+  &quot;projects&quot;: {
+    &quot;gameta&quot;: {
+      &quot;path&quot;: &quot;.&quot;,
+      &quot;tags&quot;: [&quot;metarepo&quot;],
+      &quot;url&quot;: &quot;git@github.com:genius-systems/gameta.git&quot;
+    },
+    &quot;GitPython&quot;: {
+      &quot;path&quot;: &quot;GitPython&quot;,
+      &quot;tags&quot;: [&quot;git&quot;],
+      &quot;url&quot;: &quot;https://github.com/gitpython-developers/GitPython.git&quot;
+    },
+    &quot;gitdb&quot;: {
+      &quot;path&quot;: &quot;core/gitdb&quot;,
+      &quot;tags&quot;: [&quot;git&quot;, &quot;core&quot;],
+      &quot;url&quot;: &quot;https://github.com/gitpython-developers/gitdb.git&quot;
+    }
+  },
+  &quot;constants&quot;: {
+    &quot;PROD&quot;: &quot;master&quot;
+  }
+}
+</code></pre>
+
+<p>Supposing you would like to build and deploy a production environment with code from the
+master branch specified as a constant, you can run this command below:</p>
+<pre><code class="bash">gameta apply -c &quot;git checkout {PROD}&quot; -c &quot;python setup.py bdist_wheel&quot;
+</code></pre>
+
+<p>This is the same as running the following bash commands:</p>
+<pre><code class="bash"># To build gameta
+git checkout master &amp;&amp; python setup.py bdist_wheel
+
+# To build GitPython
+cd GitPython &amp;&amp; git checkout master &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ..
+
+# To build gitdb
+cd core/gitdb &amp;&amp; git checkout master &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ../..
+</code></pre>
+
+<h3 id="parameterising-with-environment-variables">Parameterising with Environment Variables</h3>
+<p>Consider the following .meta file below:</p>
+<pre><code class="json">{
+  &quot;projects&quot;: {
+    &quot;gameta&quot;: {
+      &quot;path&quot;: &quot;.&quot;,
+      &quot;tags&quot;: [&quot;metarepo&quot;],
+      &quot;url&quot;: &quot;git@github.com:genius-systems/gameta.git&quot;
+    },
+    &quot;GitPython&quot;: {
+      &quot;path&quot;: &quot;GitPython&quot;,
+      &quot;tags&quot;: [&quot;git&quot;],
+      &quot;url&quot;: &quot;https://github.com/gitpython-developers/GitPython.git&quot;
+    },
+    &quot;gitdb&quot;: {
+      &quot;path&quot;: &quot;core/gitdb&quot;,
+      &quot;tags&quot;: [&quot;git&quot;, &quot;core&quot;],
+      &quot;url&quot;: &quot;https://github.com/gitpython-developers/gitdb.git&quot;
+    }
+  }
+}
+</code></pre>
+
+<p>Supposing you would like to build and deploy an environment with from branch specified
+via a CI/CD environment variable $BRANCH, you can run the command below:</p>
+<pre><code class="bash">gameta apply -c &quot;git checkout {$BRANCH}&quot; -c &quot;python setup.py bdist_wheel&quot;
+</code></pre>
+
+<p>This is the same as running the following bash commands:</p>
+<pre><code class="bash"># To build gameta
+git checkout $BRANCH &amp;&amp; python setup.py bdist_wheel
+
+# To build GitPython
+cd GitPython &amp;&amp; git checkout $BRANCH &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ..
+
+# To build gitdb
+cd core/gitdb &amp;&amp; git checkout $BRANCH &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ../..
+</code></pre>
+
 <h2 id="using-gameta-commands">Using Gameta Commands</h2>
 <p>Gameta commands are an abstraction of CLI commands applied with <code>gameta apply</code>,
 hence a Gameta command consists of all the parameters the <code>gameta apply</code> command 
@@ -232,14 +366,16 @@ i.e. CLI commands, tags, repositories, shell, verbose and raise errors. They
 simplify the <code>gameta apply</code> interface, allowing you to store commonly used commands
 and reuse them.</p>
 <p>To create a Gameta command, run the following:</p>
-<pre><code class="language-bash">gameta cmd add -n hello -c &quot;git checkout {branch}&quot; -c &quot;python setup.py bdist_wheel&quot;
+<pre><code class="bash">gameta cmd add -n hello -c &quot;git checkout {branch}&quot; -c &quot;python setup.py bdist_wheel&quot;
 </code></pre>
+
 <p>This will add the command in the previous section to the Gameta command store under
 the name <code>hello</code> and run the following to invoke <code>hello</code>:</p>
-<pre><code class="language-bash">gameta cmd exec -c hello 
+<pre><code class="bash">gameta cmd exec -c hello 
 </code></pre>
-<p>Multiple Gameta commands can be executed:</p>
-<pre><code class="language-bash">gameta cmd exec -c hello -c world
+
+<p>Multiple Gameta commands can be stored and executed in sequence:</p>
+<pre><code class="bash">gameta cmd exec -c hello -c world
 </code></pre>
               
             </div>
@@ -251,7 +387,7 @@ the name <code>hello</code> and run the following to invoke <code>hello</code>:<
         <a href="../best_practices/" class="btn btn-neutral float-right" title="Best Practices">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../commands/" class="btn btn-neutral" title="Command Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../commands/0.1/commands/" class="btn btn-neutral" title="0.1"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -263,7 +399,7 @@ the name <code>hello</code> and run the following to invoke <code>hello</code>:<
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -273,13 +409,13 @@ the name <code>hello</code> and run the following to invoke <code>hello</code>:<
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/genius-systems/gameta/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../commands/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../../commands/0.1/commands/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../best_practices/" style="color: #fcfcfc">Next &raquo;</a></span>
@@ -289,11 +425,6 @@ the name <code>hello</code> and run the following to invoke <code>hello</code>:<
     <script>var base_url = '../..';</script>
     <script src="../../js/theme.js" defer></script>
       <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>
