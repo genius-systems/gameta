@@ -6,6 +6,7 @@ import click
 
 from .context import gameta_context, GametaContext
 
+
 __all__ = [
     # Gameta CLI
     'gameta_cli'
@@ -17,10 +18,10 @@ __all__ = [
 @gameta_context
 def gameta_cli(context: GametaContext, project_dir: str) -> None:
     """
-    Genisys DevOps CLI, contains all commands that simplify Genisys DevOps operations
+    Gameta CLI, contains commands to simplify your DevOps operations
     \f
     Args:
-        context (GametaContext): DevOps Context
+        context (GametaContext): Gameta Context
         project_dir (str): Project directory, defaults to the current working directory
 
     Returns:
