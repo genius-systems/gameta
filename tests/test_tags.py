@@ -5,7 +5,6 @@ from shutil import copyfile
 from unittest import TestCase
 from unittest.mock import patch
 
-from click import Context
 from click.testing import CliRunner
 
 from gameta.context import GametaContext
@@ -139,8 +138,7 @@ class TestTagsAdd(TestCase):
                                 'tags': ['a', 'b', 'c'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -194,8 +192,7 @@ class TestTagsAdd(TestCase):
                                 'tags': ['a', 'b', 'c', 'd', 'e', 'f'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -249,8 +246,7 @@ class TestTagsAdd(TestCase):
                                 'tags': ['a', 'b', 'c', 'f'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -382,8 +378,7 @@ class TestTagsDelete(TestCase):
                                 'tags': [],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -437,8 +432,7 @@ class TestTagsDelete(TestCase):
                                 'tags': ['d', 'e', 'f'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -492,8 +486,7 @@ class TestTagsDelete(TestCase):
                                 'tags': ['f'],
                                 '__metarepo__': False
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )
 
@@ -539,7 +532,6 @@ class TestTagsDelete(TestCase):
                                 "url": "git@github.com:genius-systems/gameta.git",
                                 '__metarepo__': True
                             }
-                        },
-                        "commands": {}
+                        }
                     }
                 )

@@ -217,8 +217,7 @@ class TestCommandAdd(TestCase):
                                 'tags': ['a', 'c', 'd'],
                                 'url': 'https://github.com/gitpython-developers/gitdb.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -270,8 +269,7 @@ class TestCommandAdd(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -292,14 +290,20 @@ class TestCommandAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': params['commands'],
-                        'raise_errors': False,
-                        'repositories': [],
-                        'shell': True,
-                        'tags': [],
-                        'verbose': False
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -444,8 +448,7 @@ class TestCommandDelete(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -461,14 +464,20 @@ class TestCommandDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': params['commands'],
-                        'raise_errors': False,
-                        'repositories': [],
-                        'shell': True,
-                        'tags': [],
-                        'verbose': False
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -493,8 +502,7 @@ class TestCommandDelete(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -587,8 +595,7 @@ class TestCommandUpdate(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -609,14 +616,20 @@ class TestCommandUpdate(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': params['commands'],
-                        'raise_errors': False,
-                        'repositories': [],
-                        'shell': True,
-                        'tags': [],
-                        'verbose': False
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -693,14 +706,20 @@ class TestCommandUpdate(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': params['commands'],
-                        'raise_errors': params['raise_errors'],
-                        'repositories': params['repositories'],
-                        'shell': params['shell'],
-                        'tags': [],
-                        'verbose': params['verbose']
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': params['raise_errors'],
+                                    'repositories': params['repositories'],
+                                    'shell': params['shell'],
+                                    'tags': [],
+                                    'verbose': params['verbose']
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -775,14 +794,20 @@ class TestCommandUpdate(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': params['commands'],
-                        'raise_errors': params['raise_errors'],
-                        'repositories': params['repositories'],
-                        'shell': params['shell'],
-                        'tags': [],
-                        'verbose': params['verbose']
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': params['raise_errors'],
+                                    'repositories': params['repositories'],
+                                    'shell': params['shell'],
+                                    'tags': [],
+                                    'verbose': params['verbose']
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -859,14 +884,20 @@ class TestCommandUpdate(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands']['hello_world'] = {
-                        'commands': ['git fetch --all --tags --prune'],
-                        'raise_errors': params['raise_errors'],
-                        'repositories': [],
-                        'shell': False,
-                        'tags': params['tags'],
-                        'verbose': params['verbose']
-                    }
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': ['git fetch --all --tags --prune'],
+                                    'raise_errors': params['raise_errors'],
+                                    'repositories': [],
+                                    'shell': False,
+                                    'tags': params['tags'],
+                                    'verbose': params['verbose']
+                                }
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -1047,8 +1078,7 @@ class TestCommandExec(TestCase):
                                 'tags': ['metarepo'],
                                 'url': 'git@github.com:genius-systems/gameta.git'
                             }
-                        },
-                        'commands': {}
+                        }
                     }
                 )
 
@@ -1076,6 +1106,7 @@ class TestCommandExec(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
+                    output['commands'] = {}
                     output['commands']['hello_world'] = params['hello_world']
                     json.dump(output, m2)
             gameta_context = GametaContext()
@@ -1164,6 +1195,7 @@ class TestCommandExec(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
+                    output['commands'] = {}
                     output['commands']['hello_world'] = params['hello_world']
                     output['commands']['hello_world2'] = params['hello_world2']
                     output['commands']['hello_world3'] = params['hello_world3']
@@ -1194,7 +1226,7 @@ class TestCommandExec(TestCase):
                 f"Applying {params['hello_world2']['commands']} to repos {params['actual_repositories']}\n"
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][0]}\n"
-                f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][2]}\n"                
+                f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][2]}\n"
                 f"Executing Gameta command {params['commands'][2]}\n"
                 f"Applying {params['hello_world3']['commands']} to repos {params['actual_repositories']}\n"
                 f"Executing {params['hello_world3']['commands'][0]} in {params['actual_repositories'][1]}\n"
