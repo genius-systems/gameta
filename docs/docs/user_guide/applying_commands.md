@@ -77,6 +77,7 @@ configurable file name (using the ENCRYPTION_FILE_NAME constant)
 ```bash
 gameta apply -p -c '
 from os import getcwd
+from os.path import join
 from random import choice
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 key = "".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})])
