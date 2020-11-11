@@ -258,6 +258,9 @@ class GametaContext(object):
                     "shell": {
                         "type": "boolean"
                     },
+                    "python": {
+                        "type": "boolean"
+                    },
                     "verbose": {
                         "type": "boolean"
                     },
@@ -275,7 +278,7 @@ class GametaContext(object):
                     }
                 },
                 "minProperties": 6,
-                "maxProperties": 6,
+                "maxProperties": 7,
                 "additionalProperties": False,
             },
             "constants": {
@@ -428,7 +431,8 @@ class GametaContext(object):
             self,
             commands: List[str],
             repos: List[str] = (),
-            shell: bool = False
+            shell: bool = False,
+            python: bool = False,
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
@@ -438,6 +442,7 @@ class GametaContext(object):
             commands (List[str]): Commands to be applied
             repos (List[str]): Selected set of repositories
             shell (bool): Flag to indicate if a separate shell should be used
+            python (bool): Flag to indicate if commands are to be tokenised as Python commands
 
         Returns:
             None
@@ -451,14 +456,37 @@ class GametaContext(object):
             combined_details: Dict = deepcopy(details)
             combined_details.update(self.constants)
             combined_details.update(self.env_vars)
+            combined_details.update(
+                {
+                    '__repos__':
+                        json.dumps(self.repositories)
+                        .replace("true", "True")
+                        .replace("false", "False")
+                        .replace("null", "None")
+                }
+            )
 
             with self.cd(combined_details['path']):
                 repo_commands: List[str] = [c.format(**combined_details) for c in deepcopy(commands)]
-                command: List[str] = self.shell(repo_commands) if shell else self.tokenise(' && '.join(repo_commands))
+                if python:
+                    command: List[str] = self.python(repo_commands)
+                elif shell:
+                    command: List[str] = self.shell(repo_commands)
+                else:
+                    command: List[str] = self.tokenise(' && '.join(repo_commands))
                 yield repo, command
 
     @staticmethod
     def tokenise(command: str) -> List[str]:
+        """
+        Tokenises the commands into a form that is readily acceptable by subprocess
+
+        Args:
+            command (str): Constructed commands to be tokenised
+
+        Returns:
+            List[str]: Tokenised commands
+        """
         return shlex.split(command)
 
     @contextmanager
@@ -480,7 +508,7 @@ class GametaContext(object):
 
     def shell(self, commands: List[str]) -> List[str]:
         """
-        Executes commands provided in a separate shell as subprocess does not natively handle piping
+        Prepares commands to be executed in a separate shell as subprocess does not natively handle piping
 
         Args:
             commands (List[str]): User-defined commands
@@ -489,9 +517,23 @@ class GametaContext(object):
             List[str]: Shell command string to be executed by subprocess
         """
         return self.tokenise(
-            f'{SHELL} -c " ' +
+            f'{SHELL} -c "' +
             ' && '.join(commands) +
             '"'
+        )
+
+    def python(self, commands: List[str]) -> List[str]:
+        """
+        Prepares commands to be executed by Python interpreter via shell
+
+        Args:
+            commands List[str]: Python scripts
+
+        Returns:
+            List[str]: Python prepared commands to be executed by subprocess
+        """
+        return self.shell(
+            ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
         )
 
 

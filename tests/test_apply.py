@@ -293,9 +293,178 @@ class TestApply(TestCase):
             self.assertEqual(
                 result.output,
                 f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
-                f"Executing {SHELL} -c  git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
+                f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
+                f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
+                f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_with_python_interpreter(self, mock_ensure_object):
+        params = {
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['metarepo'],
+            'actual_repositories': ['gameta'],
+            'encryption_file_name': 'encryption.txt',
+            'key_len': 16
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output.update(
+                        {
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                                'KEY_LEN': params['key_len']
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+
+            output = [c for c in context.apply(params['commands'], python=True)]
+            result = self.runner.invoke(
+                self.apply, [
+                    '--command', params['commands'][0],
+                    '--command', params['commands'][1],
+                    '--tags', params['tags'][0],
+                    '-p', '-v'
+                ]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                "Multiple commands detected, executing in a separate shell\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
+                f"Executing {output[0][1][0]} {output[0][1][1]} {output[0][1][2]} in "
+                f"{params['actual_repositories'][0]}\n\n"
+            )
+            for path in [f, join(f, 'GitPython'), join(f, 'core', 'gitdb')]:
+                self.assertTrue(exists(join(path, params['encryption_file_name'])))
+                with open(join(path, params['encryption_file_name'])) as e:
+                    self.assertEqual(len(e.read()), params['key_len'])
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_with_python_interpreter_invalid_python_script(self, mock_ensure_object):
+        params = {
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write(".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '  # Missing one "
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['metarepo'],
+            'actual_repositories': ['gameta'],
+            'encryption_file_name': 'encryption.txt',
+            'key_len': 16
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output.update(
+                        {
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                                'KEY_LEN': params['key_len']
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.apply, [
+                    '--command', params['commands'][0],
+                    '--command', params['commands'][1],
+                    '--tags', params['tags'][0],
+                    '-p', '-v'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Error: One of the commands in {params['commands']} is not a valid Python script\n"
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_with_python_interpreter_shell_command_passed(self, mock_ensure_object):
+        params = {
+            'commands': ['git fetch --all --tags --prune', ],
+            'tags': ['metarepo'],
+            'actual_repositories': ['gameta'],
+            'encryption_file_name': 'encryption.txt',
+            'key_len': 16
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w+') as m2:
+                    output.update(
+                        {
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                                'KEY_LEN': params['key_len']
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+
+            output = [c for c in context.apply(params['commands'], python=True)]
+            result = self.runner.invoke(
+                self.apply, [
+                    '--command', params['commands'][0],
+                    '--tags', params['tags'][0],
+                    '-p', '-v'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Error: One of the commands in {params['commands']} is not a valid Python script\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')

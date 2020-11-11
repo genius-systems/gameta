@@ -207,7 +207,7 @@ class TestGametaContext(TestCase):
             [
                 getenv('SHELL', '/bin/sh'),
                 '-c',
-                ' aws ecr get-login-password --region region | '
+                'aws ecr get-login-password --region region | '
                 'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'
             ]
         )
@@ -221,7 +221,7 @@ class TestGametaContext(TestCase):
             ]),
             [
                 getenv('SHELL', '/bin/sh'), '-c',
-                ' git clone https://github.com/libgit2/libgit2 && '
+                'git clone https://github.com/libgit2/libgit2 && '
                 'git fetch --all --tags --prune && '
                 'git merge'
             ]
@@ -555,6 +555,139 @@ class TestGametaContext(TestCase):
             )
             self.assertEqual(self.context.constants, {})
 
+    def test_gameta_load_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'verbose': False,
+                                'shell': False,
+                                'raise_errors': False
+                            }
+                        },
+                        'constants': {
+                            'HELLO': 'world',
+                            "I": 'am',
+                            'A': 'test'
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.load()
+            self.assertCountEqual(
+                self.context.repositories,
+                {
+                    "gameta": {
+                        "url": "https://github.com/testing/gameta.git",
+                        "path": ".",
+                        "tags": [
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
+                    },
+                    "genisys": {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ],
+                        '__metarepo__': False
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ],
+                        '__metarepo__': False
+                    }
+                }
+            )
+            self.assertCountEqual(
+                self.context.tags,
+                {
+                    'core': ['genisys-testing', 'genisys'],
+                    'testing': ['genisys-testing'],
+                    'developer': ['genisys-testing'],
+                    'templating': ['genisys'],
+                    'metarepo': ['gameta']
+                }
+            )
+            self.assertTrue(self.context.is_metarepo)
+            self.assertCountEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
 
     def test_gameta_load_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -1271,7 +1404,7 @@ class TestGametaContext(TestCase):
                 self.assertEqual(repo, repo_command[0])
                 self.assertEqual(
                     repo_command[1],
-                    [getenv('SHELL', '/bin/sh'), '-c', ' git fetch --all --tags --prune && git pull']
+                    [getenv('SHELL', '/bin/sh'), '-c', 'git fetch --all --tags --prune && git pull']
                 )
 
     def test_gameta_context_apply_with_parameter_substitution(self):
@@ -1518,3 +1651,77 @@ class TestGametaContext(TestCase):
                 self.assertEqual(getcwd(), cwd)
                 self.assertEqual(repo, repo_command[0])
                 self.assertEqual(repo_command[1], test_output)
+
+    def test_gameta_context_apply_command_for_python_execution(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "projects": {
+                            "gameta": {
+                                "url": "https://github.com/test/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/test/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/test/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "constants": {
+                            "ENCRYPTION_FILE_NAME": 'encryption.txt',
+                            "KEY_LEN": 16
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.load()
+            for cwd, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(
+                        [
+                            'from random import choice\n'
+                            'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                            'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                            '\tf.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                            'for _ in range({KEY_LEN})]))'
+                        ],
+                        python=True
+                    )
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(
+                    repo_command[1],
+                    [
+                        getenv('SHELL', '/bin/sh'), '-c',
+                        "python3 -c \'"
+                        'from random import choice\n'
+                        'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                        'with open("encryption.txt", "w") as f:\n'
+                        '\tf.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                        "for _ in range(16)]))'"
+                    ]
+                )
