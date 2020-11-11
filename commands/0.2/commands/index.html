@@ -321,6 +321,8 @@ parameter values as JSON decodable strings e.g. <code>'{"hello": "world"}'</code
 <li><em>--tags / -t</em>: Tagged repositories to apply CLI commands to</li>
 <li><em>--repositories / -r</em>: Names of specific repositories to apply CLI commands to</li>
 <li>--shell / -s: Indicates that the CLI commands should be executed in a separate shell</li>
+<li>--python / -p: Indicates that the commands are Python scripts and should be executed 
+with the Python 3 interpreter</li>
 <li>--verbose / -v: Indicates that Gameta should display the CLI output when it executes a
     CLI command in other repositories</li>
 <li>--raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
@@ -331,6 +333,24 @@ parameter values as JSON decodable strings e.g. <code>'{"hello": "world"}'</code
 <p>The shell flag is required if the CLI command to be rendered is a piped CLI command
 or if the <code>cd</code> command is used. It will also be automatically added if multiple CLI
 commands are provided.</p>
+<hr />
+<hr />
+<p><strong>Note</strong></p>
+<p>Python scripts are entered as is, use <code>''</code> to help enter multi-line Python scripts and
+handle imports. This approach also works for more complex shell scripts. An example is
+provided below.</p>
+<pre><code>gameta apply -p -c '
+from os import getcwd
+print(getcwd())
+'
+</code></pre>
+
+<hr />
+<hr />
+<p><strong>Note</strong></p>
+<p>A special variable <strong>__repo__</strong> is reserved to provide access to repository details
+when using Python scripts. This variable should <strong>only be used in Python scripts</strong> as 
+it causes issues when substituted into shell parameters.</p>
 <hr />
 <h2 id="gameta-cmd">gameta cmd</h2>
 <p>Command subcommand group, contains the following commands:</p>
@@ -346,7 +366,12 @@ commands are provided.</p>
 <hr />
 <p><strong>Note</strong></p>
 <p>A Gameta command is a <code>gameta apply</code> command consisting of a set of CLI commands, tags, 
-repositories and flags (shell, verbose, raise errors) that control its execution</p>
+repositories and flags (shell, python, verbose, raise errors) that control its execution</p>
+<hr />
+<hr />
+<p><strong>Note</strong></p>
+<p>If the Python flag is entered, Gameta will check if the Python scripts entered are valid.
+All commands <strong>must</strong> be Python scripts if the Python flag is used.</p>
 <hr />
 <h4 id="arguments_10">Arguments</h4>
 <ul>
@@ -357,6 +382,8 @@ repositories and flags (shell, verbose, raise errors) that control its execution
 <li><em>--tags / -t</em>: Tagged repositories to apply CLI commands to</li>
 <li><em>--repositories / -r</em>: Names of specific repositories to apply CLI commands to</li>
 <li>--shell / -s: Indicates that the CLI command should be executed in a separate shell</li>
+<li>--python / -p: Indicates that the commands are Python scripts and should be executed 
+with the Python 3 interpreter</li>
 <li>--verbose / -v: Indicates that Gameta should display the CLI output when it executes a
     CLI command in other repositories</li>
 <li>--raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
@@ -370,6 +397,12 @@ repositories and flags (shell, verbose, raise errors) that control its execution
 </ul>
 <h3 id="gameta-cmd-update">gameta cmd update</h3>
 <p>Updates a Gameta command that exists in the Gameta command store</p>
+<hr />
+<p><strong>Note</strong></p>
+<p>If the Python flag is set, Gameta will check if the Python scripts entered are valid.
+If the Python flag is unset, Gameta will check that all the CLI commands are not Python
+compilable.</p>
+<hr />
 <h4 id="arguments_12">Arguments</h4>
 <ul>
 <li><strong>--name / -n</strong>: Gameta command name to be updated</li>
@@ -379,7 +412,10 @@ repositories and flags (shell, verbose, raise errors) that control its execution
 <li>--verbose / -v: Display execution output when CLI commands are applied</li>
 <li>--no-verbose / -nv: Do not display execution output when CLI commands are applied</li>
 <li>--shell / -s: Execute CLI commands in a separate shell</li>
-<li>--no-verbose / -nv: Do not execute CLI commands in a separate shell</li>
+<li>--no-shell / -ns: Do not execute CLI commands in a separate shell</li>
+<li>--python / -p: Execute as Python scripts with the Python 3 interpreter</li>
+<li>--no-python / -np: Do not execute as Python scripts</li>
+<li>--no-shell / -ns: Do not execute CLI commands in a separate shell</li>
 <li>--raise-errors / -e: Raise errors that occur when CLI commands are executed and 
     terminate</li>
 <li>--no-errors / -ne: Do not raise errors that occur when CLI commands are executed 

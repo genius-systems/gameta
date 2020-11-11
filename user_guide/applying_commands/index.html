@@ -88,6 +88,8 @@
         
             <li><a class="toctree-l4" href="#applying-commands_1">Applying Commands</a></li>
         
+            <li><a class="toctree-l4" href="#applying-python-commands">Applying Python Commands</a></li>
+        
             <li><a class="toctree-l4" href="#parameterising-commands">Parameterising Commands</a></li>
         
             <li><a class="toctree-l4" href="#using-gameta-commands">Using Gameta Commands</a></li>
@@ -167,6 +169,7 @@
 There are 3 parts to this section:</p>
 <ol>
 <li>Applying CLI Commands</li>
+<li>Applying Python Commands</li>
 <li>Parameterising CLI Commands</li>
 <li>Using Gameta Commands</li>
 </ol>
@@ -215,6 +218,38 @@ the following command:</p>
 <pre><code class="bash">gameta apply -c &quot;python setup.py sdist bdist_wheel&quot; -r GitPython -r gitdb
 </code></pre>
 
+<h2 id="applying-python-commands">Applying Python Commands</h2>
+<p>From version <a href="https://pypi.org/project/gameta/0.2.1/">0.2.2</a>, Gameta can apply Python 3 
+scripts across various repositories. This provides users with the flexibility to augment 
+their CLI operations with Python scripts. Python scripts are entered similar to multi-line
+shell commands using the <code>''</code>. Consider the Python script below that:</p>
+<ol>
+<li>Generates an encryption key of configurable length (using the KEY_LEN constant) 
+consisting of only ASCII variables</li>
+<li>Writes the key to all repositories (using the reserved <strong>repo</strong> variable) to a 
+configurable file name (using the ENCRYPTION_FILE_NAME constant)</li>
+</ol>
+<pre><code class="bash">gameta apply -p -c '
+from os import getcwd
+from random import choice
+from string import ascii_lowercase, ascii_uppercase, digits, punctuation
+key = &quot;&quot;.join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})])
+for repo, details in {__repo__}.items():
+    with open(join(getcwd(), details[&quot;path&quot;], &quot;{ENCRYPTION_FILE_NAME}&quot;), &quot;w&quot;) as f:
+        f.write(key)
+' -r main_repo
+</code></pre>
+
+<hr />
+<p><strong>Note</strong></p>
+<p>If the <code>--python</code> / <code>-p</code> flag is used, all commands entered (with the <code>-c</code> parameter) in
+the same execution <strong>must</strong> be Python scripts.</p>
+<hr />
+<hr />
+<p><strong>Note</strong></p>
+<p>When writing Python scripts, use double quotes for all Python strings in the script as 
+issues may arise when the command is applied due to string escaping.</p>
+<hr />
 <h2 id="parameterising-commands">Parameterising Commands</h2>
 <p>CLI parameterisation is quintessential to support more complex operations. There are 3 
 types of parameters that can be substituted:</p>
@@ -359,6 +394,15 @@ cd GitPython &amp;&amp; git checkout $BRANCH &amp;&amp; python setup.py bdist_wh
 cd core/gitdb &amp;&amp; git checkout $BRANCH &amp;&amp; python setup.py bdist_wheel &amp;&amp; cd ../..
 </code></pre>
 
+<hr />
+<p><strong>Note</strong></p>
+<p>When parameterising environment variables, use single quotes instead of double quotes
+to prevent the shell from automatically expanding these variables.</p>
+<pre><code class="bash">gameta apply -c 'git checkout {$BRANCH}'  # This is recommended
+gameta apply -c &quot;git checkout {$BRANCH}&quot;  # Shell will attempt to substitute $BRANCH
+</code></pre>
+
+<hr />
 <h2 id="using-gameta-commands">Using Gameta Commands</h2>
 <p>Gameta commands are an abstraction of CLI commands applied with <code>gameta apply</code>,
 hence a Gameta command consists of all the parameters the <code>gameta apply</code> command 
