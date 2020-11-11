@@ -180,6 +180,8 @@ Applies a set of CLI commands to a specified set of repositories (see
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
 * --shell / -s: Indicates that the CLI commands should be executed in a separate shell
+* --python / -p: Indicates that the commands are Python scripts and should be executed 
+with the Python 3 interpreter
 * --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
     CLI command in other repositories
 * --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
@@ -191,6 +193,28 @@ ___
 The shell flag is required if the CLI command to be rendered is a piped CLI command
 or if the `cd` command is used. It will also be automatically added if multiple CLI
 commands are provided.
+___
+
+___
+**Note**
+   
+Python scripts are entered as is, use `''` to help enter multi-line Python scripts and
+handle imports. This approach also works for more complex shell scripts. An example is
+provided below.
+```
+gameta apply -p -c '
+from os import getcwd
+print(getcwd())
+'
+```
+___
+
+___
+**Note**
+   
+A special variable **\_\_repo\_\_** is reserved to provide access to repository details
+when using Python scripts. This variable should **only be used in Python scripts** as 
+it causes issues when substituted into shell parameters.
 ___
 
 ## gameta cmd
@@ -211,7 +235,14 @@ ___
 **Note**
 
 A Gameta command is a `gameta apply` command consisting of a set of CLI commands, tags, 
-repositories and flags (shell, verbose, raise errors) that control its execution
+repositories and flags (shell, python, verbose, raise errors) that control its execution
+___
+
+___
+**Note**
+   
+If the Python flag is entered, Gameta will check if the Python scripts entered are valid.
+All commands **must** be Python scripts if the Python flag is used.
 ___
 
 #### Arguments 
@@ -222,6 +253,8 @@ ___
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
 * --shell / -s: Indicates that the CLI command should be executed in a separate shell
+* --python / -p: Indicates that the commands are Python scripts and should be executed 
+with the Python 3 interpreter
 * --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
     CLI command in other repositories
 * --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur when
@@ -238,6 +271,14 @@ Deletes a Gameta command from the Gameta command store
 
 Updates a Gameta command that exists in the Gameta command store
 
+___
+**Note**
+   
+If the Python flag is set, Gameta will check if the Python scripts entered are valid.
+If the Python flag is unset, Gameta will check that all the CLI commands are not Python
+compilable.
+___
+
 #### Arguments
 * **--name / -n**: Gameta command name to be updated
 * _--command / -c_: New CLI commands to be executed
@@ -246,7 +287,10 @@ Updates a Gameta command that exists in the Gameta command store
 * --verbose / -v: Display execution output when CLI commands are applied
 * --no-verbose / -nv: Do not display execution output when CLI commands are applied
 * --shell / -s: Execute CLI commands in a separate shell
-* --no-verbose / -nv: Do not execute CLI commands in a separate shell
+* --no-shell / -ns: Do not execute CLI commands in a separate shell
+* --python / -p: Execute as Python scripts with the Python 3 interpreter
+* --no-python / -np: Do not execute as Python scripts
+* --no-shell / -ns: Do not execute CLI commands in a separate shell
 * --raise-errors / -e: Raise errors that occur when CLI commands are executed and 
     terminate
 * --no-errors / -ne: Do not raise errors that occur when CLI commands are executed 
