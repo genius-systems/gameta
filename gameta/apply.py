@@ -17,6 +17,7 @@ __all__ = ['apply']
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Display execution output when CLI commands are applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
+@click.option('--python', '-p', is_flag=True, default=False, help='Execute Python scripts using Python 3 interpreter')
 @click.option('--raise-errors', '-e', is_flag=True, default=False,
               help='Raise errors that occur when executing CLI commands and terminate execution')
 @gameta_context
@@ -27,6 +28,7 @@ def apply(
         repositories: Tuple[str],
         verbose: bool,
         shell: bool,
+        python: bool,
         raise_errors: bool
 ) -> None:
     """
@@ -38,6 +40,7 @@ def apply(
         tags (Tuple[str]): Repository tags to apply command to
         repositories (Tuple[str]): Repositories to apply command to
         verbose (bool): Flag to indicate that output should be displayed as the command is applied
+        python (bool): Flag to indicate that command should be executed with the Python 3 interpreter
         shell (bool): Flag to indicate that command should be executed in a separate shell
         raise_errors (bool): Flag to indicate that errors should be raised if they occur during execution and the
                              overall execution should be terminated
@@ -63,17 +66,34 @@ def apply(
             )
         )
 
+        if python:
+            try:
+                for command in commands:
+                    compile(command, 'test', 'exec')
+            except SyntaxError:
+                raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
+
         # Python subprocess does not handle multiple commands
         # hence we need to handle it in a separate shell
         if len(commands) > 1:
             click.echo("Multiple commands detected, executing in a separate shell")
             shell = True
 
-        click.echo(
-            f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
-            f"{' in a separate shell' if shell else ''}"
-        )
-        for repo, c in context.apply(list(commands), repos=repos, shell=shell):
+        if shell:
+            click.echo(
+                f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())} "
+                f"in a separate shell"
+            )
+        elif python:
+            click.echo(
+                f"Applying Python commands {list(commands)} to repos "
+                f"{repos if repos else list(context.repositories.keys())} in a separate shell"
+            )
+        else:
+            click.echo(
+                f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
+            )
+        for repo, c in context.apply(list(commands), repos=repos, shell=shell, python=python):
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
                 if verbose:
