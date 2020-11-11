@@ -456,6 +456,15 @@ class GametaContext(object):
             combined_details: Dict = deepcopy(details)
             combined_details.update(self.constants)
             combined_details.update(self.env_vars)
+            combined_details.update(
+                {
+                    '__repos__':
+                        json.dumps(self.repositories)
+                        .replace("true", "True")
+                        .replace("false", "False")
+                        .replace("null", "None")
+                }
+            )
 
             with self.cd(combined_details['path']):
                 repo_commands: List[str] = [c.format(**combined_details) for c in deepcopy(commands)]
