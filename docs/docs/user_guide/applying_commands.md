@@ -71,7 +71,7 @@ shell commands using the `''`. Consider the Python script below that:
 
 1. Generates an encryption key of configurable length (using the KEY_LEN constant) 
 consisting of only ASCII variables
-2. Writes the key to all repositories (using the reserved __repo__ variable) to a 
+2. Writes the key to all repositories (using the reserved __repos__ variable) to a 
 configurable file name (using the ENCRYPTION_FILE_NAME constant)
 
 ```bash
