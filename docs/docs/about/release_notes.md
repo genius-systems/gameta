@@ -21,6 +21,12 @@ The current members of the Gameta team.
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
 
+## Version 0.2.2 (2020-11-11)
+
+* Added Python 3 script execution functionality to `gameta apply` [link](https://github.com/genius-systems/gameta/issues/20)
+* Added Python 3 script execution functionality to `gameta cmd` [link](https://github.com/genius-systems/gameta/issues/20)
+* Updated documentation and README.md
+
 ## Version 0.2.1 (2020-11-10)
 
 * Hot fixes for various issues:
