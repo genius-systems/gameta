@@ -4,8 +4,9 @@ This section introduces how Gameta runs commands over multiple repositories.
 There are 3 parts to this section:
 
 1. Applying CLI Commands
-2. Parameterising CLI Commands
-3. Using Gameta Commands
+2. Applying Python Commands
+3. Parameterising CLI Commands
+4. Using Gameta Commands
 
 ## Applying Commands
 
@@ -60,6 +61,44 @@ the following command:
 ```bash
 gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 ```
+
+## Applying Python Commands
+
+From version [0.2.2](https://pypi.org/project/gameta/0.2.1/), Gameta can apply Python 3 
+scripts across various repositories. This provides users with the flexibility to augment 
+their CLI operations with Python scripts. Python scripts are entered similar to multi-line
+shell commands using the `''`. Consider the Python script below that:
+
+1. Generates an encryption key of configurable length (using the KEY_LEN constant) 
+consisting of only ASCII variables
+2. Writes the key to all repositories (using the reserved __repo__ variable) to a 
+configurable file name (using the ENCRYPTION_FILE_NAME constant)
+
+```bash
+gameta apply -p -c '
+from os import getcwd
+from random import choice
+from string import ascii_lowercase, ascii_uppercase, digits, punctuation
+key = "".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})])
+for repo, details in {__repo__}.items():
+    with open(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"), "w") as f:
+        f.write(key)
+' -r main_repo
+```
+
+___
+**Note**
+
+If the `--python` / `-p` flag is used, all commands entered (with the `-c` parameter) in
+the same execution **must** be Python scripts.
+___
+
+___
+**Note**
+
+When writing Python scripts, use double quotes for all Python strings in the script as 
+issues may arise when the command is applied due to string escaping.
+___
 
 ## Parameterising Commands
 
@@ -225,6 +264,18 @@ cd GitPython && git checkout $BRANCH && python setup.py bdist_wheel && cd ..
 # To build gitdb
 cd core/gitdb && git checkout $BRANCH && python setup.py bdist_wheel && cd ../..
 ```
+
+___
+**Note**
+
+When parameterising environment variables, use single quotes instead of double quotes
+to prevent the shell from automatically expanding these variables.
+```bash
+gameta apply -c 'git checkout {$BRANCH}'  # This is recommended
+gameta apply -c "git checkout {$BRANCH}"  # Shell will attempt to substitute $BRANCH
+```
+___
+
 
 ## Using Gameta Commands
 
