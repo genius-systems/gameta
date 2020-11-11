@@ -57,7 +57,8 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': [], 'repositories': [], 'verbose': False, 'shell': True, 'raise_errors': False}}) "
+                f"'tags': [], 'repositories': [], 'verbose': False, 'shell': True, 'python': False, "
+                f"'raise_errors': False}}) "
                 f"to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
@@ -74,6 +75,7 @@ class TestCommandAdd(TestCase):
                                 'repositories': [],
                                 'shell': True,
                                 'tags': [],
+                                'python': False,
                                 'verbose': False
                             }
                         }
@@ -81,14 +83,27 @@ class TestCommandAdd(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_command_add_full_data(self, mock_ensure_object):
+    def test_command_add_python_scripts(self, mock_ensure_object):
         params = {
             'name': 'hello_world',
-            'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'python': True,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -108,7 +123,7 @@ class TestCommandAdd(TestCase):
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
-                    '-v', '-s', '-e'
+                    '-v', '-p', '-e'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -116,8 +131,8 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'raise_errors': {params['raise_errors']}}}) "
-                f"to the command store\n"
+                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
+                f" to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
@@ -152,6 +167,229 @@ class TestCommandAdd(TestCase):
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
+                                'python': params['python'],
+                                'verbose': params['verbose']
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_add_invalid_python_script(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write(".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '  # Missing a "
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': True,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                [
+                    '-n', params['name'],
+                    '-c', params['commands'][0],
+                    '-c', params['commands'][1],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-p', '-e'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Error: One of the commands in {params['commands']} is not a valid Python script\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_add_python_flag_with_shell_command(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': True,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                [
+                    '-n', params['name'],
+                    '-c', params['commands'][0],
+                    '-c', params['commands'][1],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-p', '-e'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Error: One of the commands in {params['commands']} is not a valid Python script\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_add_full_data(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': False,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                [
+                    '-n', params['name'],
+                    '-c', params['commands'][0],
+                    '-c', params['commands'][1],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-s', '-e'
+                ]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
+                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
+                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
+                f" to the command store\n"
+                f"Successfully added command {params['name']} to the command store\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            params['name']: {
+                                'commands': params['commands'],
+                                'raise_errors': params['raise_errors'],
+                                'repositories': params['repositories'],
+                                'shell': params['shell'],
+                                'tags': params['tags'],
+                                'python': params['python'],
                                 'verbose': params['verbose']
                             }
                         }
@@ -167,6 +405,7 @@ class TestCommandAdd(TestCase):
             'repositories': [],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -230,6 +469,7 @@ class TestCommandAdd(TestCase):
             'repositories': ['GitPython', 'gitdb'],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -282,6 +522,7 @@ class TestCommandAdd(TestCase):
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -326,8 +567,8 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'raise_errors': {params['raise_errors']}}}) "
-                f"to the command store\n"
+                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
+                f" to the command store\n"
                 f"Overwriting command {params['name']} in the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
@@ -363,6 +604,73 @@ class TestCommandAdd(TestCase):
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
+                                'python': params['python'],
+                                'verbose': params['verbose']
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_add_command_with_environment_variables(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': ['aws ecr get-login-password | '
+                         'docker login --username AWS --password-stdin {$AWS_ID}.dkr.ecr.{$AWS_REGION}.amazonaws.com'],
+            'tags': [],
+            'repositories': ['gameta'],
+            'verbose': False,
+            'shell': True,
+            'python': False,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.add,
+                [
+                    '-n', params['name'],
+                    '-c', params['commands'][0],
+                    '-r', params['repositories'][0],
+                    '-s', '-e'
+                ]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
+                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
+                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
+                f" to the command store\n"
+                f"Successfully added command {params['name']} to the command store\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            }
+                        },
+                        'commands': {
+                            params['name']: {
+                                'commands': params['commands'],
+                                'raise_errors': params['raise_errors'],
+                                'repositories': params['repositories'],
+                                'shell': params['shell'],
+                                'tags': params['tags'],
+                                'python': params['python'],
                                 'verbose': params['verbose']
                             }
                         }
@@ -484,7 +792,6 @@ class TestCommandDelete(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.delete, ['-n', params['name']])
-            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -542,6 +849,7 @@ class TestCommandUpdate(TestCase):
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -568,6 +876,7 @@ class TestCommandUpdate(TestCase):
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -610,6 +919,7 @@ class TestCommandUpdate(TestCase):
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'python': False,
             'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
@@ -682,6 +992,7 @@ class TestCommandUpdate(TestCase):
                             'hello_world': {
                                 'commands': params['commands'],
                                 'tags': params['tags'],
+                                'python': False,
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
@@ -692,15 +1003,29 @@ class TestCommandUpdate(TestCase):
                 )
 
     @patch('gameta.cli.click.Context.ensure_object')
-    def test_command_update_partial_update(self, mock_ensure_object):
+    def test_command_update_to_python_scripts(self, mock_ensure_object):
         params = {
             'name': 'hello_world',
             'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'new_commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
             'tags': ['a', 'b'],
-            'repositories': [],
-            'verbose': False,
+            'repositories': ['gameta'],
+            'verbose': True,
             'shell': True,
-            'raise_errors': False
+            'python': True,
+            'raise_errors': True
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -713,11 +1038,11 @@ class TestCommandUpdate(TestCase):
                             'commands': {
                                 'hello_world': {
                                     'commands': params['commands'],
-                                    'raise_errors': params['raise_errors'],
-                                    'repositories': params['repositories'],
-                                    'shell': params['shell'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
                                     'tags': [],
-                                    'verbose': params['verbose']
+                                    'verbose': False
                                 }
                             }
                         }
@@ -731,8 +1056,12 @@ class TestCommandUpdate(TestCase):
                 self.update,
                 [
                     '-n', params['name'],
+                    '-c', params['new_commands'][0],
+                    '-c', params['new_commands'][1],
                     '-t', params['tags'][0],
-                    '-t', params['tags'][1]
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-s', '-e', '-p'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -768,7 +1097,433 @@ class TestCommandUpdate(TestCase):
                         },
                         'commands': {
                             'hello_world': {
+                                'commands': params['new_commands'],
+                                'tags': params['tags'],
+                                'repositories': params['repositories'],
+                                'verbose': params['verbose'],
+                                'shell': params['shell'],
+                                'python': params['python'],
+                                'raise_errors': params['raise_errors']
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_update_from_python_scripts(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'new_commands': ['git fetch --all --tags --prune', 'git pull'],
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': False,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'python': True,
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.update,
+                [
+                    '-n', params['name'],
+                    '-c', params['new_commands'][0],
+                    '-c', params['new_commands'][1],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-s', '-e', '-np'
+                ]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Updating command {params['name']} in the command store\n"
+                f"Successfully updated command {params['name']} in the command store\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': {
+                                'commands': params['new_commands'],
+                                'tags': params['tags'],
+                                'repositories': params['repositories'],
+                                'verbose': params['verbose'],
+                                'shell': params['shell'],
+                                'python': params['python'],
+                                'raise_errors': params['raise_errors']
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_update_with_invalid_python_scripts(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'invalid_commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write(".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '  # Missing a "
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': True,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'python': True,
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.update,
+                [
+                    '-n', params['name'],
+                    '-c', params['invalid_commands'][0],
+                    '-c', params['invalid_commands'][1],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-s', '-e', '-p'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Updating command {params['name']} in the command store\n"
+                f"Error: One of the commands in {params['invalid_commands']} is not a valid Python script\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': {
                                 'commands': params['commands'],
+                                'raise_errors': False,
+                                'repositories': [],
+                                'shell': True,
+                                'tags': [],
+                                'python': True,
+                                'verbose': False
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_update_python_flag_but_not_python_commands(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': [
+                'from random import choice\n'
+                'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                'for _ in range({KEY_LEN})]))',
+                'from os import getcwd\n'
+                'from os.path import join, exists\n'
+                'from shutil import copyfile\n'
+                'for repo, details in {__repos__}.items():\n'
+                '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+            ],
+            'tags': ['a', 'b'],
+            'repositories': ['gameta'],
+            'verbose': True,
+            'shell': True,
+            'python': False,
+            'raise_errors': True
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': False,
+                                    'repositories': [],
+                                    'shell': True,
+                                    'tags': [],
+                                    'python': True,
+                                    'verbose': False
+                                }
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.update,
+                [
+                    '-n', params['name'],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1],
+                    '-r', params['repositories'][0],
+                    '-v', '-s', '-e', '-np'
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Updating command {params['name']} in the command store\n"
+                f"Error: Python flag was unset but one of the commands in {params['commands']} is still Python "
+                f"compilable\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': {
+                                'commands': params['commands'],
+                                'raise_errors': False,
+                                'repositories': [],
+                                'shell': True,
+                                'tags': [],
+                                'python': True,
+                                'verbose': False
+                            }
+                        }
+                    }
+                )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_command_update_partial_update(self, mock_ensure_object):
+        params = {
+            'name': 'hello_world',
+            'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'tags': ['a', 'b'],
+            'repositories': [],
+            'verbose': False,
+            'shell': True,
+            'python': False,
+            'raise_errors': False
+        }
+        with self.runner.isolated_filesystem() as f:
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': {
+                                    'commands': params['commands'],
+                                    'raise_errors': params['raise_errors'],
+                                    'repositories': params['repositories'],
+                                    'shell': params['shell'],
+                                    'tags': [],
+                                    'verbose': params['verbose']
+                                }
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.update,
+                [
+                    '-n', params['name'],
+                    '-t', params['tags'][0],
+                    '-t', params['tags'][1]
+                ]
+            )
+            print(result.output)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Updating command {params['name']} in the command store\n"
+                f"Successfully updated command {params['name']} in the command store\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': {
+                                'commands': params['commands'],
+                                'python': False,
                                 'tags': params['tags'],
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
@@ -788,6 +1543,7 @@ class TestCommandUpdate(TestCase):
             'repositories': [],
             'verbose': False,
             'shell': True,
+            'python': False,
             'raise_errors': False
         }
         with self.runner.isolated_filesystem() as f:
@@ -878,6 +1634,7 @@ class TestCommandUpdate(TestCase):
             'repositories': ['gitdb', 'GitPython'],
             'verbose': False,
             'shell': False,
+            'python': False,
             'raise_errors': False
         }
         with self.runner.isolated_filesystem() as f:
@@ -984,6 +1741,27 @@ class TestCommandLs(TestCase):
                     'verbose': False,
                     'shell': False,
                     'raise_errors': False
+                },
+                'hello_world3': {
+                    'commands': [
+                        'from random import choice\n'
+                        'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                        'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                        '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                        'for _ in range({KEY_LEN})]))',
+                        'from os import getcwd\n'
+                        'from os.path import join, exists\n'
+                        'from shutil import copyfile\n'
+                        'for repo, details in {__repos__}.items():\n'
+                        '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
+                        '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
+                    ],
+                    'tags': [],
+                    'repositories': ['gitdb', 'GitPython'],
+                    'verbose': False,
+                    'shell': False,
+                    'python': False,
+                    'raise_errors': False
                 }
             }
         }
@@ -1018,6 +1796,15 @@ class TestCommandLs(TestCase):
                 f"\tverbose: {params['commands']['hello_world2']['verbose']}\n"
                 f"\tshell: {params['commands']['hello_world2']['shell']}\n"
                 f"\traise_errors: {params['commands']['hello_world2']['raise_errors']}\n"
+                '\n'
+                'hello_world3:\n'
+                f"\tcommands: {' && '.join(params['commands']['hello_world3']['commands'])}\n"
+                f"\ttags: {', '.join(params['commands']['hello_world3']['tags'])}\n"
+                f"\trepositories: {', '.join(params['commands']['hello_world3']['repositories'])}\n"
+                f"\tverbose: {params['commands']['hello_world3']['verbose']}\n"
+                f"\tshell: {params['commands']['hello_world3']['shell']}\n"
+                f"\tpython: {params['commands']['hello_world3']['python']}\n"
+                f"\traise_errors: {params['commands']['hello_world3']['raise_errors']}\n"
                 '\n'
             )
 
@@ -1179,13 +1966,22 @@ class TestCommandExec(TestCase):
                 'raise_errors': True
             },
             'hello_world3': {
-                'commands': ['git fetch --all --tags --prune'],
-                'tags': ['a', 'b'],
+                'commands': [
+                    'from random import choice\n'
+                    'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                    'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                    '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                    'for _ in range({KEY_LEN})]))'
+                ],
+                'tags': [],
                 'repositories': ['gameta'],
                 'verbose': False,
                 'shell': False,
+                'python': True,
                 'raise_errors': True
             },
+            'encryption_file_name': 'encryption.txt',
+            'key_len': 16,
             'actual_repositories': ['GitPython', 'gameta', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
@@ -1197,10 +1993,19 @@ class TestCommandExec(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w') as m2:
-                    output['commands'] = {}
-                    output['commands']['hello_world'] = params['hello_world']
-                    output['commands']['hello_world2'] = params['hello_world2']
-                    output['commands']['hello_world3'] = params['hello_world3']
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': params['hello_world'],
+                                'hello_world2': params['hello_world2'],
+                                'hello_world3': params['hello_world3']
+                            },
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                                'KEY_LEN': params['key_len']
+                            }
+                        }
+                    )
                     json.dump(output, m2)
             gameta_context = GametaContext()
             gameta_context.project_dir = f
@@ -1215,6 +2020,7 @@ class TestCommandExec(TestCase):
                     '-c', params['commands'][2],
                 ]
             )
+            output = [c for c in context.obj.apply(params['hello_world3']['commands'], python=True)][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -1230,10 +2036,9 @@ class TestCommandExec(TestCase):
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][0]}\n"
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][2]}\n"
                 f"Executing Gameta command {params['commands'][2]}\n"
-                f"Applying {params['hello_world3']['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing {params['hello_world3']['commands'][0]} in {params['actual_repositories'][1]}\n"
-                f"Executing {params['hello_world3']['commands'][0]} in {params['actual_repositories'][0]}\n"
-                f"Executing {params['hello_world3']['commands'][0]} in {params['actual_repositories'][2]}\n"
+                f"Applying Python commands {params['hello_world3']['commands']} to repos "
+                f"{[params['actual_repositories'][1]]} in a separate shell\n"
+                f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][1]}\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
             with open(join(f, '.meta'), 'r') as m:
@@ -1264,6 +2069,13 @@ class TestCommandExec(TestCase):
                             'hello_world': params['hello_world'],
                             'hello_world2': params['hello_world2'],
                             'hello_world3': params['hello_world3']
+                        },
+                        'constants': {
+                            'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                            'KEY_LEN': params['key_len']
                         }
                     }
                 )
+            self.assertTrue(exists(join(f, params['encryption_file_name'])))
+            with open(join(f, params['encryption_file_name']), 'r') as e:
+                self.assertEqual(len(e.read()), params['key_len'])

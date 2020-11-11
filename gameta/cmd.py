@@ -39,6 +39,7 @@ def command_cli(context: GametaContext) -> None:
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Display execution output when CLI command is applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
+@click.option('--python', '-p', is_flag=True, default=False, help='Execute Python scripts using Python 3 interpreter')
 @click.option('--raise-errors', '-e', is_flag=True, default=False,
               help='Raise errors that occur when executing CLI commands and terminate execution')
 @gameta_context
@@ -51,6 +52,7 @@ def add(
         repositories: Tuple[str],
         verbose: bool,
         shell: bool,
+        python: bool,
         raise_errors: bool
 ) -> None:
     """
@@ -66,6 +68,7 @@ def add(
         repositories (Tuple[str]): Repositories to apply command to
         verbose (bool): Flag to indicate that output should be displayed as the command is applied
         shell (bool): Flag to indicate that command should be executed in a separate shell
+        python (bool): Flag to indicate that command should be executed by the Python 3 interpreter
         raise_errors (bool): Flag to indicate that errors should be raised if they occur during execution and the
                              overall execution should be terminated
 
@@ -75,16 +78,25 @@ def add(
     Raises:
         click.ClickException: If errors occur during processing
     """
-
+    # Validate parameters
+    # Tags must already be added before they can be used
     if any(t not in context.tags for t in tags):
         raise click.ClickException(
             f"One of the tags in {list(tags)} has not been added, please run `gameta tags add` to add it first"
         )
+    # Repositories must already be added before they can be used
     if any(r not in context.repositories for r in repositories):
         raise click.ClickException(
             f"One of the repositories in {list(repositories)} does not exist, please run `gameta repo add` to "
             f"add it first"
         )
+    # If Python flag is set, all commands must be valid Python scripts
+    if python:
+        try:
+            for command in commands:
+                compile(command, 'test', 'exec')
+        except SyntaxError:
+            raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
 
     try:
         gameta_command: Dict = {
@@ -93,6 +105,7 @@ def add(
             'repositories': list(repositories),
             'verbose': verbose,
             'shell': True if len(commands) > 1 else shell,
+            'python': python,
             'raise_errors': raise_errors
         }
 
@@ -152,6 +165,8 @@ def delete(context: GametaContext, name: str) -> None:
               help='Display execution output when CLI command is applied')
 @click.option('--shell/--no-shell', '-s/-ns', is_flag=True, default=None,
               help='Execute CLI commands in a separate shell')
+@click.option('--python/--no-python', '-p/-np', is_flag=True, default=None,
+              help='Execute Python scripts using Python 3 interpreter')
 @click.option('--raise-errors/--no-errors', '-e/-ne', is_flag=True, default=None,
               help='Raise errors that occur when executing CLI commands and terminate execution')
 @gameta_context
@@ -163,6 +178,7 @@ def update(
         repositories: Optional[Tuple[str]],
         verbose: Optional[bool],
         shell: Optional[bool],
+        python: Optional[bool],
         raise_errors: Optional[bool]
 ) -> None:
     """
@@ -176,6 +192,7 @@ def update(
         repositories (Tuple[str]): Repositories to apply command to
         verbose (Optional[bool]): Flag to indicate that output should be displayed as the command is applied
         shell (Optional[bool]): Flag to indicate that command should be executed in a separate shell
+        python (Optional[bool]): Flag to indicate that command should be executed by the Python 3 interpreter
         raise_errors (Optional[bool]): Flag to indicate that errors should be raised if they occur during execution and
                                        the overall execution should be terminated
 
@@ -193,6 +210,7 @@ def update(
         'repositories': repositories,
         'verbose': verbose,
         'shell': shell,
+        'python': python,
         'raise_errors': raise_errors
     }
     if name not in context.commands:
@@ -210,18 +228,42 @@ def update(
 
             updated_command[key] = value
 
-        # Update parameters
+        if 'python' not in updated_command:
+            updated_command['python'] = False
+
+        # Validate parameters
+        # Multiple commands need to be accompanied with the shell parameter
         if len(updated_command['commands']) > 1 and updated_command['shell'] is False:
             raise click.ClickException('Multiple CLI commands requires shell param to be True')
+        # Tags must already be added before they can be used
         if any(t not in context.tags for t in tags):
             raise click.ClickException(
                 f"One of the tags in {list(tags)} has not been added, please run `gameta tags add` to add it first"
             )
+        # Repositories must already be added before they can be used
         if any(r not in context.repositories for r in repositories):
             raise click.ClickException(
                 f"One of the repositories in {list(repositories)} does not exist, please run `gameta repo add` to "
                 f"add it first"
             )
+        # If Python flag is set, all commands need to be valid Python scripts
+        if updated_command['python']:
+            try:
+                for command in updated_command['commands']:
+                    compile(command, 'test', 'exec')
+            except SyntaxError:
+                raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
+        # If Python flag was unset, all the commands cannot be valid Python scripts
+        if context.commands[name].get('python', False) is True and updated_command['python'] is False:
+            for command in updated_command['commands']:
+                try:
+                    compile(command, 'test', 'exec')
+                    raise click.ClickException(
+                        f"Python flag was unset but one of the commands in {updated_command['commands']} "
+                        f"is still Python compilable"
+                    )
+                except SyntaxError:
+                    continue
 
         context.commands[name] = updated_command
         context.export()
@@ -265,9 +307,9 @@ def ls(context: GametaContext) -> None:
             'tags': lambda v: ', '.join(v),
             'repositories': lambda v: ', '.join(v)
         }
-        for key in ['commands', 'tags', 'repositories', 'verbose', 'shell', 'raise_errors']:
+        for key in ['commands', 'tags', 'repositories', 'verbose', 'shell', 'python', 'raise_errors']:
             if key in details:
-                command_string += '\t' + param_string.format(key, formatters.get(key, str)(details[key]))
+                command_string += '\t' + param_string.format(key, formatters.get(key, str)(details.get(key)))
 
         return command_string
 
