@@ -80,7 +80,7 @@ from os import getcwd
 from random import choice
 from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 key = "".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})])
-for repo, details in {__repo__}.items():
+for repo, details in {__repos__}.items():
     with open(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"), "w") as f:
         f.write(key)
 ' -r main_repo

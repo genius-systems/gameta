@@ -212,7 +212,7 @@ ___
 ___
 **Note**
    
-A special variable **\_\_repo\_\_** is reserved to provide access to repository details
+A special variable **\_\_repos\_\_** is reserved to provide access to repository details
 when using Python scripts. This variable should **only be used in Python scripts** as 
 it causes issues when substituted into shell parameters.
 ___
