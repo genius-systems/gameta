@@ -152,6 +152,37 @@ parameter values as JSON decodable strings e.g. `'{"hello": "world"}'` or
 `'["hello", "world"]'`
 ___
 
+___
+**Note**
+   
+From version [0.2.3](https://pypi.org/project/gameta/0.2.3/), environment variables
+parameters are acceptable parameter values. These parameter values will be substituted
+by the appropriate environment variables. For example the following `gameta params` 
+command below is acceptable:
+
+```bash
+gameta params add -p branch -y -v '${BITBUCKET_BRANCH}'
+```
+
+This will result in the configuration below:
+
+```JSON
+{
+  "projects": {
+    "gameta": {
+      "path": ".",
+      "tags": ["metarepo"],
+      "url": "https://github.com:genius-systems/gameta.git",
+      "branch": "${BITBUCKET_BRANCH}"
+    }
+  }
+}
+```
+
+And the branch parameter for gameta will be resolved to the `${BITBUCKET_BRANCH}` 
+environment variable
+___
+
 #### Arguments
 
 * **--param / -p**: Name of the parameter to be added to each repository
@@ -324,6 +355,28 @@ ___
 Constants are applied consistently across all repositories, while parameters are unique
 to each repository. Hence to distinguish between parameters which are unique, constants
 are all converted to uppercase.
+___
+
+___
+**Note**
+   
+From version [0.2.3](https://pypi.org/project/gameta/0.2.3/), constants can be added 
+with a '$' symbol e.g. `$BRANCH`. These constants will be automatically substituted
+the corresponding environment variables extracted from the environment i.e. the 
+resultant substitution from the constant store and run-time environment configuration
+below is `world`.
+
+```JSON
+{
+  "constants": {
+    "$BRANCH": "hello"
+  }
+}
+``` 
+
+```bash
+export BRANCH=world
+```
 ___
 
 ### Arguments
