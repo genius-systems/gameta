@@ -284,7 +284,7 @@ class GametaContext(object):
             "constants": {
                 "type": "object",
                 "propertyNames": {
-                    "pattern": "^[A-Z0-9_-]"
+                    "pattern": "^[$A-Z0-9_-]"
                 }
             }
         }
@@ -453,21 +453,11 @@ class GametaContext(object):
 
         for repo, details in repositories:
             # Generate complete set of parameters for substitution
-            combined_details: Dict = deepcopy(details)
-            combined_details.update(self.constants)
-            combined_details.update(self.env_vars)
-            combined_details.update(
-                {
-                    '__repos__':
-                        json.dumps(self.repositories)
-                        .replace("true", "True")
-                        .replace("false", "False")
-                        .replace("null", "None")
-                }
-            )
 
-            with self.cd(combined_details['path']):
-                repo_commands: List[str] = [c.format(**combined_details) for c in deepcopy(commands)]
+            with self.cd(details['path']):
+                repo_commands: List[str] = [
+                    c.format(**self.generate_parameters(repo, details, python)) for c in deepcopy(commands)
+                ]
                 if python:
                     command: List[str] = self.python(repo_commands)
                 elif shell:
@@ -476,6 +466,39 @@ class GametaContext(object):
                     command: List[str] = self.tokenise(' && '.join(repo_commands))
                 yield repo, command
 
+    def generate_parameters(self, repo: str, repo_details: Dict, python: bool = False) -> Dict:
+        """
+        Generates the set of parameters for each repository to be substituted into command strings. 
+        
+        Args:
+            repo (str): Repository name of parameters to be generated
+            repo_details (Dict): Repository details from .meta file
+            python (bool): Flag to indicate if Python variables should be generated, defaults to False
+
+        Returns:
+            Dict: Generated set of parameters
+        """
+
+        combined_details: Dict = {
+            k: v.format(**self.env_vars) if isinstance(v, str) else v
+            for k, v in deepcopy(repo_details).items()
+        }
+        if python:
+            repositories: Dict = deepcopy(self.repositories)
+            repositories[repo] = deepcopy(combined_details)
+            combined_details.update(
+                {
+                    '__repos__':
+                        json.dumps(repositories)
+                            .replace("true", "True")
+                            .replace("false", "False")
+                            .replace("null", "None")
+                }
+            )
+        combined_details.update(self.constants)
+        combined_details.update(self.env_vars)
+        return combined_details
+        
     @staticmethod
     def tokenise(command: str) -> List[str]:
         """

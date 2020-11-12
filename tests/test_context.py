@@ -349,6 +349,69 @@ class TestGametaContext(TestCase):
                 }
             )
 
+    def test_gameta_load_missing_projects_in_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.meta'), 'w') as m:
+                output = {
+                    "commands": {
+                        'hello_world': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        },
+                        'hello_world2': {
+                            'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'tags': [],
+                            'repositories': ['gitdb', 'GitPython'],
+                            'verbose': False,
+                            'shell': False,
+                            'raise_errors': False
+                        }
+                    },
+                    'constants': {
+                        'HELLO': 'world',
+                        "I": 'am',
+                        'A': 'test'
+                    }
+                }
+                json.dump(output, m)
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertEqual(self.context.repositories, {})
+            self.assertEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'verbose': False,
+                        'shell': False,
+                        'raise_errors': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
+
     def test_gameta_load_malformed_commands_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
@@ -555,7 +618,7 @@ class TestGametaContext(TestCase):
             )
             self.assertEqual(self.context.constants, {})
 
-    def test_gameta_load_meta_file(self):
+    def test_gameta_load_full_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -689,7 +752,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_meta_file(self):
+    def test_gameta_load_meta_file_with_mergeable_constants(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -742,9 +805,9 @@ class TestGametaContext(TestCase):
                             }
                         },
                         'constants': {
-                            'HELLO': 'world',
-                            "I": 'am',
-                            'A': 'test'
+                            '$HELLO': 'world',
+                            "$I": 'am',
+                            '$A': 'test'
                         }
                     }, m
                 )
@@ -817,9 +880,9 @@ class TestGametaContext(TestCase):
             self.assertEqual(
                 self.context.constants,
                 {
-                    'HELLO': 'world',
-                    "I": 'am',
-                    'A': 'test'
+                    '$HELLO': 'world',
+                    "$I": 'am',
+                    '$A': 'test'
                 }
             )
 
@@ -1725,3 +1788,307 @@ class TestGametaContext(TestCase):
                         "for _ in range(16)]))'"
                     ]
                 )
+
+    def test_gameta_context_generate_parameters_complete_parameter_set_generated(self):
+        self.context.repositories = {
+            "genisys": {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False
+            },
+            "genisys-testing": {
+                "url": "https://github.com/testing/genisys-testing.git",
+                "path": "core/genisys-testing",
+                "tags": [
+                    "core",
+                    "testing",
+                    "developer"
+                ],
+                '__metarepo__': False
+            },
+        }
+        self.context.commands = {
+            'hello_world': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            },
+            'hello_world2': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            }
+        }
+        self.context.constants = {
+            'HELLO': "world",
+            "I": 'am',
+            'A': 'test'
+        }
+        self.context.env_vars = {
+            '$HELLO': 'world',
+            '$I': 'am',
+            '$A': 'test'
+        }
+
+        self.assertEqual(
+            self.context.generate_parameters('genisys', self.context.repositories['genisys']),
+            {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False,
+                'HELLO': "world",
+                "I": 'am',
+                'A': 'test',
+                '$HELLO': 'world',
+                '$I': 'am',
+                '$A': 'test'
+            }
+        )
+
+    def test_gameta_context_generate_parameters_complete_parameter_set_generated_with_python_variables(self):
+        self.context.repositories = {
+            "genisys": {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False
+            },
+            "genisys-testing": {
+                "url": "https://github.com/testing/genisys-testing.git",
+                "path": "core/genisys-testing",
+                "tags": [
+                    "core",
+                    "testing",
+                    "developer"
+                ],
+                '__metarepo__': False
+            },
+        }
+        self.context.commands = {
+            'hello_world': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            },
+            'hello_world2': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            }
+        }
+        self.context.constants = {
+            'HELLO': "world",
+            "I": 'am',
+            'A': 'test'
+        }
+        self.context.env_vars = {
+            '$HELLO': 'world',
+            '$I': 'am',
+            '$A': 'test'
+        }
+
+        self.assertCountEqual(
+            self.context.generate_parameters('genisys', self.context.repositories['genisys'], python=True),
+            {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False,
+                'HELLO': "world",
+                "I": 'am',
+                'A': 'test',
+                '$HELLO': 'world',
+                '$I': 'am',
+                '$A': 'test',
+                '__repos__': self.context.repositories
+            }
+        )
+
+    def test_gameta_context_generate_parameters_constants_substituted_by_environment_variables(self):
+        self.context.repositories = {
+            "genisys": {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False
+            },
+            "genisys-testing": {
+                "url": "https://github.com/testing/genisys-testing.git",
+                "path": "core/genisys-testing",
+                "tags": [
+                    "core",
+                    "testing",
+                    "developer"
+                ],
+                '__metarepo__': False
+            },
+        }
+        self.context.commands = {
+            'hello_world': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            },
+            'hello_world2': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            }
+        }
+        self.context.constants = {
+            '$HELLO': "world",
+            "$I": 'am',
+            '$A': 'test'
+        }
+        self.context.env_vars = {
+            '$HELLO': 'hello_world',
+            '$I': 'hello_world',
+            '$A': 'hello_world'
+        }
+
+        self.assertCountEqual(
+            self.context.generate_parameters('genisys', self.context.repositories['genisys'], python=True),
+            {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False,
+                '$HELLO': 'hello_world',
+                '$I': 'hello_world',
+                '$A': 'hello_world',
+                '__repos__': json.dumps(self.context.repositories)
+            }
+        )
+
+    def test_gameta_context_generate_parameters_parameters_substituted_by_environment_variables(self):
+        self.context.repositories = {
+            "genisys": {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                '__metarepo__': False,
+                'branch': '{$BRANCH}'
+            },
+            "genisys-testing": {
+                "url": "https://github.com/testing/genisys-testing.git",
+                "path": "core/genisys-testing",
+                "tags": [
+                    "core",
+                    "testing",
+                    "developer"
+                ],
+                '__metarepo__': False,
+                'branch': 'master'
+            },
+        }
+        self.context.commands = {
+            'hello_world': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            },
+            'hello_world2': {
+                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                'tags': [],
+                'repositories': ['gitdb', 'GitPython'],
+                'verbose': False,
+                'shell': False,
+                'raise_errors': False
+            }
+        }
+        self.context.constants = {
+            '$HELLO': "world",
+            "$I": 'am',
+            '$A': 'test'
+        }
+        self.context.env_vars = {
+            '$BRANCH': 'test',
+            '$HELLO': 'hello_world',
+            '$I': 'hello_world',
+            '$A': 'hello_world'
+        }
+
+        self.assertCountEqual(
+            self.context.generate_parameters('genisys', self.context.repositories['genisys'], python=True),
+            {
+                "url": "https://github.com/testing/genisys.git",
+                "path": "core/genisys",
+                "tags": [
+                    "core",
+                    "templating"
+                ],
+                'branch': 'test',
+                '__metarepo__': False,
+                '$HELLO': 'hello_world',
+                '$I': 'hello_world',
+                '$A': 'hello_world',
+                '$BRANCH': 'test',
+                '__repos__': json.dumps({
+                    'genisys': {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ],
+                        '__metarepo__': False,
+                        'branch': 'test'
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ],
+                        '__metarepo__': False,
+                        'branch': 'master'
+                    }
+                })
+            }
+        )
