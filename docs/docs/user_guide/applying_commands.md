@@ -64,7 +64,7 @@ gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 
 ## Applying Python Commands
 
-From version [0.2.2](https://pypi.org/project/gameta/0.2.1/), Gameta can apply Python 3 
+From version [0.2.2](https://pypi.org/project/gameta/0.2.2/), Gameta can apply Python 3 
 scripts across various repositories. This provides users with the flexibility to augment 
 their CLI operations with Python scripts. Python scripts are entered similar to multi-line
 shell commands using the `''`. Consider the Python script below that:
