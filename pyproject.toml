@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "gameta"
-version = "0.2.2"
+version = "0.2.3"
 description = "CLI Tool for managing meta-repositories"
 license = "MIT"
 authors = [ "David Lee <ltw_david@hotmail.com>",]
