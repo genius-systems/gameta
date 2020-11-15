@@ -252,6 +252,9 @@ class GametaContext(object):
                             "type": "string"
                         },
                     },
+                    "description": {
+                        "type": "string"
+                    },
                     "raise_errors": {
                         "type": "boolean"
                     },
@@ -278,7 +281,7 @@ class GametaContext(object):
                     }
                 },
                 "minProperties": 6,
-                "maxProperties": 7,
+                "maxProperties": 8,
                 "additionalProperties": False,
             },
             "constants": {

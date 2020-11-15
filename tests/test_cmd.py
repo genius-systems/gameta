@@ -57,7 +57,7 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': [], 'repositories': [], 'verbose': False, 'shell': True, 'python': False, "
+                f"'description': '', 'tags': [], 'repositories': [], 'verbose': False, 'shell': True, 'python': False, "
                 f"'raise_errors': False}}) "
                 f"to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -71,6 +71,7 @@ class TestCommandAdd(TestCase):
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
+                                'description': '',
                                 'raise_errors': False,
                                 'repositories': [],
                                 'shell': True,
@@ -99,6 +100,7 @@ class TestCommandAdd(TestCase):
                 '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
                 '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
             ],
+            'description': 'Generates an encryption key',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
@@ -120,6 +122,7 @@ class TestCommandAdd(TestCase):
                     '-n', params['name'],
                     '-c', params['commands'][0],
                     '-c', params['commands'][1],
+                    '-d', params['description'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
@@ -130,7 +133,8 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
+                f"'description': '{params['description']}', 'tags': {params['tags']}, "
+                f"'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
                 f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
                 f" to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -163,6 +167,7 @@ class TestCommandAdd(TestCase):
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
+                                'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
@@ -321,6 +326,7 @@ class TestCommandAdd(TestCase):
         params = {
             'name': 'hello_world',
             'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'description': 'Fetches code from all repos',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
@@ -342,6 +348,7 @@ class TestCommandAdd(TestCase):
                     '-n', params['name'],
                     '-c', params['commands'][0],
                     '-c', params['commands'][1],
+                    '-d', params['description'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
@@ -352,7 +359,8 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
+                f"'description': '{params['description']}', 'tags': {params['tags']}, "
+                f"'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
                 f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
                 f" to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -385,6 +393,7 @@ class TestCommandAdd(TestCase):
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
+                                'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
@@ -520,6 +529,7 @@ class TestCommandAdd(TestCase):
             'commands': ['git fetch --all --tags --prune', 'git pull'],
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
+            'description': 'Fetches all commands',
             'verbose': True,
             'shell': True,
             'python': False,
@@ -536,6 +546,7 @@ class TestCommandAdd(TestCase):
                             'commands': {
                                 'hello_world': {
                                     'commands': params['commands'],
+                                    'description': 'Lame description',
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
@@ -556,6 +567,7 @@ class TestCommandAdd(TestCase):
                     '-n', params['name'],
                     '-c', params['commands'][0],
                     '-c', params['commands'][1],
+                    '-d', params['description'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
@@ -566,9 +578,9 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
-                f" to the command store\n"
+                f"'description': '{params['description']}', 'tags': {params['tags']}, "
+                f"'repositories': {params['repositories']}, 'verbose': {params['verbose']}, 'shell': {params['shell']}, "
+                f"'python': {params['python']}, 'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Overwriting command {params['name']} in the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
@@ -600,6 +612,7 @@ class TestCommandAdd(TestCase):
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
+                                'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
@@ -617,6 +630,7 @@ class TestCommandAdd(TestCase):
             'name': 'hello_world',
             'commands': ['aws ecr get-login-password | '
                          'docker login --username AWS --password-stdin {$AWS_ID}.dkr.ecr.{$AWS_REGION}.amazonaws.com'],
+            'description': 'Log into AWS',
             'tags': [],
             'repositories': ['gameta'],
             'verbose': False,
@@ -638,6 +652,7 @@ class TestCommandAdd(TestCase):
                     '-n', params['name'],
                     '-c', params['commands'][0],
                     '-r', params['repositories'][0],
+                    '-d', params['description'],
                     '-s', '-e'
                 ]
             )
@@ -645,7 +660,8 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'tags': {params['tags']}, 'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
+                f"'description': '{params['description']}', 'tags': {params['tags']}, "
+                f"'repositories': {params['repositories']}, 'verbose': {params['verbose']}, "
                 f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
                 f" to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -666,6 +682,7 @@ class TestCommandAdd(TestCase):
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
+                                'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
                                 'shell': params['shell'],
@@ -915,6 +932,7 @@ class TestCommandUpdate(TestCase):
         params = {
             'name': 'hello_world',
             'commands': ['git fetch --all --tags --prune', 'git pull'],
+            'description': 'Fetches and updates code',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
@@ -933,6 +951,7 @@ class TestCommandUpdate(TestCase):
                             'commands': {
                                 'hello_world': {
                                     'commands': params['commands'],
+                                    'description': 'Lame description',
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
@@ -953,6 +972,7 @@ class TestCommandUpdate(TestCase):
                     '-n', params['name'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
+                    '-d', params['description'],
                     '-r', params['repositories'][0],
                     '-v', '-s', '-e',
                 ]
@@ -991,6 +1011,7 @@ class TestCommandUpdate(TestCase):
                         'commands': {
                             'hello_world': {
                                 'commands': params['commands'],
+                                'description': params['description'],
                                 'tags': params['tags'],
                                 'python': False,
                                 'repositories': params['repositories'],
@@ -1020,6 +1041,7 @@ class TestCommandUpdate(TestCase):
                 '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
                 '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
             ],
+            'description': 'Generates an encryption key',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
@@ -1038,6 +1060,7 @@ class TestCommandUpdate(TestCase):
                             'commands': {
                                 'hello_world': {
                                     'commands': params['commands'],
+                                    'description': "Lame description",
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
@@ -1058,6 +1081,7 @@ class TestCommandUpdate(TestCase):
                     '-n', params['name'],
                     '-c', params['new_commands'][0],
                     '-c', params['new_commands'][1],
+                    '-d', params['description'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
@@ -1098,6 +1122,7 @@ class TestCommandUpdate(TestCase):
                         'commands': {
                             'hello_world': {
                                 'commands': params['new_commands'],
+                                'description': params['description'],
                                 'tags': params['tags'],
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
@@ -1128,6 +1153,7 @@ class TestCommandUpdate(TestCase):
                 '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
             ],
             'tags': ['a', 'b'],
+            'description': "Generates an encryption key",
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
@@ -1166,6 +1192,7 @@ class TestCommandUpdate(TestCase):
                     '-n', params['name'],
                     '-c', params['new_commands'][0],
                     '-c', params['new_commands'][1],
+                    '-d', params['description'],
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
@@ -1206,6 +1233,7 @@ class TestCommandUpdate(TestCase):
                         'commands': {
                             'hello_world': {
                                 'commands': params['new_commands'],
+                                'description': params['description'],
                                 'tags': params['tags'],
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
@@ -1488,7 +1516,6 @@ class TestCommandUpdate(TestCase):
                     '-t', params['tags'][1]
                 ]
             )
-            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -1523,6 +1550,7 @@ class TestCommandUpdate(TestCase):
                         'commands': {
                             'hello_world': {
                                 'commands': params['commands'],
+                                'description': '',
                                 'python': False,
                                 'tags': params['tags'],
                                 'repositories': params['repositories'],
