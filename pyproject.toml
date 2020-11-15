@@ -39,6 +39,11 @@ envlist = py36,py37,py38,py39
 
 [testenv]
 commands = python -m unittest discover -v -s ./tests -t .
+
+[testenv:py36]
+setenv =
+    LC_ALL = C.UTF-8
+    LANG = C.UTF-8
 """
 
 [tool.poetry.dependencies]
