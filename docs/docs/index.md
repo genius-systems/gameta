@@ -14,7 +14,7 @@ complex software.
 
 ## System Requirements
 
-Gameta requires Python 3.7+, it is designed to be multi-platform but currently is
+Gameta requires Python 3.6+, it is designed to be multi-platform but currently is
 only tested in Linux environments.
 
 ## Installation

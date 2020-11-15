@@ -21,6 +21,11 @@ The current members of the Gameta team.
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
 
+## Version 0.2.4 (2020-11-16)
+
+* Adding support for Python 3.6 [link](https://github.com/genius-systems/gameta/issues/27)
+* Adding description to Gameta commands [link](https://github.com/genius-systems/gameta/issues/30)
+
 ## Version 0.2.3 (2020-11-13)
 
 * Added environment variable substitution for parameters and constants
