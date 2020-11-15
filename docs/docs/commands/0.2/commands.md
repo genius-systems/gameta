@@ -278,6 +278,7 @@ ___
 
 #### Arguments 
 * **--name / -n**: Name 
+* --description / -d: Brief description of the Gameta command
 * --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
     with new data
 * **_--command / -c_**: CLI commands to be applied
@@ -312,6 +313,7 @@ ___
 
 #### Arguments
 * **--name / -n**: Gameta command name to be updated
+* --description / -d: Brief description of the Gameta command to be updated
 * _--command / -c_: New CLI commands to be executed
 * _--tags / -t_: New repository tags apply CLI commands to
 * _--repositories / -r_: New repositories to apply CLI commands to

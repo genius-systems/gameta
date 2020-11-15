@@ -31,6 +31,7 @@ def command_cli(context: GametaContext) -> None:
 
 @command_cli.command()
 @click.option('--name', '-n', type=str, required=True, help='Gameta command name to be added to the store')
+@click.option('--description', '-d', type=str, default='', help='Brief description of the Gameta command')
 @click.option('--overwrite', '-o', type=bool, is_flag=True, default=False,
               help='Overwrite existing Gameta command in the store')
 @click.option('--command', '-c', 'commands', type=str, required=True, multiple=True, help='CLI Commands to be executed')
@@ -47,6 +48,7 @@ def add(
         context: GametaContext,
         name: str,
         overwrite: bool,
+        description: str,
         commands: Tuple[str],
         tags: Tuple[str],
         repositories: Tuple[str],
@@ -61,6 +63,7 @@ def add(
     Args:
         context (GametaContext): Gameta Context
         name (str): Name of the CLI command to be stored
+        description (str): Brief description of the command
         overwrite (bool): Flag to overwrite the existing Gameta command if it exists, defaults to false
 
         commands (Tuple[str]): CLI command to be applied
@@ -101,6 +104,7 @@ def add(
     try:
         gameta_command: Dict = {
             'commands': list(commands),
+            'description': description,
             'tags': list(tags),
             'repositories': list(repositories),
             'verbose': verbose,
@@ -157,6 +161,7 @@ def delete(context: GametaContext, name: str) -> None:
 @click.option('--name', '-n', type=str, required=True, help='Gameta command name to be added to the store')
 @click.option('--command', '-c', 'commands', type=str, default=None, multiple=True,
               help='New CLI commands to be executed')
+@click.option('--description', '-d', type=str, default=None, help='Brief description of the Gameta command')
 @click.option('--tags', '-t', type=str, multiple=True, default=None,
               help='New repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=None,
@@ -174,6 +179,7 @@ def update(
         context: GametaContext,
         name: str,
         commands: Optional[Tuple[str]],
+        description: Optional[str],
         tags: Optional[Tuple[str]],
         repositories: Optional[Tuple[str]],
         verbose: Optional[bool],
@@ -188,8 +194,9 @@ def update(
         context (GametaContext): Gameta Context
         name (str): Command to be updated
         commands (Tuple[str]): CLI command to be applied
-        tags (Tuple[str]): Repository tags to apply command to
-        repositories (Tuple[str]): Repositories to apply command to
+        description (Optional[str]): Brief description of CLI command
+        tags (Optional[Tuple[str]]): Repository tags to apply command to
+        repositories (Optional[Tuple[str]]): Repositories to apply command to
         verbose (Optional[bool]): Flag to indicate that output should be displayed as the command is applied
         shell (Optional[bool]): Flag to indicate that command should be executed in a separate shell
         python (Optional[bool]): Flag to indicate that command should be executed by the Python 3 interpreter
@@ -206,6 +213,7 @@ def update(
     click.echo(f"Updating command {name} in the command store")
     updates: Dict = {
         'commands': commands,
+        'description': description,
         'tags': tags,
         'repositories': repositories,
         'verbose': verbose,
@@ -221,6 +229,7 @@ def update(
         for key, value in updates.items():
             # Skip invalid data
             if not (
+                isinstance(value, str) or
                 isinstance(value, bool) or
                 (isinstance(value, tuple) and len(value) > 0)
             ):
@@ -230,6 +239,9 @@ def update(
 
         if 'python' not in updated_command:
             updated_command['python'] = False
+
+        if 'description' not in updated_command:
+            updated_command['description'] = ''
 
         # Validate parameters
         # Multiple commands need to be accompanied with the shell parameter
