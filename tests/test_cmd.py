@@ -1916,6 +1916,7 @@ class TestCommandExec(TestCase):
                 'repositories': ['gameta'],
                 'verbose': False,
                 'shell': False,
+                'python': False,
                 'raise_errors': True
             },
             'actual_repositories': ['GitPython', 'gameta', 'gitdb']
@@ -1939,6 +1940,7 @@ class TestCommandExec(TestCase):
             context = Context(exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
+            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
