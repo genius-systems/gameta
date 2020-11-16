@@ -319,7 +319,7 @@ def ls(context: GametaContext) -> None:
             'tags': lambda v: ', '.join(v),
             'repositories': lambda v: ', '.join(v)
         }
-        for key in ['commands', 'tags', 'repositories', 'verbose', 'shell', 'python', 'raise_errors']:
+        for key in ['description', 'commands', 'tags', 'repositories', 'verbose', 'shell', 'python', 'raise_errors']:
             if key in details:
                 command_string += '\t' + param_string.format(key, formatters.get(key, str)(details.get(key)))
 
@@ -350,6 +350,21 @@ def exec(context: click.Context, commands: Tuple[str]) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
+    def get_command(command_name: str) -> Dict:
+        """
+        Structures a command for execution
+
+        Args:
+            command_name (str): Command to be executed
+
+        Returns:
+            Dict: Structured command output
+        """
+        return {
+            p: g_context.commands[command_name][p]
+            for p in ['commands', 'tags', 'repositories', 'verbose', 'shell', 'raise_errors', 'python']
+        }
+
     from gameta.apply import apply
 
     g_context: GametaContext = context.obj
@@ -363,6 +378,6 @@ def exec(context: click.Context, commands: Tuple[str]) -> None:
         click.echo(f"Executing {list(commands)}")
         for command in commands:
             click.echo(f"Executing Gameta command {command}")
-            context.invoke(apply, **g_context.commands[command])
+            context.invoke(apply, **get_command(command))
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
