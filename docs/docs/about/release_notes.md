@@ -21,6 +21,11 @@ The current members of the Gameta team.
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
 
+## Version 0.2.5 (2020-11-16)
+
+* Hotfixes for various issues:
+  * Description parameter affects `gameta cmd exec`
+
 ## Version 0.2.4 (2020-11-16)
 
 * Adding support for Python 3.6 [link](https://github.com/genius-systems/gameta/issues/27)
