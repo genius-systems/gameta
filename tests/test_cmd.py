@@ -1916,6 +1916,7 @@ class TestCommandExec(TestCase):
                 'repositories': ['gameta'],
                 'verbose': False,
                 'shell': False,
+                'python': False,
                 'raise_errors': True
             },
             'actual_repositories': ['GitPython', 'gameta', 'gitdb']
