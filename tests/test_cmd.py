@@ -1940,7 +1940,6 @@ class TestCommandExec(TestCase):
             context = Context(exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
-            print(result.output)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
