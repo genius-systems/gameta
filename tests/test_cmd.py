@@ -1756,6 +1756,7 @@ class TestCommandLs(TestCase):
             'commands': {
                 'hello_world': {
                     'commands': ['git fetch --all --tags --prune', 'git pull'],
+                    'description': 'Fetches source',
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
@@ -1764,6 +1765,7 @@ class TestCommandLs(TestCase):
                 },
                 'hello_world2': {
                     'commands': ['git fetch --all --tags --prune', 'git pull'],
+                    'description': 'Fetches source',
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
@@ -1784,6 +1786,7 @@ class TestCommandLs(TestCase):
                         '    if not exists(join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}")):\n'
                         '        copyfile("{ENCRYPTION_FILE_NAME}", join(getcwd(), details["path"], "{ENCRYPTION_FILE_NAME}"))'
                     ],
+                    'description': 'Generates encryption key',
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
@@ -1810,6 +1813,7 @@ class TestCommandLs(TestCase):
             self.assertEqual(
                 result.output,
                 "hello_world:\n"
+                f"\tdescription: {params['commands']['hello_world']['description']}\n"
                 f"\tcommands: {' && '.join(params['commands']['hello_world']['commands'])}\n"
                 f"\ttags: {', '.join(params['commands']['hello_world']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world']['repositories'])}\n"
@@ -1818,6 +1822,7 @@ class TestCommandLs(TestCase):
                 f"\traise_errors: {params['commands']['hello_world']['raise_errors']}\n"
                 '\n'
                 "hello_world2:\n"
+                f"\tdescription: {params['commands']['hello_world2']['description']}\n"
                 f"\tcommands: {' && '.join(params['commands']['hello_world2']['commands'])}\n"
                 f"\ttags: {', '.join(params['commands']['hello_world2']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world2']['repositories'])}\n"
@@ -1826,6 +1831,7 @@ class TestCommandLs(TestCase):
                 f"\traise_errors: {params['commands']['hello_world2']['raise_errors']}\n"
                 '\n'
                 'hello_world3:\n'
+                f"\tdescription: {params['commands']['hello_world3']['description']}\n"
                 f"\tcommands: {' && '.join(params['commands']['hello_world3']['commands'])}\n"
                 f"\ttags: {', '.join(params['commands']['hello_world3']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world3']['repositories'])}\n"
@@ -1905,6 +1911,7 @@ class TestCommandExec(TestCase):
             'commands': ['hello_world'],
             'hello_world': {
                 'commands': ['git fetch --all --tags --prune'],
+                'description': '',
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
@@ -1979,18 +1986,22 @@ class TestCommandExec(TestCase):
             'commands': ['hello_world', 'hello_world2', 'hello_world3'],
             'hello_world': {
                 'commands': ['git fetch --all --tags --prune'],
+                'description': '',
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
                 'shell': False,
+                'python': False,
                 'raise_errors': True
             },
             'hello_world2': {
                 'commands': ['git fetch --all --tags --prune'],
+                'description': '',
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
                 'shell': False,
+                'python': False,
                 'raise_errors': True
             },
             'hello_world3': {
@@ -2001,6 +2012,7 @@ class TestCommandExec(TestCase):
                     '    f.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
                     'for _ in range({KEY_LEN})]))'
                 ],
+                'description': '',
                 'tags': [],
                 'repositories': ['gameta'],
                 'verbose': False,
@@ -2048,6 +2060,7 @@ class TestCommandExec(TestCase):
                     '-c', params['commands'][2],
                 ]
             )
+            print(result.output)
             output = [c for c in context.obj.apply(params['hello_world3']['commands'], python=True)][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
