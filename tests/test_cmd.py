@@ -9,7 +9,7 @@ from click import Context
 from click.testing import CliRunner
 
 from gameta.context import GametaContext
-from gameta.cmd import add, delete, update, ls, exec
+from gameta.cmd import add, delete, update, ls
 
 
 class TestCommandAdd(TestCase):

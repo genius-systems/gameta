@@ -135,9 +135,9 @@ class Meta(File):
 
         # Validate repositories
         try:
-            for repo in self.context.gameta_data['projects'].values():
+            for repo in self.context.gameta_data['repositories'].values():
                 self.context.validators['repositories'].validate(repo)
-            self.context.repositories = self.context.gameta_data['projects']
+            self.context.repositories = self.context.gameta_data['repositories']
             self.context.is_metarepo = True
             self.context.generate_tags()
         except Exception as e:
@@ -170,7 +170,7 @@ class Meta(File):
             None
         """
         try:
-            self.context.gameta_data['projects'] = self.context.repositories
+            self.context.gameta_data['repositories'] = self.context.repositories
             if self.context.commands:
                 self.context.gameta_data['commands'] = self.context.commands
             if self.context.constants:
@@ -205,6 +205,9 @@ class GametaContext(object):
         '$schema': "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
+            "virtualenv": {
+                "type": "string"
+            },
             "repositories": {
                 "$ref": "#/definitions/repositories"
             },
@@ -306,6 +309,7 @@ class GametaContext(object):
     }
 
     def __init__(self):
+        self.virtualenv: Optional[str] = None
         self.project_dir: Optional[str] = None
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False

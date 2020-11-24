@@ -50,7 +50,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             basename(f): {
                                 'path': '.',
                                 'tags': ['metarepo'],
@@ -81,7 +81,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
@@ -113,7 +113,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
@@ -145,7 +145,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
@@ -177,7 +177,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 'path': '.',
                                 'tags': ['metarepo'],
@@ -205,7 +205,7 @@ class TestSync(TestCase):
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
-                        'projects': {},
+                        'repositories': {},
                         "commands": {}
                     }, m
                 )

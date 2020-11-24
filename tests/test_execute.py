@@ -49,7 +49,7 @@ class TestExec(TestCase):
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
-            context = Context(exec, obj=gameta_context)
+            context = Context(self.exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(self.exec, ['-c', params['commands'][0], '-c', params['commands'][1]])
             self.assertEqual(result.exit_code, 1)
@@ -106,7 +106,7 @@ class TestExec(TestCase):
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
-            context = Context(exec, obj=gameta_context)
+            context = Context(self.exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
             self.assertEqual(result.exit_code, 0)
@@ -220,7 +220,7 @@ class TestExec(TestCase):
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
-            context = Context(exec, obj=gameta_context)
+            context = Context(self.exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(
                 self.exec,
@@ -230,7 +230,6 @@ class TestExec(TestCase):
                     '-c', params['commands'][2],
                 ]
             )
-            print(result.output)
             output = [c for c in context.obj.apply(params['hello_world3']['commands'], python=True)][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(

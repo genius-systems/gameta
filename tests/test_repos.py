@@ -70,7 +70,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -123,7 +123,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -178,7 +178,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -202,7 +202,7 @@ class TestReposAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         "tags": ['a', 'b', 'c'],
@@ -230,7 +230,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -260,7 +260,7 @@ class TestReposAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         "__metarepo__": False,
@@ -288,7 +288,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -343,7 +343,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -377,7 +377,7 @@ class TestReposAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         '__metarepo__': False
@@ -405,7 +405,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -454,7 +454,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -504,7 +504,7 @@ class TestReposDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['a', 'b', 'c'],
@@ -528,7 +528,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -555,7 +555,7 @@ class TestReposDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['a', 'b', 'c'],
@@ -580,7 +580,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -607,7 +607,7 @@ class TestReposDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['a', 'b', 'c'],
@@ -636,7 +636,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -663,7 +663,7 @@ class TestReposDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['a', 'b', 'c'],
@@ -687,7 +687,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -722,7 +722,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -757,7 +757,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -782,13 +782,13 @@ class TestRepoLs(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['a', 'b', 'c'],
                         "__metarepo__": False
                     }
-                    output['projects']['genisys'] = {
+                    output['repositories']['genisys'] = {
                         "url": 'https://github.com/test/genisys.git',
                         "path": "core/genisys",
                         'tags': ['c', 'd', 'e'],
@@ -817,7 +817,7 @@ class TestRepoLs(TestCase):
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
                     {
-                        'projects': {}
+                        'repositories': {}
                     }, m
                 )
             context = GametaContext()
@@ -914,7 +914,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -978,7 +978,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -1048,7 +1048,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -1117,7 +1117,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -1183,7 +1183,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -1248,7 +1248,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -1313,7 +1313,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],

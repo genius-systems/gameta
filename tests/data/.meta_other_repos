@@ -1,5 +1,5 @@
 {
-  "projects": {
+  "repositories": {
     "gameta": {
       "__metarepo__": true,
       "path": ".",

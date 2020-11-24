@@ -47,7 +47,7 @@ class TestTagsAdd(TestCase):
                 template.extractall(f)
             with open(join(f, '.meta'), 'w+') as m:
                 json.dump({
-                    'projects': {}
+                    'repositories': {}
                 }, m)
             context = GametaContext()
             context.project_dir = f
@@ -101,7 +101,7 @@ class TestTagsAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         '__metarepo__': False
@@ -125,7 +125,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -154,7 +154,7 @@ class TestTagsAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['d', 'e', 'f'],
@@ -179,7 +179,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -208,7 +208,7 @@ class TestTagsAdd(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['c', 'b', 'f'],
@@ -233,7 +233,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -287,7 +287,7 @@ class TestTagsDelete(TestCase):
                 template.extractall(f)
             with open(join(f, '.meta'), 'w+') as m:
                 json.dump({
-                    'projects': {}
+                    'repositories': {}
                 }, m)
             context = GametaContext()
             context.project_dir = f
@@ -341,7 +341,7 @@ class TestTagsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         '__metarepo__': False
@@ -365,7 +365,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -394,7 +394,7 @@ class TestTagsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['d', 'e', 'f'],
@@ -419,7 +419,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -448,7 +448,7 @@ class TestTagsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['GitPython'] = {
+                    output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
                         'tags': ['c', 'b', 'f'],
@@ -473,7 +473,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo"],
@@ -502,7 +502,7 @@ class TestTagsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({
+                    output['repositories']['gameta'].update({
                         'tags': ['metarepo', 'a', 'b', 'c']
                     })
                     json.dump(output, m2)
@@ -525,7 +525,7 @@ class TestTagsDelete(TestCase):
                 self.assertCountEqual(
                     json.load(m),
                     {
-                        "projects": {
+                        "repositories": {
                             "gameta": {
                                 "path": ".",
                                 "tags": ["metarepo", "a"],

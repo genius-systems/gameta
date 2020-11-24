@@ -86,9 +86,9 @@ class TestApply(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({'test_dir': 'test_gameta'})
-                    output['projects']['gitdb'].update({'test_dir': 'test_gitdb'})
-                    output['projects']['GitPython'].update({'test_dir': 'test_gitpython'})
+                    output['repositories']['gameta'].update({'test_dir': 'test_gameta'})
+                    output['repositories']['gitdb'].update({'test_dir': 'test_gitdb'})
+                    output['repositories']['GitPython'].update({'test_dir': 'test_gitpython'})
                     output.update({'constants': {'BRANCH': 'master'}})
                     json.dump(output, m2)
             context = GametaContext()

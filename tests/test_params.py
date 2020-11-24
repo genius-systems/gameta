@@ -58,7 +58,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -110,7 +110,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -194,7 +194,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -256,7 +256,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -319,7 +319,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -384,7 +384,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -456,7 +456,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -488,9 +488,9 @@ class TestParamsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({"test": {'a': [1, 2, 3]}})
-                    output['projects']['GitPython'].update({'test': {'a': [4, 5, 6]}})
-                    output['projects']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
+                    output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
+                    output['repositories']['GitPython'].update({'test': {'a': [4, 5, 6]}})
+                    output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -507,7 +507,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -539,8 +539,8 @@ class TestParamsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({"test": {'a': [1, 2, 3]}})
-                    output['projects']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
+                    output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
+                    output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -557,7 +557,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -589,9 +589,9 @@ class TestParamsDelete(TestCase):
             with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
                 output = json.load(m1)
                 with open(join(f, '.meta'), 'w+') as m2:
-                    output['projects']['gameta'].update({"test": {'a': [1, 2, 3]}})
-                    output['projects']['GitPython'].update({'test': {'a': [4, 5, 6]}})
-                    output['projects']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
+                    output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
+                    output['repositories']['GitPython'].update({'test': {'a': [4, 5, 6]}})
+                    output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
                     json.dump(output, m2)
             context = GametaContext()
             context.project_dir = f
@@ -608,7 +608,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],

@@ -58,7 +58,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -108,7 +108,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -156,7 +156,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -232,7 +232,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -282,7 +282,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
@@ -332,7 +332,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
                                 'tags': ['a', 'b', 'c'],
