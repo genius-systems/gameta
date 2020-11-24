@@ -52,4 +52,4 @@ from .apply import *
 from .params import *
 from .cmd import *
 from .constants import *
-from .exec import *
+from .execute import *

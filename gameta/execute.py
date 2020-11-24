@@ -3,15 +3,17 @@ from typing import Tuple, Dict
 import click
 
 from gameta.context import GametaContext
+from gameta.cli import gameta_cli
 
 
-__all__ = ['exec']
+__all__ = ['execute']
 
 
+@gameta_cli.command("exec")
 @click.option('--command', '-c', 'commands', type=str, multiple=True, required=True,
               help='Gameta commands to be invoked')
 @click.pass_context
-def exec(context: click.Context, commands: Tuple[str]) -> None:
+def execute(context: click.Context, commands: Tuple[str]) -> None:
     """
     Executes Gameta commands from the CLI command store
     \f

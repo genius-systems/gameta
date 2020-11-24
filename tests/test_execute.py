@@ -9,12 +9,13 @@ from click import Context
 from click.testing import CliRunner
 
 from gameta.context import GametaContext
+from gameta.execute import execute
 
 
 class TestExec(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
-        self.exec = exec
+        self.exec = execute
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_exec_key_parameters_not_provided(self, mock_ensure_object):
