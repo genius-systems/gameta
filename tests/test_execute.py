@@ -1,9 +1,10 @@
 import json
+import sys
 import venv
 import zipfile
 from os.path import join, dirname, exists
 from shutil import copyfile, copytree
-from unittest import TestCase
+from unittest import TestCase, skipIf
 from unittest.mock import patch
 
 from click import Context
@@ -295,6 +296,8 @@ class TestExec(TestCase):
             with open(join(f, params['encryption_file_name']), 'r') as e:
                 self.assertEqual(len(e.read()), params['key_len'])
 
+    @skipIf(f'{sys.version_info.major}.{sys.version_info.minor}' == '3.9',
+            'Cryptography is not yet Python 3.9 compatible')
     @patch('gameta.cli.click.core.Context')
     def test_exec_multiple_commands_with_virtualenv(self, mock_context):
         params = {

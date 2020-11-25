@@ -1,13 +1,13 @@
 import json
 import subprocess
+import sys
 import zipfile
 import venv
-import shlex
 from os import listdir
 from os.path import join, dirname, exists
 from tempfile import mkdtemp
 from shutil import copyfile, copytree, rmtree
-from unittest import TestCase
+from unittest import TestCase, skipIf
 from unittest.mock import patch
 
 from click.testing import CliRunner
@@ -523,6 +523,8 @@ class TestApply(TestCase):
                 "\n"
             )
 
+    @skipIf(f'{sys.version_info.major}.{sys.version_info.minor}' == '3.9',
+            'Cryptography is not yet Python 3.9 compatible')
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_shell_command_with_virtualenv(self, mock_ensure_object):
         params = {
@@ -585,6 +587,8 @@ class TestApply(TestCase):
             self.assertTrue(exists(join(f, 'encryption.txt')))
             self.assertTrue(exists(join(f, 'key')))
 
+    @skipIf(f'{sys.version_info.major}.{sys.version_info.minor}' == '3.9',
+            'Cryptography is not yet Python 3.9 compatible')
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_python_command_with_virtualenv(self, mock_ensure_object):
         params = {
