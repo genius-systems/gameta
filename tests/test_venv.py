@@ -629,9 +629,11 @@ class TestVenvUnregister(TestCase):
                 f"Virtualenv {params['name']} successfully unregistered\n"
             )
             self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
-            self.assertCountEqual(
-                listdir(join(f, params['directory'])),
-                ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory']))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+                )
             )
             self.assertTrue(
                 all(
