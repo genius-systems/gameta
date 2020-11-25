@@ -162,6 +162,22 @@ class Meta(File):
             self.context.constants = {}
             click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
 
+        # Validate constants
+        try:
+            self.context.validators['constants'].validate(self.context.gameta_data.get('constants', {}))
+            self.context.constants = self.context.gameta_data.get('constants', {})
+        except Exception as e:
+            self.context.constants = {}
+            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate virtualenvs
+        try:
+            self.context.validators['virtualenvs'].validate(self.context.gameta_data.get('virtualenvs', {}))
+            self.context.venvs = self.context.gameta_data.get('virtualenvs', {})
+        except Exception as e:
+            self.context.venvs = {}
+            click.echo(f"Malformed virtualenvs element, error: {e.__class__.__name__}.{str(e)}")
+
     def export(self) -> None:
         """
         Exports data from the GametaContext to the .meta file
@@ -175,6 +191,8 @@ class Meta(File):
                 self.context.gameta_data['commands'] = self.context.commands
             if self.context.constants:
                 self.context.gameta_data['constants'] = self.context.constants
+            if self.context.venvs:
+                self.context.gameta_data['virtualenvs'] = self.context.venvs
             with open(self.file, 'w') as f:
                 json.dump(self.context.gameta_data, f, indent=2)
         except Exception as e:
@@ -205,8 +223,8 @@ class GametaContext(object):
         '$schema': "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-            "virtualenv": {
-                "type": "string"
+            "virtualenvs": {
+                "$ref": "#/definitions/virtualenvs"
             },
             "repositories": {
                 "$ref": "#/definitions/repositories"
@@ -222,6 +240,15 @@ class GametaContext(object):
             ]
         },
         'definitions': {
+            "virtualenvs": {
+                "type": "object",
+                "propertyNames": {
+                    "pattern": "^[a-zA-Z0-9_-]"
+                },
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
             "repositories": {
                 "type": "object",
                 "properties": {
@@ -300,7 +327,8 @@ class GametaContext(object):
         'meta': Draft7Validator(__schema__),
         'repositories': Draft7Validator(__schema__['definitions']['repositories']),
         'commands': Draft7Validator(__schema__['definitions']['commands']),
-        'constants': Draft7Validator(__schema__['definitions']['constants'])
+        'constants': Draft7Validator(__schema__['definitions']['constants']),
+        'virtualenvs': Draft7Validator(__schema__['definitions']['virtualenvs'])
     }
 
     reserved_params: Dict[str, List[str]] = {
@@ -309,11 +337,11 @@ class GametaContext(object):
     }
 
     def __init__(self):
-        self.virtualenv: Optional[str] = None
         self.project_dir: Optional[str] = None
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
+        self.venvs: Dict = {}
         self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
@@ -440,6 +468,7 @@ class GametaContext(object):
             repos: List[str] = (),
             shell: bool = False,
             python: bool = False,
+            venv: Optional[str] = None,
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
@@ -450,6 +479,7 @@ class GametaContext(object):
             repos (List[str]): Selected set of repositories
             shell (bool): Flag to indicate if a separate shell should be used
             python (bool): Flag to indicate if commands are to be tokenised as Python commands
+            venv (Optional[str]): Virtualenv parameter for executing commands
 
         Returns:
             None
