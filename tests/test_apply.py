@@ -1,5 +1,8 @@
 import json
+import subprocess
 import zipfile
+import venv
+import shlex
 from os import listdir
 from os.path import join, dirname, exists
 from tempfile import mkdtemp
@@ -518,4 +521,172 @@ class TestApply(TestCase):
                 f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
                 "Fetching origin\n"
                 "\n"
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_shell_command_with_virtualenv(self, mock_ensure_object):
+        params = {
+            'commands': ['pip install cryptography'],
+            'actual_repositories': ['gameta'],
+            'venv': 'test',
+            'directory': 'test'
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update({'virtualenvs': {params['venv']: join(f, params['directory'])}})
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.apply,
+                [
+                    '--command', params['commands'][0],
+                    '-ve', params['venv'],
+                    '-r', params['actual_repositories'][0]
+                ]
+            )
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Applying {params['commands']} to repos {params['actual_repositories']} "
+                f"with virtualenv {params['venv']}\n"
+                f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
+                f"{params['commands'][0]} in {params['actual_repositories'][0]}\n"
+            )
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory'], 'lib', 'python3.8', 'site-packages'))
+                    for i in ['cryptography', 'six.py']
+                )
+            )
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory'], 'lib64', 'python3.8', 'site-packages'))
+                    for i in ['cryptography', 'six.py']
+                )
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_python_command_with_virtualenv(self, mock_ensure_object):
+        params = {
+            'commands': [
+                'from cryptography.fernet import Fernet\n'
+                'key = Fernet.generate_key()\n'
+                'encryptor = Fernet(key)\n'
+                'message = encryptor.encrypt(b"This is a secret message")\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "wb") as f:\n'
+                '    f.write(message)\n'
+                'with open("key", "wb") as f:\n'
+                '    f.write(key)\n',
+                'from cryptography.fernet import Fernet\n'
+                'with open("key", "rb") as f:\n'
+                '    decryptor = Fernet(f.read())\n'
+                'with open("{ENCRYPTION_FILE_NAME}", "rb") as f:\n'
+                '    print("This is the decrypted message:", decryptor.decrypt(f.read()).decode("utf-8"))\n'
+            ],
+            'encrypted_message': b'gAAAAABfvlQP7cPwZlRhwA2X1pApIGoaJPS_v9bQLK3JNRin4BV9uFSUGrZPOKtCyaSqb1xOq5h'
+                                 b'u9RhZTRlxTDMiC1NTo5Q221Qtn8YRFZJY1plv3_V_45I=',
+            'decrypted_message': 'This is a secret message',
+            'actual_repositories': ['gameta'],
+            'venv': 'test',
+            'directory': 'test',
+            'encryption_file_name': 'encryption.txt'
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'virtualenvs': {
+                                params['venv']: join(f, params['directory'])
+                            },
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name']
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            subprocess.check_output(context.virtualenv(params['venv'], ['pip install cryptography']))
+            result = self.runner.invoke(
+                self.apply,
+                [
+                    '--command', params['commands'][0],
+                    '--command', params['commands'][1],
+                    '-ve', params['venv'],
+                    '-r', params['actual_repositories'][0],
+                    '-p', '-v', '-e'
+                ]
+            )
+            output = [c for c in context.apply(params['commands'], python=True)]
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                "Multiple commands detected, executing in a separate shell\n"
+                f"Applying {params['commands']} to repos {params['actual_repositories']} "
+                f"with virtualenv {params['venv']}\n"
+                f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
+                f"{output[0][1][2]} in {params['actual_repositories'][0]}\n"
+                f"This is the decrypted message: {params['decrypted_message']}\n"
+                "\n"
+            )
+            self.assertTrue(all(i in listdir(f) for i in [params['encryption_file_name'], 'key']))
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_with_nonexistent_virtualenv(self, mock_ensure_object):
+        params = {
+            'commands': ['pip install cryptography'],
+            'actual_repositories': ['gameta'],
+            'invalid_venv': 'venv',
+            'venv': 'test',
+            'directory': 'test'
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update({'virtualenvs': {params['venv']: join(f, params['directory'])}})
+                    json.dump(output, m2)
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(
+                self.apply,
+                [
+                    '--command', params['commands'][0],
+                    '-ve', params['invalid_venv'],
+                    '-r', params['actual_repositories'][0]
+                ]
+            )
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Error: Virtualenv {params['invalid_venv']} has not been registered\n"
             )

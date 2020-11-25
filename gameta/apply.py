@@ -1,5 +1,5 @@
 import subprocess
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import click
 
@@ -18,6 +18,7 @@ __all__ = ['apply']
               help='Display execution output when CLI commands are applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
 @click.option('--python', '-p', is_flag=True, default=False, help='Execute Python scripts using Python 3 interpreter')
+@click.option('--venv', '-ve', type=str, default=None, help='Virtualenv to execute commands in')
 @click.option('--raise-errors', '-e', is_flag=True, default=False,
               help='Raise errors that occur when executing CLI commands and terminate execution')
 @gameta_context
@@ -29,6 +30,7 @@ def apply(
         verbose: bool,
         shell: bool,
         python: bool,
+        venv: Optional[str],
         raise_errors: bool
 ) -> None:
     """
@@ -41,6 +43,7 @@ def apply(
         repositories (Tuple[str]): Repositories to apply command to
         verbose (bool): Flag to indicate that output should be displayed as the command is applied
         python (bool): Flag to indicate that command should be executed with the Python 3 interpreter
+        venv (Optional[str]): Virtualenv to execute commands with
         shell (bool): Flag to indicate that command should be executed in a separate shell
         raise_errors (bool): Flag to indicate that errors should be raised if they occur during execution and the
                              overall execution should be terminated
@@ -73,13 +76,21 @@ def apply(
             except SyntaxError:
                 raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
 
+        if venv is not None and venv not in context.venvs:
+            raise click.ClickException(f"Virtualenv {venv} has not been registered")
+
         # Python subprocess does not handle multiple commands
         # hence we need to handle it in a separate shell
         if len(commands) > 1:
             click.echo("Multiple commands detected, executing in a separate shell")
             shell = True
 
-        if shell:
+        if venv:
+            click.echo(
+                f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())} "
+                f"with virtualenv {venv}"
+            )
+        elif shell:
             click.echo(
                 f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())} "
                 f"in a separate shell"
@@ -93,7 +104,7 @@ def apply(
             click.echo(
                 f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
             )
-        for repo, c in context.apply(list(commands), repos=repos, shell=shell, python=python):
+        for repo, c in context.apply(list(commands), repos=repos, shell=shell, python=python, venv=venv):
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
                 if verbose:
