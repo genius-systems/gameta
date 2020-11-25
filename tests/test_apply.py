@@ -526,7 +526,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_shell_command_with_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip install cryptography'],
+            'commands': ['pip3 install cryptography'],
             'actual_repositories': ['gameta'],
             'venv': 'test',
             'directory': 'test'
@@ -563,18 +563,27 @@ class TestApply(TestCase):
                 f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
                 f"{params['commands'][0]} in {params['actual_repositories'][0]}\n"
             )
-            self.assertTrue(
-                all(
-                    i in listdir(join(f, params['directory'], 'lib', 'python3.8', 'site-packages'))
-                    for i in ['cryptography', 'six.py']
-                )
+            subprocess.check_output(
+                [
+                    i
+                    for i in context.apply(
+                        [
+                            'from cryptography.fernet import Fernet\n'
+                            'key = Fernet.generate_key()\n'
+                            'encryptor = Fernet(key)\n'
+                            'message = encryptor.encrypt(b"This is a secret message")\n'
+                            'with open("encryption.txt", "wb") as f:\n'
+                            '    f.write(message)\n'
+                            'with open("key", "wb") as f:\n'
+                            '    f.write(key)\n',
+                        ],
+                        python=True,
+                        venv=params['venv']
+                    )
+                ][0][1]
             )
-            self.assertTrue(
-                all(
-                    i in listdir(join(f, params['directory'], 'lib64', 'python3.8', 'site-packages'))
-                    for i in ['cryptography', 'six.py']
-                )
-            )
+            self.assertTrue(exists(join(f, 'encryption.txt')))
+            self.assertTrue(exists(join(f, 'key')))
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_python_command_with_virtualenv(self, mock_ensure_object):
@@ -627,7 +636,7 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            subprocess.check_output(context.virtualenv(params['venv'], ['pip install cryptography']))
+            subprocess.check_output(context.virtualenv(params['venv'], ['pip3 install cryptography']))
             result = self.runner.invoke(
                 self.apply,
                 [
@@ -655,7 +664,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_with_nonexistent_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip install cryptography'],
+            'commands': ['pip3 install cryptography'],
             'actual_repositories': ['gameta'],
             'invalid_venv': 'venv',
             'venv': 'test',

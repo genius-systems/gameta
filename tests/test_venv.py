@@ -59,7 +59,12 @@ class TestVenvCreate(TestCase):
                 f"Successfully created virtualenv {params['name']}\n"
             )
             self.assertCountEqual(listdir(f), ['.venv', '.meta', '.gitignore'])
-            self.assertCountEqual(listdir(join(f, '.venv')), ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg'])
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, '.venv'))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+                )
+            )
             self.assertTrue(
                 all(
                     i in listdir(join(f, '.venv', 'bin'))
@@ -120,9 +125,11 @@ class TestVenvCreate(TestCase):
                 f"Successfully created virtualenv {params['name']}\n"
             )
             self.assertCountEqual(listdir(f), [params['directory'], '.meta', '.gitignore'])
-            self.assertCountEqual(
-                listdir(join(f, params['directory'])),
-                ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory']))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+                )
             )
             self.assertTrue(
                 all(
@@ -168,9 +175,11 @@ class TestVenvCreate(TestCase):
             )
             self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
             self.assertCountEqual(listdir(join(f, 'test')), ['another_test'])
-            self.assertCountEqual(
-                listdir(join(f, params['directory'])),
-                ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory']))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+                )
             )
             self.assertTrue(
                 all(
@@ -225,9 +234,11 @@ class TestVenvCreate(TestCase):
                 f"Successfully created virtualenv {params['name']}\n"
             )
             self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
-            self.assertCountEqual(
-                listdir(join(f, params['directory'])),
-                ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg', 'test.txt']
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory']))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg', 'test.txt']
+                )
             )
             self.assertTrue(
                 all(
@@ -282,9 +293,11 @@ class TestVenvCreate(TestCase):
                 f"Successfully created virtualenv {params['name']}\n"
             )
             self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
-            self.assertCountEqual(
-                listdir(join(f, params['directory'])),
-                ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+            self.assertTrue(
+                all(
+                    i in listdir(join(f, params['directory']))
+                    for i in ['bin', 'lib64', 'lib', 'include', 'pyvenv.cfg']
+                )
             )
             self.assertTrue(
                 all(
