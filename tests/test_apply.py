@@ -560,7 +560,7 @@ class TestApply(TestCase):
                 result.output,
                 f"Applying {params['commands']} to repos {params['actual_repositories']} "
                 f"with virtualenv {params['venv']}\n"
-                f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
+                f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
                 f"{params['commands'][0]} in {params['actual_repositories'][0]}\n"
             )
             subprocess.check_output(
@@ -654,7 +654,7 @@ class TestApply(TestCase):
                 "Multiple commands detected, executing in a separate shell\n"
                 f"Applying {params['commands']} to repos {params['actual_repositories']} "
                 f"with virtualenv {params['venv']}\n"
-                f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
+                f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
                 f"{output[0][1][2]} in {params['actual_repositories'][0]}\n"
                 f"This is the decrypted message: {params['decrypted_message']}\n"
                 "\n"

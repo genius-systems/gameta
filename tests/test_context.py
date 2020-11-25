@@ -1916,7 +1916,7 @@ class TestGametaContext(TestCase):
                     repo_command[1],
                     [
                         getenv('SHELL', '/bin/sh'), '-c',
-                        f"source {join(f, 'test', 'bin', 'activate')} && "
+                        f". {join(f, 'test', 'bin', 'activate')} && "
                         'git fetch --all --tags --prune && git pull']
                 )
 
@@ -1989,7 +1989,7 @@ class TestGametaContext(TestCase):
                     repo_command[1],
                     [
                         getenv('SHELL', '/bin/sh'), '-c',
-                        f"source {join(f, 'test', 'bin', 'activate')} && "
+                        f". {join(f, 'test', 'bin', 'activate')} && "
                         "python3 -c \'"
                         'from random import choice\n'
                         'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'

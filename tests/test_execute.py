@@ -387,7 +387,7 @@ class TestExec(TestCase):
                 f"Executing Gameta command {params['commands'][0]}\n"
                 f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']} "
                 f"with virtualenv {params['venv']}\n"
-                f"Executing {SHELL} -c source {join(f, 'test', 'bin', 'activate')} && "
+                f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
                 f"{params['hello_world']['commands'][0]} in {params['actual_repositories'][0]}\n"
                 f"Executing Gameta command {params['commands'][1]}\n"
                 "Multiple commands detected, executing in a separate shell\n"

@@ -592,7 +592,7 @@ class GametaContext(object):
         Returns:
             List[str]: Prepared commands to be executed by subprocess
         """
-        return self.shell([f"source {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
+        return self.shell([f". {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
 
     def python(self, commands: List[str], shell: bool = True) -> List[str]:
         """
