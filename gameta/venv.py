@@ -40,7 +40,7 @@ def venv_cli(context: GametaContext):
 @click.option(' /--no-pip', ' /-np', 'pip', is_flag=True, default=True,
               help='Flag to include pip, defaults to true')
 @click.option('--symlinks/ ', '-l/ ', 'symlinks', is_flag=True, default=False,
-              help='Flag to include pip, defaults to false')
+              help='Flag to create symlinks to the python executable instead of actual files, defaults to False')
 @click.pass_context
 def create(
         context: click.Context,
