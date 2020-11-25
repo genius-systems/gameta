@@ -67,7 +67,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {},
+                        'repositories': {},
                         'commands': {
                             params['name']: {
                                 'commands': params['commands'],
@@ -144,7 +144,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -233,7 +233,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -298,7 +298,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -370,7 +370,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -446,7 +446,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -511,7 +511,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -589,7 +589,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -671,7 +671,7 @@ class TestCommandAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -766,7 +766,7 @@ class TestCommandDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -820,7 +820,7 @@ class TestCommandDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -916,7 +916,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -988,7 +988,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1099,7 +1099,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1210,7 +1210,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1331,7 +1331,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1437,7 +1437,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1527,7 +1527,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1620,7 +1620,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -1709,7 +1709,7 @@ class TestCommandUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',

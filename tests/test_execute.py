@@ -63,7 +63,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
                                 'path': '.',
@@ -124,7 +124,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
@@ -255,7 +255,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
