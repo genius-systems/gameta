@@ -12,6 +12,7 @@ first argument. There are several subcommand groups:
 7. gameta cmd
 8. gameta exec
 9. gameta const
+10. gameta venv
 
 ___
 **Note**
@@ -156,10 +157,9 @@ ___
 ___
 **Note**
    
-From version [0.2.3](https://pypi.org/project/gameta/0.2.3/), environment variables
-parameters are acceptable parameter values. These parameter values will be substituted
-by the appropriate environment variables. For example the following `gameta params` 
-command below is acceptable:
+Environment variables parameters are acceptable parameter values. These parameter 
+values will be substituted by the appropriate environment variables. For example 
+the following `gameta params` command below is acceptable:
 
 ```bash
 gameta params add -p branch -y -v '${BITBUCKET_BRANCH}'
@@ -211,9 +211,10 @@ Applies a set of CLI commands to a specified set of repositories (see
 * **_--command / -c_**: CLI commands to be applied
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
+* --venv / -ve: Activates the specified virtual environment and executes the CLI commands
 * --shell / -s: Indicates that the CLI commands should be executed in a separate shell
 * --python / -p: Indicates that the commands are Python scripts and should be executed 
-with the Python 3 interpreter
+    with a Python 3 interpreter
 * --verbose / -v: Indicates that Gameta should display the CLI output when it executes a
     CLI command in other repositories
 * --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
@@ -239,6 +240,13 @@ from os import getcwd
 print(getcwd())
 '
 ```
+___
+
+___
+**Note**
+   
+Activate a virtual environment to provide access to Python packages or CLI commands 
+installed in the virtual environment.
 ___
 
 ___
@@ -284,6 +292,7 @@ ___
 * **_--command / -c_**: CLI commands to be applied
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
+* --venv / -ve: Activate the specified virtual environment and execute the CLI commands
 * --shell / -s: Indicates that the CLI command should be executed in a separate shell
 * --python / -p: Indicates that the commands are Python scripts and should be executed 
 with the Python 3 interpreter
@@ -317,6 +326,7 @@ ___
 * _--command / -c_: New CLI commands to be executed
 * _--tags / -t_: New repository tags apply CLI commands to
 * _--repositories / -r_: New repositories to apply CLI commands to
+* --venv / -ve: Activate specified virtual environment and execute commands
 * --verbose / -v: Display execution output when CLI commands are applied
 * --no-verbose / -nv: Do not display execution output when CLI commands are applied
 * --shell / -s: Execute CLI commands in a separate shell
@@ -362,11 +372,10 @@ ___
 ___
 **Note**
    
-From version [0.2.3](https://pypi.org/project/gameta/0.2.3/), constants can be added 
-with a '$' symbol e.g. `$BRANCH`. These constants will be automatically substituted
-the corresponding environment variables extracted from the environment i.e. the 
-resultant substitution from the constant store and run-time environment configuration
-below is `world`.
+Constants can be added with a '$' symbol e.g. `$BRANCH`. These constants will be 
+automatically substituted with the corresponding environment variables extracted 
+from the environment i.e. the resultant substitution from the constant store and
+run-time environment configuration below is `world`.
 
 ```JSON
 {
@@ -410,5 +419,67 @@ ___
    
 The constant name can be provided in either lowercase or uppercase.
 ___
+
+## gameta venv
+
+Virtualenv subcommand group, contains the following commands:
+
+1. gameta venv create
+2. gameta venv register
+3. gameta venv unregister
+
+### gameta venv create
+
+Creates a new virtual environment within the project directory
+
+### Arguments
+* **--name / -n**: Name of the virtual environment to be created
+* --directory / -d: Relative directory of the virtual environment
+    to be created
+* --overwrite / -o: Overwrites the current directory when virtual 
+    environment is created
+* --site-packages / -s: Include a copy of all system site-packages
+    in virtual environment
+* --no-pip / -np: Does not include a copy of pip in the virtualenv
+* --symlinks / -l: Uses symlinks to the Python executor
+
+___
+**Note**
+   
+Virtual environment names can only be stored with alphanumeric 
+characters and the special characters '-' and '_'.
+___
+
+### gameta venv register
+
+Registers a new virtual environment in the .meta file
+
+### Arguments
+* **--name / -n**: Name of the virtual environment to be registered
+* **--path / -p**: Absolute path to the virtual environment
+* --overwrite / -o: Overwrites a registered virtual environment
+
+___
+**Note**
+   
+Virtual environment names can only be stored with alphanumeric 
+characters and the special characters '-' and '_'.
+___
+___
+**Note**
+   
+Users may have created their own virtual environments e.g. with 
+pyenv or conda, and would like Gameta to use these virtual environments. 
+`gameta venv register` enables this functionality by storing a reference
+to the virtual environments and sourcing it before execution.
+___
+
+### gameta venv unregister
+
+Unregisters an existing virtual environment in the .meta file
+
+### Arguments
+* **--name / -n**: Name of the virtual environment to be registered
+* --delete / -d: Deletes the virtual environment
 
 [Applying Commands]: ../../user_guide/applying_commands.md

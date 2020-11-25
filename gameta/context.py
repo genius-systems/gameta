@@ -162,6 +162,14 @@ class Meta(File):
             self.context.constants = {}
             click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
 
+        # Validate virtualenvs
+        try:
+            self.context.validators['virtualenvs'].validate(self.context.gameta_data.get('virtualenvs', {}))
+            self.context.venvs = self.context.gameta_data.get('virtualenvs', {})
+        except Exception as e:
+            self.context.venvs = {}
+            click.echo(f"Malformed virtualenvs element, error: {e.__class__.__name__}.{str(e)}")
+
     def export(self) -> None:
         """
         Exports data from the GametaContext to the .meta file
@@ -175,6 +183,8 @@ class Meta(File):
                 self.context.gameta_data['commands'] = self.context.commands
             if self.context.constants:
                 self.context.gameta_data['constants'] = self.context.constants
+            if self.context.venvs:
+                self.context.gameta_data['virtualenvs'] = self.context.venvs
             with open(self.file, 'w') as f:
                 json.dump(self.context.gameta_data, f, indent=2)
         except Exception as e:
@@ -205,8 +215,8 @@ class GametaContext(object):
         '$schema': "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-            "virtualenv": {
-                "type": "string"
+            "virtualenvs": {
+                "$ref": "#/definitions/virtualenvs"
             },
             "repositories": {
                 "$ref": "#/definitions/repositories"
@@ -222,6 +232,15 @@ class GametaContext(object):
             ]
         },
         'definitions': {
+            "virtualenvs": {
+                "type": "object",
+                "propertyNames": {
+                    "pattern": "^[a-zA-Z0-9_-]"
+                },
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
             "repositories": {
                 "type": "object",
                 "properties": {
@@ -281,10 +300,13 @@ class GametaContext(object):
                         "items": {
                             "type": "string"
                         },
+                    },
+                    "venv": {
+                        "type": ["string", "null"]
                     }
                 },
-                "minProperties": 6,
-                "maxProperties": 8,
+                "minProperties": 9,
+                "maxProperties": 9,
                 "additionalProperties": False,
             },
             "constants": {
@@ -300,7 +322,8 @@ class GametaContext(object):
         'meta': Draft7Validator(__schema__),
         'repositories': Draft7Validator(__schema__['definitions']['repositories']),
         'commands': Draft7Validator(__schema__['definitions']['commands']),
-        'constants': Draft7Validator(__schema__['definitions']['constants'])
+        'constants': Draft7Validator(__schema__['definitions']['constants']),
+        'virtualenvs': Draft7Validator(__schema__['definitions']['virtualenvs'])
     }
 
     reserved_params: Dict[str, List[str]] = {
@@ -309,11 +332,11 @@ class GametaContext(object):
     }
 
     def __init__(self):
-        self.virtualenv: Optional[str] = None
         self.project_dir: Optional[str] = None
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
+        self.venvs: Dict = {}
         self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
@@ -440,6 +463,7 @@ class GametaContext(object):
             repos: List[str] = (),
             shell: bool = False,
             python: bool = False,
+            venv: Optional[str] = None,
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
@@ -450,6 +474,7 @@ class GametaContext(object):
             repos (List[str]): Selected set of repositories
             shell (bool): Flag to indicate if a separate shell should be used
             python (bool): Flag to indicate if commands are to be tokenised as Python commands
+            venv (Optional[str]): Virtualenv parameter for executing commands
 
         Returns:
             None
@@ -465,8 +490,12 @@ class GametaContext(object):
                 repo_commands: List[str] = [
                     c.format(**self.generate_parameters(repo, details, python)) for c in deepcopy(commands)
                 ]
-                if python:
-                    command: List[str] = self.python(repo_commands)
+                if venv is not None:
+                    command: List[str] = self.virtualenv(
+                        venv, self.python(repo_commands, shell=False) if python else repo_commands
+                    )
+                elif python:
+                        command: List[str] = self.python(repo_commands)
                 elif shell:
                     command: List[str] = self.shell(repo_commands)
                 else:
@@ -552,19 +581,32 @@ class GametaContext(object):
             '"'
         )
 
-    def python(self, commands: List[str]) -> List[str]:
+    def virtualenv(self, venv: str, commands: List[str]) -> List[str]:
         """
-        Prepares commands to be executed by Python interpreter via shell
+        Prepares commands to be executed by a virtualenv by sourcing it prior to execution
+
+        Args:
+            venv (str): Name of virtualenv to be activated
+            commands (List[str]): Python scripts or shell commands
+
+        Returns:
+            List[str]: Prepared commands to be executed by subprocess
+        """
+        return self.shell([f". {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
+
+    def python(self, commands: List[str], shell: bool = True) -> List[str]:
+        """
+        Prepares commands to be executed by the system Python interpreter via shell
 
         Args:
             commands List[str]: Python scripts
+            shell: Flag to indicate if shell should be used to generate the command
 
         Returns:
             List[str]: Python prepared commands to be executed by subprocess
         """
-        return self.shell(
-            ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
-        )
+        commands: List[str] = ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
+        return self.shell(commands) if shell else commands
 
 
 gameta_context = click.make_pass_decorator(GametaContext, ensure=True)

@@ -37,6 +37,7 @@ def command_cli(context: GametaContext) -> None:
 @click.option('--command', '-c', 'commands', type=str, required=True, multiple=True, help='CLI Commands to be executed')
 @click.option('--tags', '-t', type=str, multiple=True, default=(), help='Repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=(), help='Repositories to apply CLI commands to')
+@click.option('--venv', '-ve', type=str, default=None, help="Virtualenv to execute commands with, defaults to None")
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Display execution output when CLI command is applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
@@ -52,6 +53,7 @@ def add(
         commands: Tuple[str],
         tags: Tuple[str],
         repositories: Tuple[str],
+        venv: Optional[str],
         verbose: bool,
         shell: bool,
         python: bool,
@@ -69,6 +71,7 @@ def add(
         commands (Tuple[str]): CLI command to be applied
         tags (Tuple[str]): Repository tags to apply command to
         repositories (Tuple[str]): Repositories to apply command to
+        venv (Optional[str]): Virtualenv to execute commands with, defaults to None
         verbose (bool): Flag to indicate that output should be displayed as the command is applied
         shell (bool): Flag to indicate that command should be executed in a separate shell
         python (bool): Flag to indicate that command should be executed by the Python 3 interpreter
@@ -100,6 +103,11 @@ def add(
                 compile(command, 'test', 'exec')
         except SyntaxError:
             raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
+    # Virtualenv must registered before it can be used
+    if venv is not None and venv not in context.venvs:
+        raise click.ClickException(
+            f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
+        )
 
     try:
         gameta_command: Dict = {
@@ -107,6 +115,7 @@ def add(
             'description': description,
             'tags': list(tags),
             'repositories': list(repositories),
+            'venv': venv,
             'verbose': verbose,
             'shell': True if len(commands) > 1 else shell,
             'python': python,
@@ -166,6 +175,7 @@ def delete(context: GametaContext, name: str) -> None:
               help='New repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=None,
               help='New repositories to apply CLI commands to')
+@click.option('--venv', '-ve', 'venv', type=str, default=None, help='New virtualenv to execute commands with')
 @click.option('--verbose/--no-verbose', '-v/-nv', is_flag=True, default=None,
               help='Display execution output when CLI command is applied')
 @click.option('--shell/--no-shell', '-s/-ns', is_flag=True, default=None,
@@ -182,6 +192,7 @@ def update(
         description: Optional[str],
         tags: Optional[Tuple[str]],
         repositories: Optional[Tuple[str]],
+        venv: Optional[str],
         verbose: Optional[bool],
         shell: Optional[bool],
         python: Optional[bool],
@@ -197,6 +208,7 @@ def update(
         description (Optional[str]): Brief description of CLI command
         tags (Optional[Tuple[str]]): Repository tags to apply command to
         repositories (Optional[Tuple[str]]): Repositories to apply command to
+        venv (Optional[str]): Virtualenv to execute commands with
         verbose (Optional[bool]): Flag to indicate that output should be displayed as the command is applied
         shell (Optional[bool]): Flag to indicate that command should be executed in a separate shell
         python (Optional[bool]): Flag to indicate that command should be executed by the Python 3 interpreter
@@ -216,6 +228,7 @@ def update(
         'description': description,
         'tags': tags,
         'repositories': repositories,
+        'venv': venv,
         'verbose': verbose,
         'shell': shell,
         'python': python,
@@ -257,6 +270,11 @@ def update(
             raise click.ClickException(
                 f"One of the repositories in {list(repositories)} does not exist, please run `gameta repo add` to "
                 f"add it first"
+            )
+        # Virtualenv must be registered before it can be used
+        if updated_command['venv'] is not None and updated_command['venv'] not in context.venvs:
+            raise click.ClickException(
+                f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
             )
         # If Python flag is set, all commands need to be valid Python scripts
         if updated_command['python']:
@@ -319,7 +337,9 @@ def ls(context: GametaContext) -> None:
             'tags': lambda v: ', '.join(v),
             'repositories': lambda v: ', '.join(v)
         }
-        for key in ['description', 'commands', 'tags', 'repositories', 'verbose', 'shell', 'python', 'raise_errors']:
+        for key in [
+            'description', 'commands', 'tags', 'repositories', 'venv', 'verbose', 'shell', 'python', 'raise_errors'
+        ]:
             if key in details:
                 command_string += '\t' + param_string.format(key, formatters.get(key, str)(details.get(key)))
 

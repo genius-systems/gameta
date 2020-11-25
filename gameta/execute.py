@@ -39,7 +39,7 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
         """
         return {
             p: g_context.commands[command_name][p]
-            for p in ['commands', 'tags', 'repositories', 'verbose', 'shell', 'raise_errors', 'python']
+            for p in ['commands', 'tags', 'repositories', 'venv', 'verbose', 'shell', 'raise_errors', 'python']
         }
 
     from gameta.apply import apply

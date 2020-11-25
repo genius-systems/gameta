@@ -1,14 +1,16 @@
 import json
+import sys
+import venv
 import zipfile
 from os.path import join, dirname, exists
 from shutil import copyfile, copytree
-from unittest import TestCase
+from unittest import TestCase, skipIf
 from unittest.mock import patch
 
 from click import Context
 from click.testing import CliRunner
 
-from gameta.context import GametaContext
+from gameta.context import GametaContext, SHELL
 from gameta.execute import execute
 
 
@@ -86,6 +88,7 @@ class TestExec(TestCase):
                 'verbose': False,
                 'shell': False,
                 'python': False,
+                'venv': None,
                 'raise_errors': True
             },
             'actual_repositories': ['GitPython', 'gameta', 'gitdb']
@@ -162,6 +165,7 @@ class TestExec(TestCase):
                 'verbose': False,
                 'shell': False,
                 'python': False,
+                'venv': None,
                 'raise_errors': True
             },
             'hello_world2': {
@@ -172,6 +176,7 @@ class TestExec(TestCase):
                 'verbose': False,
                 'shell': False,
                 'python': False,
+                'venv': None,
                 'raise_errors': True
             },
             'hello_world3': {
@@ -188,6 +193,7 @@ class TestExec(TestCase):
                 'verbose': False,
                 'shell': False,
                 'python': True,
+                'venv': None,
                 'raise_errors': True
             },
             'encryption_file_name': 'encryption.txt',
@@ -289,3 +295,145 @@ class TestExec(TestCase):
             self.assertTrue(exists(join(f, params['encryption_file_name'])))
             with open(join(f, params['encryption_file_name']), 'r') as e:
                 self.assertEqual(len(e.read()), params['key_len'])
+
+    @skipIf(f'{sys.version_info.major}.{sys.version_info.minor}' == '3.9',
+            'Cryptography is not yet Python 3.9 compatible')
+    @patch('gameta.cli.click.core.Context')
+    def test_exec_multiple_commands_with_virtualenv(self, mock_context):
+        params = {
+            'commands': ['hello_world', 'hello_world2'],
+            'hello_world': {
+                'commands': ['pip3 install cryptography'],
+                'description': '',
+                'tags': [],
+                'repositories': ['gameta'],
+                'verbose': False,
+                'shell': False,
+                'python': False,
+                'venv': 'test',
+                'raise_errors': True
+            },
+            'hello_world2': {
+                'commands': [
+                    'from cryptography.fernet import Fernet\n'
+                    'key = Fernet.generate_key()\n'
+                    'encryptor = Fernet(key)\n'
+                    'message = encryptor.encrypt(b"This is a secret message")\n'
+                    'with open("{ENCRYPTION_FILE_NAME}", "wb") as f:\n'
+                    '    f.write(message)\n'
+                    'with open("key", "wb") as f:\n'
+                    '    f.write(key)\n',
+                    'from cryptography.fernet import Fernet\n'
+                    'with open("key", "rb") as f:\n'
+                    '    decryptor = Fernet(f.read())\n'
+                    'with open("{ENCRYPTION_FILE_NAME}", "rb") as f:\n'
+                    '    print("This is the decrypted message:", decryptor.decrypt(f.read()).decode("utf-8"))\n'
+                ],
+                'description': '',
+                'tags': [],
+                'repositories': ['gameta'],
+                'verbose': False,
+                'shell': False,
+                'python': True,
+                'venv': 'test',
+                'raise_errors': True
+            },
+            'venv': 'test',
+            'directory': 'test',
+            'encryption_file_name': 'encryption.txt',
+            'actual_repositories': ['gameta']
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output.update(
+                        {
+                            'commands': {
+                                'hello_world': params['hello_world'],
+                                'hello_world2': params['hello_world2']
+                            },
+                            'constants': {
+                                'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                            },
+                            'virtualenvs': {
+                                params['venv']: join(f, params['directory'])
+                            }
+                        }
+                    )
+                    json.dump(output, m2)
+            gameta_context = GametaContext()
+            gameta_context.project_dir = f
+            gameta_context.load()
+            context = Context(self.exec, obj=gameta_context)
+            mock_context.return_value = context
+            result = self.runner.invoke(
+                self.exec,
+                [
+                    '-c', params['commands'][0],
+                    '-c', params['commands'][1],
+                ]
+            )
+            output = [c for c in context.obj.apply(
+                params['hello_world2']['commands'], python=True, venv=params['venv']
+            )][0][1]
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Executing {params['commands']}\n"
+                f"Executing Gameta command {params['commands'][0]}\n"
+                f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']} "
+                f"with virtualenv {params['venv']}\n"
+                f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
+                f"{params['hello_world']['commands'][0]} in {params['actual_repositories'][0]}\n"
+                f"Executing Gameta command {params['commands'][1]}\n"
+                "Multiple commands detected, executing in a separate shell\n"
+                f"Applying {params['hello_world2']['commands']} to repos {params['actual_repositories']} "
+                f"with virtualenv {params['venv']}\n"
+                f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][0]}\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'repositories': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': params['hello_world'],
+                            'hello_world2': params['hello_world2'],
+                        },
+                        'constants': {
+                            'ENCRYPTION_FILE_NAME': params['encryption_file_name'],
+                        },
+                        'virtualenvs': {
+                            params['venv']: join(f, params['directory'])
+                        }
+                    }
+                )
+            self.assertTrue(exists(join(f, params['encryption_file_name'])))
+            self.assertTrue(exists(join(f, 'key')))
