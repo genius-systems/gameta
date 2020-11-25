@@ -162,14 +162,6 @@ class Meta(File):
             self.context.constants = {}
             click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
 
-        # Validate constants
-        try:
-            self.context.validators['constants'].validate(self.context.gameta_data.get('constants', {}))
-            self.context.constants = self.context.gameta_data.get('constants', {})
-        except Exception as e:
-            self.context.constants = {}
-            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
-
         # Validate virtualenvs
         try:
             self.context.validators['virtualenvs'].validate(self.context.gameta_data.get('virtualenvs', {}))
@@ -308,10 +300,13 @@ class GametaContext(object):
                         "items": {
                             "type": "string"
                         },
+                    },
+                    "venv": {
+                        "type": ["string", "null"]
                     }
                 },
-                "minProperties": 6,
-                "maxProperties": 8,
+                "minProperties": 9,
+                "maxProperties": 9,
                 "additionalProperties": False,
             },
             "constants": {
@@ -495,13 +490,12 @@ class GametaContext(object):
                 repo_commands: List[str] = [
                     c.format(**self.generate_parameters(repo, details, python)) for c in deepcopy(commands)
                 ]
-                if python:
-                    if venv is not None:
-                        command: List[str] = self.virtualenv(venv, commands)
-                    else:
+                if venv is not None:
+                    command: List[str] = self.virtualenv(
+                        venv, self.python(repo_commands, shell=False) if python else repo_commands
+                    )
+                elif python:
                         command: List[str] = self.python(repo_commands)
-                elif venv is not None:
-                    command: List[str] = self.virtualenv(venv, commands)
                 elif shell:
                     command: List[str] = self.shell(repo_commands)
                 else:
@@ -600,19 +594,19 @@ class GametaContext(object):
         """
         return self.shell([f"source {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
 
-    def python(self, commands: List[str]) -> List[str]:
+    def python(self, commands: List[str], shell: bool = True) -> List[str]:
         """
         Prepares commands to be executed by the system Python interpreter via shell
 
         Args:
             commands List[str]: Python scripts
+            shell: Flag to indicate if shell should be used to generate the command
 
         Returns:
             List[str]: Python prepared commands to be executed by subprocess
         """
-        return self.shell(
-            ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
-        )
+        commands: List[str] = ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
+        return self.shell(commands) if shell else commands
 
 
 gameta_context = click.make_pass_decorator(GametaContext, ensure=True)

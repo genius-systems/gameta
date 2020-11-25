@@ -293,18 +293,24 @@ class TestGametaContext(TestCase):
                     "commands": {
                         'hello_world': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         },
                         'hello_world2': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         }
                     },
@@ -324,18 +330,24 @@ class TestGametaContext(TestCase):
                 {
                     'hello_world': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     },
                     'hello_world2': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     }
                 }
@@ -349,25 +361,31 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_missing_projects_in_meta_file(self):
+    def test_gameta_load_missing_repositories_in_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 output = {
                     "commands": {
                         'hello_world': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         },
                         'hello_world2': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         }
                     },
@@ -387,18 +405,24 @@ class TestGametaContext(TestCase):
                 {
                     'hello_world': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     },
                     'hello_world2': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     }
                 }
@@ -538,18 +562,24 @@ class TestGametaContext(TestCase):
                         "commands": {
                             'hello_world': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             },
                             'hello_world2': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             }
                         },
@@ -600,18 +630,24 @@ class TestGametaContext(TestCase):
                 {
                     'hello_world': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     },
                     'hello_world2': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     }
                 }
@@ -655,18 +691,24 @@ class TestGametaContext(TestCase):
                         "commands": {
                             'hello_world': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             },
                             'hello_world2': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             }
                         },
@@ -727,18 +769,24 @@ class TestGametaContext(TestCase):
                 {
                     'hello_world': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     },
                     'hello_world2': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     }
                 }
@@ -789,18 +837,24 @@ class TestGametaContext(TestCase):
                         "commands": {
                             'hello_world': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             },
                             'hello_world2': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             }
                         },
@@ -861,18 +915,24 @@ class TestGametaContext(TestCase):
                 {
                     'hello_world': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     },
                     'hello_world2': {
                         'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
                         'verbose': False,
                         'shell': False,
+                        'venv': None,
+                        'python': False,
                         'raise_errors': False
                     }
                 }
@@ -923,18 +983,24 @@ class TestGametaContext(TestCase):
                         "commands": {
                             'hello_world': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             },
                             'hello_world2': {
                                 'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
                                 'verbose': False,
                                 'shell': False,
+                                'venv': None,
+                                'python': False,
                                 'raise_errors': False
                             }
                         },
@@ -987,18 +1053,24 @@ class TestGametaContext(TestCase):
                     "commands": {
                         'hello_world': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         },
                         'hello_world2': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
+                            'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
                             'verbose': False,
                             'shell': False,
+                            'venv': None,
+                            'python': False,
                             'raise_errors': False
                         }
                     },
@@ -1780,6 +1852,144 @@ class TestGametaContext(TestCase):
                     repo_command[1],
                     [
                         getenv('SHELL', '/bin/sh'), '-c',
+                        "python3 -c \'"
+                        'from random import choice\n'
+                        'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                        'with open("encryption.txt", "w") as f:\n'
+                        '\tf.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                        "for _ in range(16)]))'"
+                    ]
+                )
+
+    def test_gameta_context_apply_shell_command_with_virtualenv(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "repositories": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "virtualenvs": {
+                            'test': join(f, 'test')
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.load()
+            for cwd, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys')],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(['git fetch --all --tags --prune', 'git pull'], venv='test')
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(
+                    repo_command[1],
+                    [
+                        getenv('SHELL', '/bin/sh'), '-c',
+                        f"source {join(f, 'test', 'bin', 'activate')} && "
+                        'git fetch --all --tags --prune && git pull']
+                )
+
+    def test_gameta_context_apply_python_scripts_with_virtualenv(self):
+        with self.runner.isolated_filesystem() as f:
+            makedirs(join(f, 'core', 'genisys'))
+            makedirs(join(f, 'core', 'genisys-testing'))
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "repositories": {
+                            "gameta": {
+                                "url": "https://github.com/test/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys": {
+                                "url": "https://github.com/test/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/test/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {},
+                        "constants": {
+                            "ENCRYPTION_FILE_NAME": 'encryption.txt',
+                            "KEY_LEN": 16
+                        },
+                        "virtualenvs": {
+                            'test': join(f, 'test')
+                        }
+                    }, m
+                )
+            self.context.project_dir = f
+            self.context.load()
+            for cwd, repo, repo_command in zip(
+                    [f, join(f, 'core', 'genisys'), join(f, 'core', 'genisys-testing')],
+                    ['gameta', 'genisys', 'genisys-testing'],
+                    self.context.apply(
+                        [
+                            'from random import choice\n'
+                            'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
+                            'with open("{ENCRYPTION_FILE_NAME}", "w") as f:\n'
+                            '\tf.write("".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) '
+                            'for _ in range({KEY_LEN})]))'
+                        ],
+                        python=True,
+                        venv='test'
+                    )
+            ):
+                self.assertEqual(getcwd(), cwd)
+                self.assertEqual(repo, repo_command[0])
+                self.assertEqual(
+                    repo_command[1],
+                    [
+                        getenv('SHELL', '/bin/sh'), '-c',
+                        f"source {join(f, 'test', 'bin', 'activate')} && "
                         "python3 -c \'"
                         'from random import choice\n'
                         'from string import ascii_lowercase, ascii_uppercase, digits, punctuation\n'
