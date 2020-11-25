@@ -496,7 +496,12 @@ class GametaContext(object):
                     c.format(**self.generate_parameters(repo, details, python)) for c in deepcopy(commands)
                 ]
                 if python:
-                    command: List[str] = self.python(repo_commands)
+                    if venv is not None:
+                        command: List[str] = self.virtualenv(venv, commands)
+                    else:
+                        command: List[str] = self.python(repo_commands)
+                elif venv is not None:
+                    command: List[str] = self.virtualenv(venv, commands)
                 elif shell:
                     command: List[str] = self.shell(repo_commands)
                 else:
@@ -582,9 +587,22 @@ class GametaContext(object):
             '"'
         )
 
+    def virtualenv(self, venv: str, commands: List[str]) -> List[str]:
+        """
+        Prepares commands to be executed by a virtualenv by sourcing it prior to execution
+
+        Args:
+            venv (str): Name of virtualenv to be activated
+            commands (List[str]): Python scripts or shell commands
+
+        Returns:
+            List[str]: Prepared commands to be executed by subprocess
+        """
+        return self.shell([f"source {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
+
     def python(self, commands: List[str]) -> List[str]:
         """
-        Prepares commands to be executed by Python interpreter via shell
+        Prepares commands to be executed by the system Python interpreter via shell
 
         Args:
             commands List[str]: Python scripts
