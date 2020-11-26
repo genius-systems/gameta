@@ -296,6 +296,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
@@ -307,6 +308,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
@@ -318,6 +320,10 @@ class TestGametaContext(TestCase):
                         'HELLO': 'world',
                         "I": 'am',
                         'A': 'test'
+                    },
+                    'virtualenvs': {
+                        'testenv': join(f, 'testenv'),
+                        'testenv2': join(f, 'testenv2')
                     }
                 }
                 json.dump(output, m)
@@ -333,6 +339,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -344,6 +351,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -371,6 +379,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
@@ -382,6 +391,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
@@ -393,6 +403,10 @@ class TestGametaContext(TestCase):
                         'HELLO': 'world',
                         "I": 'am',
                         'A': 'test'
+                    },
+                    'virtualenvs': {
+                        'testenv': join(f, 'testenv'),
+                        'testenv2': join(f, 'testenv2')
                     }
                 }
                 json.dump(output, m)
@@ -408,6 +422,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -419,6 +434,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -433,6 +449,13 @@ class TestGametaContext(TestCase):
                     'HELLO': 'world',
                     "I": 'am',
                     'A': 'test'
+                }
+            )
+            self.assertEqual(
+                self.context.venvs,
+                {
+                    'testenv': join(f, 'testenv'),
+                    'testenv2': join(f, 'testenv2')
                 }
             )
 
@@ -477,6 +500,10 @@ class TestGametaContext(TestCase):
                             'HELLO': 'world',
                             "I": 'am',
                             'A': 'test'
+                        },
+                        'virtualenvs': {
+                            'testenv': join(f, 'testenv'),
+                            'testenv2': join(f, 'testenv2')
                         }
                     }, m
                 )
@@ -524,6 +551,13 @@ class TestGametaContext(TestCase):
                     'A': 'test'
                 }
             )
+            self.assertEqual(
+                self.context.venvs,
+                {
+                    'testenv': join(f, 'testenv'),
+                    'testenv2': join(f, 'testenv2')
+                }
+            )
 
     def test_gameta_load_malformed_constants_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -565,6 +599,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -576,6 +611,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -587,6 +623,10 @@ class TestGametaContext(TestCase):
                             'hello': 'world',
                             "i": 'am',
                             'a': 'test'
+                        },
+                        'virtualenvs': {
+                            'testenv': join(f, 'testenv'),
+                            'testenv2': join(f, 'testenv2')
                         }
                     }, m
                 )
@@ -633,6 +673,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -644,6 +685,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -653,6 +695,158 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertEqual(self.context.constants, {})
+            self.assertEqual(
+                self.context.venvs,
+                {
+                    'testenv': join(f, 'testenv'),
+                    'testenv2': join(f, 'testenv2')
+                }
+            )
+
+    def test_gameta_load_malformed_virtualenvs_meta_file(self):
+        with self.runner.isolated_filesystem() as f:
+            with open(join(f, '.meta'), 'w') as m:
+                json.dump(
+                    {
+                        "repositories": {
+                            "gameta": {
+                                "url": "https://github.com/testing/gameta.git",
+                                "path": ".",
+                                "tags": [
+                                    "metarepo"
+                                ],
+                                '__metarepo__': True
+                            },
+                            "genisys": {
+                                "url": "https://github.com/testing/genisys.git",
+                                "path": "core/genisys",
+                                "tags": [
+                                    "core",
+                                    "templating"
+                                ],
+                                '__metarepo__': False
+                            },
+                            "genisys-testing": {
+                                "url": "https://github.com/testing/genisys-testing.git",
+                                "path": "core/genisys-testing",
+                                "tags": [
+                                    "core",
+                                    "testing",
+                                    "developer"
+                                ],
+                                '__metarepo__': False
+                            }
+                        },
+                        "commands": {
+                            'hello_world': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
+                                'verbose': False,
+                                'shell': False,
+                                'venv': None,
+                                'python': False,
+                                'raise_errors': False
+                            },
+                            'hello_world2': {
+                                'commands': ['git fetch --all --tags --prune', 'git pull'],
+                                'description': "Hello world",
+                                'tags': [],
+                                'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
+                                'verbose': False,
+                                'shell': False,
+                                'venv': None,
+                                'python': False,
+                                'raise_errors': False
+                            }
+                        },
+                        'constants': {
+                            'HELLO': 'world',
+                            "I": 'am',
+                            'A': 'test'
+                        },
+                        'virtualenvs': {
+                            'D*SJ': join(f, 'testenv'),
+                            '#@(*$': join(f, 'testenv2')
+                        }
+                    }, m
+                )
+
+            self.context.project_dir = f
+            self.context.load()
+            self.assertCountEqual(
+                self.context.repositories,
+                {
+                    "gameta": {
+                        "url": "https://github.com/testing/gameta.git",
+                        "path": ".",
+                        "tags": [
+                            "metarepo"
+                        ],
+                        '__metarepo__': True
+                    },
+                    "genisys": {
+                        "url": "https://github.com/testing/genisys.git",
+                        "path": "core/genisys",
+                        "tags": [
+                            "core",
+                            "templating"
+                        ],
+                        '__metarepo__': False
+                    },
+                    "genisys-testing": {
+                        "url": "https://github.com/testing/genisys-testing.git",
+                        "path": "core/genisys-testing",
+                        "tags": [
+                            "core",
+                            "testing",
+                            "developer"
+                        ],
+                        '__metarepo__': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.commands,
+                {
+                    'hello_world': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
+                        'verbose': False,
+                        'shell': False,
+                        'venv': None,
+                        'python': False,
+                        'raise_errors': False
+                    },
+                    'hello_world2': {
+                        'commands': ['git fetch --all --tags --prune', 'git pull'],
+                        'description': "Hello world",
+                        'tags': [],
+                        'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
+                        'verbose': False,
+                        'shell': False,
+                        'venv': None,
+                        'python': False,
+                        'raise_errors': False
+                    }
+                }
+            )
+            self.assertEqual(
+                self.context.constants,
+                {
+                    'HELLO': 'world',
+                    "I": 'am',
+                    'A': 'test'
+                }
+            )
+            self.assertEqual(self.context.venvs, {})
 
     def test_gameta_load_full_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -694,6 +888,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -705,6 +900,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -716,6 +912,10 @@ class TestGametaContext(TestCase):
                             'HELLO': 'world',
                             "I": 'am',
                             'A': 'test'
+                        },
+                        'virtualenvs': {
+                            'testenv': join(f, 'testenv'),
+                            'testenv2': join(f, 'testenv2')
                         }
                     }, m
                 )
@@ -772,6 +972,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -783,6 +984,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -797,6 +999,13 @@ class TestGametaContext(TestCase):
                     'HELLO': 'world',
                     "I": 'am',
                     'A': 'test'
+                }
+            )
+            self.assertEqual(
+                self.context.venvs,
+                {
+                    'testenv': join(f, 'testenv'),
+                    'testenv2': join(f, 'testenv2')
                 }
             )
 
@@ -840,6 +1049,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -851,6 +1061,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -918,6 +1129,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -929,6 +1141,7 @@ class TestGametaContext(TestCase):
                         'description': "Hello world",
                         'tags': [],
                         'repositories': ['gitdb', 'GitPython'],
+                        'all': False,
                         'verbose': False,
                         'shell': False,
                         'venv': None,
@@ -986,6 +1199,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -997,6 +1211,7 @@ class TestGametaContext(TestCase):
                                 'description': "Hello world",
                                 'tags': [],
                                 'repositories': ['gitdb', 'GitPython'],
+                                'all': False,
                                 'verbose': False,
                                 'shell': False,
                                 'venv': None,
@@ -1056,6 +1271,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
@@ -1067,6 +1283,7 @@ class TestGametaContext(TestCase):
                             'description': "Hello world",
                             'tags': [],
                             'repositories': ['gitdb', 'GitPython'],
+                            'all': False,
                             'verbose': False,
                             'shell': False,
                             'venv': None,
