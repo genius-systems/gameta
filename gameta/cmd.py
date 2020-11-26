@@ -38,6 +38,8 @@ def command_cli(context: GametaContext) -> None:
 @click.option('--tags', '-t', type=str, multiple=True, default=(), help='Repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=(), help='Repositories to apply CLI commands to')
 @click.option('--venv', '-ve', type=str, default=None, help="Virtualenv to execute commands with, defaults to None")
+@click.option('--all', '-a', 'use_all', is_flag=True, default=False,
+              help='Applies the CLI commands to all repositories, overrides the tags and repositories arguments')
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Display execution output when CLI command is applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
@@ -54,6 +56,7 @@ def add(
         tags: Tuple[str],
         repositories: Tuple[str],
         venv: Optional[str],
+        use_all: bool,
         verbose: bool,
         shell: bool,
         python: bool,
@@ -68,13 +71,14 @@ def add(
         description (str): Brief description of the command
         overwrite (bool): Flag to overwrite the existing Gameta command if it exists, defaults to false
 
-        commands (Tuple[str]): CLI command to be applied
-        tags (Tuple[str]): Repository tags to apply command to
-        repositories (Tuple[str]): Repositories to apply command to
+        commands (Tuple[str]): CLI commands to be applied
+        tags (Tuple[str]): Repository tags to apply commands to
+        repositories (Tuple[str]): Repositories to apply commands to
         venv (Optional[str]): Virtualenv to execute commands with, defaults to None
-        verbose (bool): Flag to indicate that output should be displayed as the command is applied
-        shell (bool): Flag to indicate that command should be executed in a separate shell
-        python (bool): Flag to indicate that command should be executed by the Python 3 interpreter
+        use_all (bool): Flag to indicate that CLI commands should be applied to all repositories
+        verbose (bool): Flag to indicate that output should be displayed as the commands is applied
+        shell (bool): Flag to indicate that commands should be executed in a separate shell
+        python (bool): Flag to indicate that commands should be executed by the Python 3 interpreter
         raise_errors (bool): Flag to indicate that errors should be raised if they occur during execution and the
                              overall execution should be terminated
 
@@ -116,6 +120,7 @@ def add(
             'tags': list(tags),
             'repositories': list(repositories),
             'venv': venv,
+            'all': use_all,
             'verbose': verbose,
             'shell': True if len(commands) > 1 else shell,
             'python': python,
@@ -176,6 +181,8 @@ def delete(context: GametaContext, name: str) -> None:
 @click.option('--repositories', '-r', type=str, multiple=True, default=None,
               help='New repositories to apply CLI commands to')
 @click.option('--venv', '-ve', 'venv', type=str, default=None, help='New virtualenv to execute commands with')
+@click.option('--all/--no-all', '-a/-na', 'use_all', is_flag=True, default=None,
+              help='Applies the CLI commands to all repositories, overrides the tags and repositories arguments')
 @click.option('--verbose/--no-verbose', '-v/-nv', is_flag=True, default=None,
               help='Display execution output when CLI command is applied')
 @click.option('--shell/--no-shell', '-s/-ns', is_flag=True, default=None,
@@ -193,6 +200,7 @@ def update(
         tags: Optional[Tuple[str]],
         repositories: Optional[Tuple[str]],
         venv: Optional[str],
+        use_all: Optional[bool],
         verbose: Optional[bool],
         shell: Optional[bool],
         python: Optional[bool],
@@ -209,6 +217,7 @@ def update(
         tags (Optional[Tuple[str]]): Repository tags to apply command to
         repositories (Optional[Tuple[str]]): Repositories to apply command to
         venv (Optional[str]): Virtualenv to execute commands with
+        use_all (bool): Flag to indicate that CLI commands should be applied to all repositories
         verbose (Optional[bool]): Flag to indicate that output should be displayed as the command is applied
         shell (Optional[bool]): Flag to indicate that command should be executed in a separate shell
         python (Optional[bool]): Flag to indicate that command should be executed by the Python 3 interpreter
@@ -229,6 +238,7 @@ def update(
         'tags': tags,
         'repositories': repositories,
         'venv': venv,
+        'all': use_all,
         'verbose': verbose,
         'shell': shell,
         'python': python,
@@ -338,7 +348,8 @@ def ls(context: GametaContext) -> None:
             'repositories': lambda v: ', '.join(v)
         }
         for key in [
-            'description', 'commands', 'tags', 'repositories', 'venv', 'verbose', 'shell', 'python', 'raise_errors'
+            'description', 'commands', 'tags', 'repositories', 'venv',
+            'all', 'verbose', 'shell', 'python', 'raise_errors'
         ]:
             if key in details:
                 command_string += '\t' + param_string.format(key, formatters.get(key, str)(details.get(key)))
