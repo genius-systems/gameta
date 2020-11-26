@@ -37,9 +37,20 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
         Returns:
             Dict: Structured command output
         """
+        mapping: Dict[str, str] = {
+            'commands': 'commands',
+            'tags': 'tags',
+            'repositories': 'repositories',
+            'venv': 'venv',
+            'all': 'use_all',
+            'verbose': 'verbose',
+            'raise_errors': 'raise_errors',
+            'python': 'python',
+            'shell': 'shell'
+        }
         return {
-            p: g_context.commands[command_name][p]
-            for p in ['commands', 'tags', 'repositories', 'venv', 'verbose', 'shell', 'raise_errors', 'python']
+            v: g_context.commands[command_name][k]
+            for k, v in mapping.items()
         }
 
     from gameta.apply import apply
