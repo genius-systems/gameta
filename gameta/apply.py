@@ -14,6 +14,8 @@ __all__ = ['apply']
 @click.option('--command', '-c', 'commands', type=str, required=True, multiple=True, help='CLI Commands to be executed')
 @click.option('--tags', '-t', type=str, multiple=True, default=(), help='Repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=(), help='Repositories to apply CLI commands to')
+@click.option('--all', '-a', 'use_all', is_flag=True, default=False,
+              help='Applies the CLI commands to all repositories, overrides the tags and repositories arguments')
 @click.option('--verbose', '-v', is_flag=True, default=False,
               help='Display execution output when CLI commands are applied')
 @click.option('--shell', '-s', is_flag=True, default=False, help='Execute CLI commands in a separate shell')
@@ -27,6 +29,7 @@ def apply(
         commands: Tuple[str],
         tags: Tuple[str],
         repositories: Tuple[str],
+        use_all: bool,
         verbose: bool,
         shell: bool,
         python: bool,
@@ -38,13 +41,14 @@ def apply(
     \f
     Args:
         context (GametaContext): Gameta Context
-        commands (Tuple[str]): CLI command to be applied
-        tags (Tuple[str]): Repository tags to apply command to
-        repositories (Tuple[str]): Repositories to apply command to
-        verbose (bool): Flag to indicate that output should be displayed as the command is applied
-        python (bool): Flag to indicate that command should be executed with the Python 3 interpreter
+        commands (Tuple[str]): CLI commands to be applied
+        tags (Tuple[str]): Repository tags to apply commands to
+        repositories (Tuple[str]): Repositories to apply commands to
+        use_all (bool): Flag to indicate that commands should be applied to all repositories
+        verbose (bool): Flag to indicate that output should be displayed as the commands is applied
+        python (bool): Flag to indicate that commands should be executed with the Python 3 interpreter
         venv (Optional[str]): Virtualenv to execute commands with
-        shell (bool): Flag to indicate that command should be executed in a separate shell
+        shell (bool): Flag to indicate that commands should be executed in a separate shell
         raise_errors (bool): Flag to indicate that errors should be raised if they occur during execution and the
                              overall execution should be terminated
 
@@ -52,6 +56,9 @@ def apply(
         None
 
     Examples:
+        $ gameta apply -c "git fetch --all --tags --prune" -c "git checkout {branch}" -a  # All repositories
+        $ gameta apply -p -c 'from os import getcwd\nprint(getcwd())'  # Executes a Python script
+        $ gameta apply -ve test -c "pip install cryptography"  # Applies command with virtualenv test
         $ gameta apply -c "git fetch --all --tags --prune" -c "git checkout {branch}"  # Multiple commands
         $ gameta apply -c "git fetch --all --tags --prune" -t tag1 -t tag2 -t tag3 -r repo_a  # Apply to tags and repos
         $ gameta apply -c "git fetch --all --tags --prune" -e  # Raise errors and terminate
@@ -62,12 +69,24 @@ def apply(
         click.ClickException: If errors occur during processing
     """
     try:
-        repos: List[str] = sorted(
-            list(
-                set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
-                set([repo for repo in repositories if repo in context.repositories])
+        repos: List[str]
+        if use_all:
+            repos = list(context.repositories.keys())
+        elif repositories or tags:
+            repos = sorted(
+                list(
+                    set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
+                    set([repo for repo in repositories if repo in context.repositories])
+                )
             )
-        )
+            # No valid repositories or tags were provided
+            if not repos:
+                raise click.ClickException(
+                    f"The current configuration (tags: {list(tags)}, repositories: {list(repositories)}) yielded no "
+                    f"repositories, please check that you entered valid tags and repositories"
+                )
+        else:
+            repos = [context.metarepo]
 
         if python:
             try:

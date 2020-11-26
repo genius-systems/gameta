@@ -58,7 +58,7 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.apply, ['--command', params['commands'][0]])
+            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-a'])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -100,7 +100,9 @@ class TestApply(TestCase):
             context.env_vars['$TMP'] = tempdir
             mock_ensure_object.return_value = context
 
-            output = [c for repo, c in context.apply(list(params['commands']), shell=True)]
+            output = [c for repo, c in context.apply(
+                list(params['commands']), repos=list(context.repositories), shell=True
+            )]
             result = self.runner.invoke(
                 self.apply,
                 [
@@ -108,6 +110,7 @@ class TestApply(TestCase):
                     '--command', params['commands'][1],
                     '--command', params['commands'][2],
                     '--command', params['commands'][3],
+                    '-a'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -159,6 +162,7 @@ class TestApply(TestCase):
         params = {
             'commands': ['git fetch --all --tags --prune'],
             'tags': ['hello', 'world'],
+            'repositories': [],
             'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
@@ -175,13 +179,11 @@ class TestApply(TestCase):
             result = self.runner.invoke(
                 self.apply, ['--command', params['commands'][0], '-t', params['tags'][0], '-t', params['tags'][1]]
             )
-            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
+                f"Error: The current configuration (tags: {params['tags']}, repositories: {params['repositories']}) "
+                f"yielded no repositories, please check that you entered valid tags and repositories\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -217,7 +219,8 @@ class TestApply(TestCase):
         params = {
             'commands': ['git fetch --all --tags --prune'],
             'repositories': ['hello', 'world'],
-            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb'],
+            'tags': []
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -234,13 +237,11 @@ class TestApply(TestCase):
                 self.apply,
                 ['--command', params['commands'][0], '-r', params['repositories'][0], '-r', params['repositories'][1]]
             )
-            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
-                f"Executing git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
+                f"Error: The current configuration (tags: {params['tags']}, repositories: {params['repositories']}) "
+                f"yielded no repositories, please check that you entered valid tags and repositories\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -278,7 +279,7 @@ class TestApply(TestCase):
     def test_apply_command_in_separate_shell(self, mock_ensure_object):
         params = {
             'commands': ['git fetch --all --tags --prune'],
-            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
+            'actual_repositories': ['gameta']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -297,8 +298,6 @@ class TestApply(TestCase):
                 result.output,
                 f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
                 f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][0]}\n"
-                f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][1]}\n"
-                f"Executing {SHELL} -c git fetch --all --tags --prune in {params['actual_repositories'][2]}\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -345,7 +344,7 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
 
-            output = [c for c in context.apply(params['commands'], python=True)]
+            output = [c for c in context.apply(params['commands'], python=True, repos=list(context.repositories))]
             result = self.runner.invoke(
                 self.apply, [
                     '--command', params['commands'][0],
@@ -507,7 +506,7 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-v'])
+            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-v', '-a'])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -579,6 +578,7 @@ class TestApply(TestCase):
                             'with open("key", "wb") as f:\n'
                             '    f.write(key)\n',
                         ],
+                        repos=list(context.repositories),
                         python=True,
                         venv=params['venv']
                     )
@@ -651,7 +651,7 @@ class TestApply(TestCase):
                     '-p', '-v', '-e'
                 ]
             )
-            output = [c for c in context.apply(params['commands'], python=True)]
+            output = [c for c in context.apply(params['commands'], repos=list(context.repositories), python=True)]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
