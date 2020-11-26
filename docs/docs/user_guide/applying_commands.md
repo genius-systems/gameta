@@ -72,6 +72,12 @@ Users can apply a CLI command to all repositories managed by Gameta with the
 gameta apply -c "python setup.py sdist bdist_wheel" -a
 ```
 
+___
+**Note**
+
+The `--all / -a` flag overrides the `--tags / -t` and `--repositories / -r` arguments.
+___
+
 ## Applying Python Commands
 
 Gameta can apply Python 3 scripts across various repositories. This provides users with the
