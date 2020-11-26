@@ -86,12 +86,13 @@ class TestExec(TestCase):
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
+                'all': True,
                 'shell': False,
                 'python': False,
                 'venv': None,
                 'raise_errors': True
             },
-            'actual_repositories': ['GitPython', 'gameta', 'gitdb']
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
 
         }
         with self.runner.isolated_filesystem() as f:
@@ -118,8 +119,8 @@ class TestExec(TestCase):
                 f"Executing {params['commands']}\n"
                 f"Executing Gameta command {params['commands'][0]}\n"
                 f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][0]}\n"
+                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][2]}\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
@@ -163,6 +164,7 @@ class TestExec(TestCase):
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
+                'all': True,
                 'shell': False,
                 'python': False,
                 'venv': None,
@@ -174,6 +176,7 @@ class TestExec(TestCase):
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
+                'all': True,
                 'shell': False,
                 'python': False,
                 'venv': None,
@@ -191,6 +194,7 @@ class TestExec(TestCase):
                 'tags': [],
                 'repositories': ['gameta'],
                 'verbose': False,
+                'all': False,
                 'shell': False,
                 'python': True,
                 'venv': None,
@@ -198,7 +202,7 @@ class TestExec(TestCase):
             },
             'encryption_file_name': 'encryption.txt',
             'key_len': 16,
-            'actual_repositories': ['GitPython', 'gameta', 'gitdb']
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -236,25 +240,27 @@ class TestExec(TestCase):
                     '-c', params['commands'][2],
                 ]
             )
-            output = [c for c in context.obj.apply(params['hello_world3']['commands'], python=True)][0][1]
+            output = [
+                c for c in context.obj.apply(params['hello_world3']['commands'], python=True, repos=['gameta'])
+            ][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
                 f"Executing {params['commands']}\n"
                 f"Executing Gameta command {params['commands'][0]}\n"
                 f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][0]}\n"
+                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][2]}\n"
                 f"Executing Gameta command {params['commands'][1]}\n"
                 f"Applying {params['hello_world2']['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][0]}\n"
+                f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world2']['commands'][0]} in {params['actual_repositories'][2]}\n"
                 f"Executing Gameta command {params['commands'][2]}\n"
                 f"Applying Python commands {params['hello_world3']['commands']} to repos "
-                f"{[params['actual_repositories'][1]]} in a separate shell\n"
-                f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][1]}\n"
+                f"{[params['actual_repositories'][0]]} in a separate shell\n"
+                f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][0]}\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
             with open(join(f, '.meta'), 'r') as m:
@@ -306,8 +312,9 @@ class TestExec(TestCase):
                 'commands': ['pip3 install cryptography'],
                 'description': '',
                 'tags': [],
-                'repositories': ['gameta'],
+                'repositories': [],
                 'verbose': False,
+                'all': False,
                 'shell': False,
                 'python': False,
                 'venv': 'test',
@@ -331,7 +338,8 @@ class TestExec(TestCase):
                 ],
                 'description': '',
                 'tags': [],
-                'repositories': ['gameta'],
+                'repositories': [],
+                'all': False,
                 'verbose': False,
                 'shell': False,
                 'python': True,
@@ -381,7 +389,7 @@ class TestExec(TestCase):
                 ]
             )
             output = [c for c in context.obj.apply(
-                params['hello_world2']['commands'], python=True, venv=params['venv']
+                params['hello_world2']['commands'], python=True, venv=params['venv'], repos=['gameta']
             )][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(

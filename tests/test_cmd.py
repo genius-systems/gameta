@@ -57,8 +57,8 @@ class TestCommandAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
-                f"'description': '', 'tags': [], 'repositories': [], 'venv': None, 'verbose': False, 'shell': True, "
-                f"'python': False, 'raise_errors': False}}) "
+                f"'description': '', 'tags': [], 'repositories': [], 'venv': None, 'all': False, 'verbose': False, "
+                f"'shell': True, 'python': False, 'raise_errors': False}}) "
                 f"to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
@@ -74,6 +74,7 @@ class TestCommandAdd(TestCase):
                                 'description': '',
                                 'raise_errors': False,
                                 'repositories': [],
+                                'all': False,
                                 'shell': True,
                                 'tags': [],
                                 'venv': None,
@@ -105,6 +106,7 @@ class TestCommandAdd(TestCase):
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
+            'all': False,
             'shell': True,
             'python': True,
             'venv': None,
@@ -136,9 +138,9 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'description': '{params['description']}', 'tags': {params['tags']}, "
-                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
-                f" to the command store\n"
+                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'all': {params['all']}, "
+                f"'verbose': {params['verbose']}, 'shell': {params['shell']}, 'python': {params['python']}, "
+                f"'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
@@ -172,6 +174,7 @@ class TestCommandAdd(TestCase):
                                 'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
                                 'venv': params['venv'],
@@ -334,6 +337,7 @@ class TestCommandAdd(TestCase):
             'description': 'Fetches code from all repos',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
+            'all': True,
             'verbose': True,
             'shell': True,
             'python': False,
@@ -358,7 +362,7 @@ class TestCommandAdd(TestCase):
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
-                    '-v', '-s', '-e'
+                    '-v', '-s', '-e', '-a'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -366,9 +370,9 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'description': '{params['description']}', 'tags': {params['tags']}, "
-                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}})"
-                f" to the command store\n"
+                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'all': {params['all']}, "
+                f"'verbose': {params['verbose']}, 'shell': {params['shell']}, 'python': {params['python']}, "
+                f"'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
             self.assertTrue(exists(join(f, '.meta')))
@@ -402,6 +406,7 @@ class TestCommandAdd(TestCase):
                                 'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
                                 'venv': params['venv'],
@@ -539,6 +544,7 @@ class TestCommandAdd(TestCase):
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'description': 'Fetches all commands',
+            'all': True,
             'verbose': True,
             'shell': True,
             'python': False,
@@ -559,6 +565,7 @@ class TestCommandAdd(TestCase):
                                     'description': 'Lame description',
                                     'raise_errors': False,
                                     'repositories': [],
+                                    'all': False,
                                     'shell': True,
                                     'tags': [],
                                     'venv': None,
@@ -583,7 +590,7 @@ class TestCommandAdd(TestCase):
                     '-t', params['tags'][0],
                     '-t', params['tags'][1],
                     '-r', params['repositories'][0],
-                    '-v', '-s', '-e', '-o'
+                    '-v', '-s', '-e', '-o', '-a'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -591,9 +598,9 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'description': '{params['description']}', 'tags': {params['tags']}, "
-                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'verbose': {params['verbose']}, "
-                f"'shell': {params['shell']}, 'python': {params['python']}, 'raise_errors': {params['raise_errors']}}}) "
-                f"to the command store\n"
+                f"'repositories': {params['repositories']}, 'venv': {params['venv']}, 'all': {params['all']}, "
+                f"'verbose': {params['verbose']}, 'shell': {params['shell']}, 'python': {params['python']}, "
+                f"'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Overwriting command {params['name']} in the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
             )
@@ -628,6 +635,7 @@ class TestCommandAdd(TestCase):
                                 'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
                                 'python': params['python'],
@@ -647,6 +655,7 @@ class TestCommandAdd(TestCase):
             'tags': [],
             'repositories': ['gameta'],
             'verbose': False,
+            'all': False,
             'shell': True,
             'python': False,
             'raise_errors': True,
@@ -682,7 +691,7 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'description': '{params['description']}', 'tags': {params['tags']}, "
-                f"'repositories': {params['repositories']}, 'venv': '{params['venv']}', "
+                f"'repositories': {params['repositories']}, 'venv': '{params['venv']}', 'all': {params['all']}, "
                 f"'verbose': {params['verbose']}, 'shell': {params['shell']}, 'python': {params['python']}, "
                 f"'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -706,6 +715,7 @@ class TestCommandAdd(TestCase):
                                 'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
                                 'python': params['python'],
@@ -744,6 +754,7 @@ class TestCommandAdd(TestCase):
             'verbose': False,
             'shell': True,
             'python': True,
+            'all': False,
             'raise_errors': True,
             'venv': 'test',
             'directory': 'test'
@@ -778,7 +789,7 @@ class TestCommandAdd(TestCase):
                 result.output,
                 f"Adding command {params['name']} with parameters ({{'commands': {params['commands']}, "
                 f"'description': '{params['description']}', 'tags': {params['tags']}, "
-                f"'repositories': {params['repositories']}, 'venv': '{params['venv']}', "
+                f"'repositories': {params['repositories']}, 'venv': '{params['venv']}', 'all': {params['all']}, "
                 f"'verbose': {params['verbose']}, 'shell': {params['shell']}, 'python': {params['python']}, "
                 f"'raise_errors': {params['raise_errors']}}}) to the command store\n"
                 f"Successfully added command {params['name']} to the command store\n"
@@ -802,6 +813,7 @@ class TestCommandAdd(TestCase):
                                 'description': params['description'],
                                 'raise_errors': params['raise_errors'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'shell': params['shell'],
                                 'tags': params['tags'],
                                 'python': params['python'],
@@ -1038,6 +1050,7 @@ class TestCommandDelete(TestCase):
                                     'description': "test",
                                     'raise_errors': False,
                                     'repositories': [],
+                                    'all': False,
                                     'shell': True,
                                     'python': False,
                                     'venv': None,
@@ -1179,6 +1192,7 @@ class TestCommandUpdate(TestCase):
             'description': 'Fetches and updates code',
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
+            'all': True,
             'verbose': True,
             'shell': True,
             'python': False,
@@ -1200,6 +1214,7 @@ class TestCommandUpdate(TestCase):
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
+                                    'all': False,
                                     'tags': [],
                                     'python': False,
                                     'venv': None,
@@ -1225,7 +1240,7 @@ class TestCommandUpdate(TestCase):
                     '-d', params['description'],
                     '-r', params['repositories'][0],
                     '-ve', params['venv'],
-                    '-v', '-s', '-e',
+                    '-v', '-s', '-e', '-a'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -1265,7 +1280,8 @@ class TestCommandUpdate(TestCase):
                                 'description': params['description'],
                                 'venv': params['venv'],
                                 'tags': params['tags'],
-                                'python': False,
+                                'python': params['python'],
+                                'all': params['all'],
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
@@ -1288,6 +1304,7 @@ class TestCommandUpdate(TestCase):
             'repositories': ['gameta'],
             'verbose': True,
             'shell': True,
+            'all': False,
             'python': False,
             'venv1': 'test1',
             'venv2': 'test2',
@@ -1308,6 +1325,7 @@ class TestCommandUpdate(TestCase):
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
+                                    'all': False,
                                     'tags': [],
                                     'python': False,
                                     'venv': params['venv1'],
@@ -1374,6 +1392,7 @@ class TestCommandUpdate(TestCase):
                                 'description': params['description'],
                                 'venv': params['venv2'],
                                 'tags': params['tags'],
+                                'all': params['all'],
                                 'python': False,
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
@@ -1412,6 +1431,7 @@ class TestCommandUpdate(TestCase):
             'verbose': True,
             'shell': True,
             'python': True,
+            'all': False,
             'venv': 'test',
             'raise_errors': True
         }
@@ -1431,6 +1451,7 @@ class TestCommandUpdate(TestCase):
                                     'repositories': [],
                                     'shell': True,
                                     'python': True,
+                                    'all': False,
                                     'tags': [],
                                     'venv': None,
                                     'verbose': False
@@ -1499,6 +1520,7 @@ class TestCommandUpdate(TestCase):
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
+                                'all': params['all'],
                                 'python': params['python'],
                                 'venv': params['venv'],
                                 'raise_errors': params['raise_errors']
@@ -1531,6 +1553,7 @@ class TestCommandUpdate(TestCase):
             'tags': ['a', 'b'],
             'description': "Generates an encryption key",
             'repositories': ['gameta'],
+            'all': False,
             'verbose': True,
             'shell': True,
             'python': False,
@@ -1551,6 +1574,7 @@ class TestCommandUpdate(TestCase):
                                     'description': "test",
                                     'raise_errors': False,
                                     'repositories': [],
+                                    'all': False,
                                     'shell': True,
                                     'tags': [],
                                     'venv': None,
@@ -1615,6 +1639,7 @@ class TestCommandUpdate(TestCase):
                                 'description': params['description'],
                                 'tags': params['tags'],
                                 'repositories': params['repositories'],
+                                'all': params['all'],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
                                 'python': params['python'],
@@ -1658,6 +1683,7 @@ class TestCommandUpdate(TestCase):
             'tags': ['a', 'b'],
             'repositories': ['gameta'],
             'verbose': True,
+            'all': False,
             'shell': True,
             'python': True,
             'venv': None,
@@ -1678,6 +1704,7 @@ class TestCommandUpdate(TestCase):
                                     'raise_errors': False,
                                     'repositories': [],
                                     'shell': True,
+                                    'all': False,
                                     'tags': [],
                                     'python': True,
                                     'venv': None,
@@ -1740,6 +1767,7 @@ class TestCommandUpdate(TestCase):
                                 'raise_errors': False,
                                 'repositories': [],
                                 'shell': True,
+                                'all': False,
                                 'tags': [],
                                 'description': 'This is a lame description',
                                 'venv': None,
@@ -1772,6 +1800,7 @@ class TestCommandUpdate(TestCase):
             'verbose': True,
             'shell': True,
             'venv': None,
+            'all': False,
             'python': False,
             'description': "Hello world",
             'raise_errors': True
@@ -1791,6 +1820,7 @@ class TestCommandUpdate(TestCase):
                                     'repositories': [],
                                     'shell': True,
                                     'tags': [],
+                                    'all': False,
                                     'venv': None,
                                     'description': '',
                                     'python': True,
@@ -1853,6 +1883,7 @@ class TestCommandUpdate(TestCase):
                                 'venv': None,
                                 'raise_errors': False,
                                 'repositories': [],
+                                'all': False,
                                 'shell': True,
                                 'tags': [],
                                 'python': True,
@@ -1872,6 +1903,7 @@ class TestCommandUpdate(TestCase):
             'verbose': False,
             'shell': True,
             'python': False,
+            'all': False,
             'description': 'Hello world',
             'venv': None,
             'raise_errors': False
@@ -1891,6 +1923,7 @@ class TestCommandUpdate(TestCase):
                                     'repositories': params['repositories'],
                                     'shell': params['shell'],
                                     'tags': [],
+                                    'all': True,
                                     'description': params['description'],
                                     'venv': params['venv'],
                                     'python': params['python'],
@@ -1909,7 +1942,8 @@ class TestCommandUpdate(TestCase):
                 [
                     '-n', params['name'],
                     '-t', params['tags'][0],
-                    '-t', params['tags'][1]
+                    '-t', params['tags'][1],
+                    '-na'
                 ]
             )
             self.assertEqual(result.exit_code, 0)
@@ -1950,6 +1984,7 @@ class TestCommandUpdate(TestCase):
                                 'python': params['python'],
                                 'venv': params['venv'],
                                 'tags': params['tags'],
+                                'all': params['all'],
                                 'repositories': params['repositories'],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
@@ -1968,6 +2003,7 @@ class TestCommandUpdate(TestCase):
             'repositories': [],
             'verbose': False,
             'shell': True,
+            'all': False,
             'venv': None,
             'description': 'Hello world',
             'python': False,
@@ -1987,6 +2023,7 @@ class TestCommandUpdate(TestCase):
                                     'raise_errors': params['raise_errors'],
                                     'repositories': params['repositories'],
                                     'shell': params['shell'],
+                                    'all': params['all'],
                                     'tags': [],
                                     'verbose': params['verbose'],
                                     'python': params['python'],
@@ -2047,6 +2084,7 @@ class TestCommandUpdate(TestCase):
                                 'commands': params['commands'],
                                 'description': params['description'],
                                 'tags': [],
+                                'all': params['all'],
                                 'repositories': params['repositories'],
                                 'venv': params['venv'],
                                 'verbose': params['verbose'],
@@ -2086,6 +2124,7 @@ class TestCommandUpdate(TestCase):
                                     'shell': False,
                                     'tags': params['tags'],
                                     'python': False,
+                                    'all': True,
                                     'description': "hello world",
                                     'venv': None,
                                     'verbose': params['verbose']
@@ -2132,6 +2171,7 @@ class TestCommandUpdate(TestCase):
                                 'description': "hello world",
                                 'venv': None,
                                 'tags': [],
+                                'all': True,
                                 'repositories': [],
                                 'verbose': params['verbose'],
                                 'shell': params['shell'],
@@ -2151,6 +2191,7 @@ class TestCommandUpdate(TestCase):
             'verbose': False,
             'shell': False,
             'python': False,
+            'all': True,
             'raise_errors': False,
             'venv': 'test'
         }
@@ -2168,6 +2209,7 @@ class TestCommandUpdate(TestCase):
                                     'raise_errors': params['raise_errors'],
                                     'repositories': [],
                                     'shell': False,
+                                    'all': params['all'],
                                     'tags': params['tags'],
                                     'python': False,
                                     'description': "hello world",
@@ -2216,6 +2258,7 @@ class TestCommandUpdate(TestCase):
                                 'python': False,
                                 'description': "hello world",
                                 'venv': None,
+                                'all': params['all'],
                                 'tags': [],
                                 'repositories': [],
                                 'verbose': params['verbose'],
@@ -2256,6 +2299,7 @@ class TestCommandLs(TestCase):
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
+                    'all': True,
                     'shell': False,
                     'python': False,
                     'venv': None,
@@ -2267,6 +2311,7 @@ class TestCommandLs(TestCase):
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
+                    'all': True,
                     'shell': False,
                     'python': False,
                     'venv': None,
@@ -2290,6 +2335,7 @@ class TestCommandLs(TestCase):
                     'tags': [],
                     'repositories': ['gitdb', 'GitPython'],
                     'verbose': False,
+                    'all': False,
                     'shell': False,
                     'python': True,
                     'venv': 'test',
@@ -2320,6 +2366,7 @@ class TestCommandLs(TestCase):
                 f"\ttags: {', '.join(params['commands']['hello_world']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world']['repositories'])}\n"
                 f"\tvenv: {params['commands']['hello_world']['venv']}\n"
+                f"\tall: {params['commands']['hello_world']['all']}\n"
                 f"\tverbose: {params['commands']['hello_world']['verbose']}\n"
                 f"\tshell: {params['commands']['hello_world']['shell']}\n"               
                 f"\tpython: {params['commands']['hello_world']['python']}\n"
@@ -2331,6 +2378,7 @@ class TestCommandLs(TestCase):
                 f"\ttags: {', '.join(params['commands']['hello_world2']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world2']['repositories'])}\n"
                 f"\tvenv: {params['commands']['hello_world2']['venv']}\n"
+                f"\tall: {params['commands']['hello_world2']['all']}\n"
                 f"\tverbose: {params['commands']['hello_world2']['verbose']}\n"
                 f"\tshell: {params['commands']['hello_world2']['shell']}\n"
                 f"\tpython: {params['commands']['hello_world2']['python']}\n"
@@ -2342,6 +2390,7 @@ class TestCommandLs(TestCase):
                 f"\ttags: {', '.join(params['commands']['hello_world3']['tags'])}\n"
                 f"\trepositories: {', '.join(params['commands']['hello_world3']['repositories'])}\n"
                 f"\tvenv: {params['commands']['hello_world3']['venv']}\n"
+                f"\tall: {params['commands']['hello_world3']['all']}\n"
                 f"\tverbose: {params['commands']['hello_world3']['verbose']}\n"
                 f"\tshell: {params['commands']['hello_world3']['shell']}\n"
                 f"\tpython: {params['commands']['hello_world3']['python']}\n"

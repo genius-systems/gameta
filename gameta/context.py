@@ -280,6 +280,9 @@ class GametaContext(object):
                     "raise_errors": {
                         "type": "boolean"
                     },
+                    "all": {
+                        "type": "boolean"
+                    },
                     "shell": {
                         "type": "boolean"
                     },
@@ -305,8 +308,8 @@ class GametaContext(object):
                         "type": ["string", "null"]
                     }
                 },
-                "minProperties": 9,
-                "maxProperties": 9,
+                "minProperties": 10,
+                "maxProperties": 10,
                 "additionalProperties": False,
             },
             "constants": {
@@ -383,6 +386,18 @@ class GametaContext(object):
             str: Path to the project's .gitignore file
         """
         return self.files['gitignore'].file
+
+    @property
+    def metarepo(self) -> str:
+        """
+        Returns the primary metarepo's name.
+
+        Returns:
+            str: Name of the primary metarepo
+        """
+        for repo in self.repositories:
+            if self.is_primary_metarepo(repo):
+                return repo
 
     def add_gitignore(self, path: str) -> None:
         """
@@ -479,9 +494,9 @@ class GametaContext(object):
         Returns:
             None
         """
-        repositories: List[Tuple[str, Dict[str, str]]] = \
-            [(repo, details) for repo, details in self.repositories.items() if repo in repos] or \
-            list(self.repositories.items())
+        repositories: List[Tuple[str, Dict[str, str]]] = [
+            (repo, details) for repo, details in self.repositories.items() if repo in repos
+        ]
 
         for repo, details in repositories:
             # Generate complete set of parameters for substitution

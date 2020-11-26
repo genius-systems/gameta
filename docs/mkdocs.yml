@@ -11,6 +11,8 @@ nav:
   - Metarepos: metarepos.md
   - Command Reference:
       - Version 0.3: commands/0.3/commands.md
+      - Version 0.2: commands/0.2/commands.md
+      - Version 0.1: commands/0.1/commands.md
   - User Guide:
       - Applying Commands: user_guide/applying_commands.md
       - Best Practices: user_guide/best_practices.md

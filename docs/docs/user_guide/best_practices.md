@@ -34,6 +34,6 @@ And the following commands to help manage your DevOps operations:
 gameta apply -c run_go_tests -t go
 gameta apply -c run_nodejs_tests -t nodejs
 gameta apply -c build_go_backend -t go
-gameta apply -c build_nodejs_backend -r backend_app_3
+gameta apply -c build_nodejs_backend -r backend_app_2
 ```
 
