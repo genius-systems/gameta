@@ -105,7 +105,7 @@ You should also see the repository cloned to the relative path specified
 Gameta provides a powerful toolkit to manage your set of repositories.
 
 ```bash
-gameta apply -c "git fetch --all --tags --prune" -c "git merge"
+gameta apply -a -c "git fetch --all --tags --prune" -c "git merge"
 ```
 
 The command above applies the following to all repositories:

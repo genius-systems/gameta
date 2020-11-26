@@ -34,7 +34,7 @@ def apply(
         raise_errors: bool
 ) -> None:
     """
-    Applies a CLI command to all repositories (by default) or a specific set of repositories
+    Applies a CLI command to the metarepo (by default) or a specific set of repositories
     \f
     Args:
         context (GametaContext): Gameta Context

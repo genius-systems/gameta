@@ -212,6 +212,7 @@ Applies a set of CLI commands to a specified set of repositories (see
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
 * --venv / -ve: Activates the specified virtual environment and executes the CLI commands
+* --all / -a: Indicates that the CLI commands should applied to all repositories
 * --shell / -s: Indicates that the CLI commands should be executed in a separate shell
 * --python / -p: Indicates that the commands are Python scripts and should be executed 
     with a Python 3 interpreter
@@ -219,6 +220,17 @@ Applies a set of CLI commands to a specified set of repositories (see
     CLI command in other repositories
 * --raise-errors / -e: Indicates that Gameta should terminate and raise errors that occur
     when executing CLI commands in child repositories 
+
+___
+**Note**
+   
+The CLI command is executed in the meta-repository by default, to apply it to other
+repositories, users may use the following functionalities to specify repositories
+
+1. `--repositories / -r ` to explicitly specify repositories 
+2. `--tags / -r` to apply to repositories with tagged with the tag
+3. `--all / -a` to apply to all repositories  
+___
 
 ___
 **Note**
@@ -293,6 +305,7 @@ ___
 * _--tags / -t_: Tagged repositories to apply CLI commands to
 * _--repositories / -r_: Names of specific repositories to apply CLI commands to
 * --venv / -ve: Activate the specified virtual environment and execute the CLI commands
+* --all / -a: Indicates that the CLI command shouuld be applied to all repositories
 * --shell / -s: Indicates that the CLI command should be executed in a separate shell
 * --python / -p: Indicates that the commands are Python scripts and should be executed 
 with the Python 3 interpreter
@@ -327,6 +340,9 @@ ___
 * _--tags / -t_: New repository tags apply CLI commands to
 * _--repositories / -r_: New repositories to apply CLI commands to
 * --venv / -ve: Activate specified virtual environment and execute commands
+* --all / -a: Execute the command for all repositories
+* --no-all / -na: Do not execute the command for all repositories, 
+tag/repositories/default configuration will apply
 * --verbose / -v: Display execution output when CLI commands are applied
 * --no-verbose / -nv: Do not display execution output when CLI commands are applied
 * --shell / -s: Execute CLI commands in a separate shell

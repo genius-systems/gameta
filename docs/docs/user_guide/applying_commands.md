@@ -10,12 +10,13 @@ There are 3 parts to this section:
 
 ## Applying Commands
 
-By default, Gameta applies CLI commands to all repositories (metarepo and all 
-child repos). It also provides the flexibility to apply them to a user-defined
-selection of these repositories. There are 2 ways users can select repositories:
+By default, Gameta applies CLI commands to only the metarepository. It also provides
+the flexibility to apply them to a user-defined selection of these repositories. 
+There are 2 ways users can select repositories:
 
 1. Applying to Tagged Repositories
 2. Applying to Selected Repositories
+3. Applying to All Repositories
 
 ### Applying to Tagged Repositories
 
@@ -62,12 +63,20 @@ the following command:
 gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 ```
 
+### Applying to All Repositories
+
+Users can apply a CLI command to all repositories managed by Gameta with the 
+`--all / -a` flag:
+
+```bash
+gameta apply -c "python setup.py sdist bdist_wheel" -a
+```
+
 ## Applying Python Commands
 
-From version [0.2.2](https://pypi.org/project/gameta/0.2.2/), Gameta can apply Python 3 
-scripts across various repositories. This provides users with the flexibility to augment 
-their CLI operations with Python scripts. Python scripts are entered similar to multi-line
-shell commands using the `''`. Consider the Python script below that:
+Gameta can apply Python 3 scripts across various repositories. This provides users with the
+flexibility to augment their CLI operations with Python scripts. Python scripts are entered 
+similar to multi-line shell commands using the `''`. Consider the Python script below that:
 
 1. Generates an encryption key of configurable length (using the KEY_LEN constant) 
 consisting of only ASCII variables
@@ -157,7 +166,7 @@ Supposing you would like to build and deploy a customised trunk configuration wi
 checked out from those branches, you can run this command below:
 
 ```bash
-gameta apply -c "git checkout {branch}" -c "python setup.py bdist_wheel"
+gameta apply -c "git checkout {branch}" -c "python setup.py bdist_wheel" -a
 ```
 
 This is the same as running the following bash commands:
@@ -296,13 +305,13 @@ This will add the command in the previous section to the Gameta command store un
 the name `hello` and run the following to invoke `hello`:
 
 ```bash
-gameta cmd exec -c hello 
+gameta exec -c hello 
 ``` 
 
 Multiple Gameta commands can be stored and executed in sequence:
 
 ```bash
-gameta cmd exec -c hello -c world
+gameta exec -c hello -c world
 ```
 
 [Commands]: ../commands/0.2/commands.md
