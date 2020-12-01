@@ -59,8 +59,8 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
         None
 
     Examples:
-        $ gameta parameters add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
-        $ gameta parameters add -p test -t str -v hello_world -u  # Prompts user input for parameter values
+        $ gameta params add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
+        $ gameta params add -p test -t str -v hello_world -u  # Prompts user input for parameter values
 
     Raises:
         click.ClickException: If errors occur during processing
@@ -121,6 +121,9 @@ def delete(context: GametaContext, param: str) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ git params delete -p branch  # To delete the branch parameter
 
     Raises:
         click.ClickException: If errors occur during processing

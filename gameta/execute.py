@@ -24,6 +24,9 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
     Returns:
         None
 
+    Examples:
+        $ gameta exec -c cmd_1 -c cmd_2 -c cmd_3
+
     Raises:
         click.ClickException: If errors occur during processing
     """

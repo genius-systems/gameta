@@ -85,6 +85,16 @@ def add(
     Returns:
         None
 
+    Examples:
+        $ gameta cmd add -n cmd_name -c "git fetch --all --tags --prune" -c "git pull"  # Multiple shell commands
+        $ gameta cmd add -n cmd_name -ve "test" -c "pip install cryptography"  # With a registered virtualenv named test
+        $ gameta cmd add -n cmd_name -s -e -v -c "git fetch --all --tags --prune"  # In a separate shell, verbose,
+                                                                                     terminate if errors occur
+        $ gameta cmd add -n cmd_name -c "git pull" -a  # Applies to all repositories
+        $ gameta cmd add -n cmd_name -c "git pull" -t test  # Applies to repositories tagged with test
+        $ gameta cmd add -n cmd_name -c "git pull" -r test  # Applies to the repository named test
+        $ gameta cmd add -n cmd_name -p 'print("Hello World")'  # Executes a Python script
+
     Raises:
         click.ClickException: If errors occur during processing
     """
@@ -156,6 +166,9 @@ def delete(context: GametaContext, name: str) -> None:
     Returns:
         None
 
+    Examples:
+        $ gameta cmd delete -n cmd_name  # Deletes an existing command
+
     Raises:
         click.ClickException: If errors occur during processing
     """
@@ -226,6 +239,11 @@ def update(
 
     Returns:
         None
+
+    Examples:
+        $ gameta cmd update -n test -c "git fetch --all --tags --prune"  # Updates the CLI commands of test
+        $ gameta cmd update -n test -ve test  # Updates the virtualenv of test
+        $ gameta cmd update -n test -ns  # Updates test to execute in the same shell
 
     Raises:
         click.ClickException: If errors occur during processing
@@ -325,6 +343,9 @@ def ls(context: GametaContext) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta cmd ls  # Lists all the existing commands in the command store
 
     Raises:
         click.ClickException: If errors occur during processing

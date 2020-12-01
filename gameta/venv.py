@@ -63,8 +63,19 @@ def create(
         pip (bool): Flag to include pip in the virtualenv, defaults to true
         symlinks (bool): Flag to create symlinks to the python executable instead of actual files, defaults to False
 
+    Examples:
+        $ gameta venv create -n test  # Creates and registers a new virtualenv named test in project directory
+        $ gameta venv create -n test -d venv  # Creates a new virtualenv test in directory /path/to/project_dir/venv
+        $ gameta venv create -n test -o  # Creates virtualenv and overwrites existing directory
+        $ gameta venv create -n test -s  # Adds all site packages to created virtualenv
+        $ gameta venv create -n test -np  # Do not add pip to the created virtualenv
+        $ gameta venv create -n test -l  # Use symlinks instead of a physical copy of the Python3 interpreter
+
     Returns:
         None
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(
         f"Creating virtualenv in {join(context.obj.project_dir, directory)} with the following config: "
@@ -106,6 +117,13 @@ def register(context: GametaContext, name: str, path: str, overwrite: bool) -> N
 
     Returns:
         None
+
+    Examples:
+        $ gameta venv register -n test -p /path/to/venv  # Registers a virtualenv
+        $ gameta venv register -n test -p /path/to/venv  # Overwrites existing virtualenv test if it exists
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     if not exists(path):
         raise click.ClickException(f'Path {path} does not exist')
@@ -134,6 +152,13 @@ def unregister(context: GametaContext, name: str, delete: bool) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta venv unregister -n test  # Unregisters a virtualenv in gameta
+        $ gameta venv unregister -n test -d  # Unregisters and deletes the virtualenv
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     if name not in context.venvs:
         raise click.ClickException(f"Virtualenv {name} has not been registered")
