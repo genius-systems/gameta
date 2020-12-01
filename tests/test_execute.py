@@ -65,6 +65,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
@@ -128,6 +129,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
@@ -267,6 +269,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
@@ -411,6 +414,7 @@ class TestExec(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,

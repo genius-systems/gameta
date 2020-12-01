@@ -9,6 +9,7 @@ from unittest.mock import patch
 from click import Context
 from click.testing import CliRunner
 
+from gameta import __version__
 from gameta.context import GametaContext
 from gameta.venv import create, register, unregister
 
@@ -77,6 +78,7 @@ class TestVenvCreate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "__metarepo__": True,
@@ -143,6 +145,7 @@ class TestVenvCreate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": __version__,
                         "repositories": {},
                         "virtualenvs": {
                             'test': join(f, params['directory'])
@@ -193,6 +196,7 @@ class TestVenvCreate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "__metarepo__": True,
@@ -252,6 +256,7 @@ class TestVenvCreate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "__metarepo__": True,
@@ -311,6 +316,7 @@ class TestVenvCreate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "__metarepo__": True,
@@ -412,6 +418,7 @@ class TestVenvRegister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": __version__,
                         'repositories': {},
                         'virtualenvs': {
                             params['name']: join(f, params['directory'])
@@ -451,6 +458,7 @@ class TestVenvRegister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "__metarepo__": True,
@@ -504,6 +512,7 @@ class TestVenvRegister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "__metarepo__": True,
@@ -548,6 +557,7 @@ class TestVenvRegister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "__metarepo__": True,
@@ -647,6 +657,7 @@ class TestVenvUnregister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "__metarepo__": True,
@@ -689,6 +700,7 @@ class TestVenvUnregister(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "__metarepo__": True,

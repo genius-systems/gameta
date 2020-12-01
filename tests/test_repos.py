@@ -70,6 +70,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -123,6 +124,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -178,6 +180,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -230,6 +233,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -288,6 +292,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -343,6 +348,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -405,6 +411,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -454,6 +461,7 @@ class TestReposAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -528,6 +536,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -580,6 +589,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -636,6 +646,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -687,6 +698,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -722,6 +734,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -757,6 +770,7 @@ class TestReposDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -914,6 +928,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -978,6 +993,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -1048,6 +1064,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -1117,6 +1134,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -1183,6 +1201,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -1248,6 +1267,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",
@@ -1313,6 +1333,7 @@ class TestRepoUpdate(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             "gameta": {
                                 "path": ".",

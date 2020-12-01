@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
+from gameta import __version__
 from gameta.context import GametaContext
 from gameta.init import init, sync
 
@@ -50,6 +51,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": __version__,
                         'repositories': {
                             basename(f): {
                                 'path': '.',
@@ -81,6 +83,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": __version__,
                         'repositories': {
                             'gameta': {
                                 'path': '.',
@@ -113,6 +116,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'gameta': {
                                 'path': '.',
@@ -145,6 +149,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'gameta': {
                                 'path': '.',
@@ -177,6 +182,7 @@ class TestInit(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": __version__,
                         'repositories': {
                             'gameta': {
                                 'path': '.',

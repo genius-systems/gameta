@@ -5,6 +5,7 @@ from unittest import TestCase, skipIf
 
 from click.testing import CliRunner
 
+from gameta import __version__
 from gameta.context import GametaContext
 
 
@@ -273,7 +274,7 @@ class TestGametaContext(TestCase):
             }
         )
 
-    def test_gameta_load_empty_meta_file(self):
+    def test_gameta_context_load_empty_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w'):
                 pass
@@ -283,7 +284,7 @@ class TestGametaContext(TestCase):
             self.assertEqual(self.context.repositories, {})
             self.assertEqual(self.context.commands, {})
 
-    def test_gameta_load_malformed_repositories_meta_file(self):
+    def test_gameta_context_load_malformed_repositories_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 output = {
@@ -369,7 +370,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_missing_repositories_in_meta_file(self):
+    def test_gameta_context_load_missing_repositories_in_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 output = {
@@ -459,7 +460,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_malformed_commands_meta_file(self):
+    def test_gameta_context_load_malformed_commands_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -559,7 +560,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_malformed_constants_meta_file(self):
+    def test_gameta_context_load_malformed_constants_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -703,7 +704,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_malformed_virtualenvs_meta_file(self):
+    def test_gameta_context_load_malformed_virtualenvs_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -848,7 +849,7 @@ class TestGametaContext(TestCase):
             )
             self.assertEqual(self.context.venvs, {})
 
-    def test_gameta_load_full_meta_file(self):
+    def test_gameta_context_load_full_meta_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -1009,7 +1010,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_meta_file_with_mergeable_constants(self):
+    def test_gameta_context_load_meta_file_with_mergeable_constants(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -1159,7 +1160,7 @@ class TestGametaContext(TestCase):
                 }
             )
 
-    def test_gameta_load_meta_and_gitignore_file(self):
+    def test_gameta_context_load_meta_and_gitignore_file(self):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.meta'), 'w') as m:
                 json.dump(
@@ -1448,6 +1449,7 @@ class TestGametaContext(TestCase):
                 self.assertEqual(
                     json.load(f),
                     {
+                        "version": __version__,
                         'repositories': {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1482,6 +1484,7 @@ class TestGametaContext(TestCase):
                 self.assertEqual(
                     json.load(f),
                     {
+                        "version": __version__,
                         'repositories': {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1561,6 +1564,7 @@ class TestGametaContext(TestCase):
                 self.assertEqual(
                     json.load(f),
                     {
+                        "version": __version__,
                         'repositories': {
                             "genisys": {
                                 "url": "https://github.com/testing/genisys.git",

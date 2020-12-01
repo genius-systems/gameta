@@ -58,6 +58,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -108,6 +109,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -156,6 +158,7 @@ class TestConstantsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -232,6 +235,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -282,6 +286,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -332,6 +337,7 @@ class TestConstantsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',

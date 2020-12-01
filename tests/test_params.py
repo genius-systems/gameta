@@ -58,6 +58,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -110,6 +111,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -194,6 +196,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -256,6 +259,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -319,6 +323,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -384,6 +389,7 @@ class TestParamsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -456,6 +462,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -507,6 +514,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -557,6 +565,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -608,6 +617,7 @@ class TestParamsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',

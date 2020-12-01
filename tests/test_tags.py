@@ -125,6 +125,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -179,6 +180,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -233,6 +235,7 @@ class TestTagsAdd(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -365,6 +368,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -419,6 +423,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -473,6 +478,7 @@ class TestTagsDelete(TestCase):
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -525,6 +531,7 @@ class TestTagsDelete(TestCase):
                 self.assertCountEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
