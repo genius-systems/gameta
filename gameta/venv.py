@@ -107,7 +107,7 @@ def create(
 @gameta_context
 def register(context: GametaContext, name: str, path: str, overwrite: bool) -> None:
     """
-    Stores a reference to the virtual environment in the .meta file
+    Stores a reference to the virtual environment in the .gameta file
     \f
     Args:
         context (GametaContext): Gameta Context

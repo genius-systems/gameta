@@ -14,7 +14,7 @@ __all__ = ['init', 'sync']
 
 @gameta_cli.command()
 @click.option('--git', '-g', is_flag=True, default=False, help='Flag to initialise the current directory as a git repo')
-@click.option('--overwrite', '-o', is_flag=True, default=False, help='Flag to overwrite existing .meta file')
+@click.option('--overwrite', '-o', is_flag=True, default=False, help='Flag to overwrite existing .gameta file')
 @gameta_context
 def init(context: GametaContext, overwrite: bool, git: bool) -> None:
     """
@@ -22,7 +22,7 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
     \f
     Args:
         context (GametaContext): Gameta Context
-        overwrite (bool): Flag to indicate if existing .meta file should be overwritten
+        overwrite (bool): Flag to indicate if existing .gameta file should be overwritten
         git (bool): Flag to indicate if we should initialise git in the current directory
 
     Returns:
@@ -31,7 +31,7 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
     Examples:
         $ gameta init  # With default values
         $ gameta init -g  # Initialises the current working directory as a git repository
-        $ gameta init -o  # Overwrites the existing .meta file if it exists
+        $ gameta init -o  # Overwrites the existing .gameta file if it exists
 
     Raises:
         click.ClickException: If errors occur during processing
@@ -73,7 +73,7 @@ def init(context: GametaContext, overwrite: bool, git: bool) -> None:
 @gameta_context
 def sync(context: GametaContext) -> None:
     """
-    Syncs all the repositories listed in the .meta file locally
+    Syncs all the repositories listed in the .gameta file locally
     \f
     Args:
         context (GametaContext): Gameta Context

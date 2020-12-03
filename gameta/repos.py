@@ -81,12 +81,12 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
         click.echo(f"Repository {name} has been added locally")
         if name in context.repositories:
             if overwrite is True:
-                click.echo(f"Overwriting repository {name} in .meta file")
+                click.echo(f"Overwriting repository {name} in .gameta file")
             else:
-                click.echo(f"Repository {name} has already been added to .meta file")
+                click.echo(f"Repository {name} has already been added to .gameta file")
                 return
         else:
-            click.echo(f"Adding {name} to .meta file")
+            click.echo(f"Adding {name} to .gameta file")
 
         context.repositories[name] = {
             'url': url,
@@ -109,7 +109,7 @@ def add(context: GametaContext, name: str, url: str, path: str, overwrite: bool)
 @gameta_context
 def delete(context: GametaContext, name: str, clear: bool) -> None:
     """
-    Deletes the repository from the .meta file and locally if specified
+    Deletes the repository from the .gameta file and locally if specified
     \f
     Args:
         context (GametaContext): Gameta Context
@@ -127,9 +127,9 @@ def delete(context: GametaContext, name: str, clear: bool) -> None:
         click.ClickException: If errors occur during processing
     """
     try:
-        click.echo(f"Deleting repository {name} from .meta file")
+        click.echo(f"Deleting repository {name} from .gameta file")
         if name not in context.repositories:
-            click.echo(f"Repository {name} does not exist in the .meta file, ignoring")
+            click.echo(f"Repository {name} does not exist in the .gameta file, ignoring")
             return
 
         # Prevent user from deleting primary metarepo
@@ -190,7 +190,7 @@ def update(
         click.ClickException: If errors occur during processing
     """
     if name not in context.repositories:
-        raise click.ClickException(f"Repository {name} does not exist in the .meta file, please add it first")
+        raise click.ClickException(f"Repository {name} does not exist in the .gameta file, please add it first")
 
     try:
         click.echo(f"Updating repository {name} with new details (name: {new_name}, url: {new_url}, path: {new_path})")
@@ -241,7 +241,7 @@ def update(
 @gameta_context
 def ls(context: GametaContext) -> None:
     """
-    Lists all the repositories added in the .meta file
+    Lists all the repositories added in the .gameta file
     \f
     Args:
         context (GametaContext): Gameta Context

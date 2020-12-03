@@ -23,7 +23,7 @@ ___
 
 ## gameta
 
-Main CLI group, loads .meta files and delegates subcommands to other groups
+Main CLI group, loads .gameta files and delegates subcommands to other groups
 
 ### Arguments
 
@@ -40,12 +40,12 @@ to populate the project name and Git URL from the .git folder.
 
 * --git / -g: Indicates that Gameta should initialise this folder as a git 
   repository
-* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .gameta file 
   with new data
 
 ## gameta sync
 
-Syncs all child repositories specified in the .meta file locally.
+Syncs all child repositories specified in the .gameta file locally.
 
 ## gameta repo
 
@@ -58,14 +58,14 @@ Repository subcommand group, contains the following commands:
 
 ### gameta repo add
 
-Adds a new child repository to the .meta file and clone it. 
+Adds a new child repository to the .gameta file and clone it. 
 
 ___
 **Note**
 
 If the repository is already cloned to the path provided, then Gameta will 
 attempt to extract its details and match them against the arguments that user
-provides before adding it to the .meta file.
+provides before adding it to the .gameta file.
 ___
 
 #### Arguments
@@ -73,12 +73,12 @@ ___
 * **--name / -n**: Name of the child repository to be stored
 * **--url / -u**: URL of the child repository to be stored
 * **--path / -p**: Relative local path within the project directory to clone the child repository to
-* --overwrite / -o: Indicates that Gameta should overwrite the repository details in the .meta file
+* --overwrite / -o: Indicates that Gameta should overwrite the repository details in the .gameta file
     if they exist
 
 ### gameta repo delete
 
-Deletes an existing child repository from the .meta file and its local clone.
+Deletes an existing child repository from the .gameta file and its local clone.
 
 #### Arguments
 
@@ -280,7 +280,7 @@ Command subcommand group, contains the following commands:
 
 ### gameta cmd add
 
-Adds a Gameta command to the Gameta command store within the .meta file
+Adds a Gameta command to the Gameta command store within the .gameta file
 
 ___
 **Note**
@@ -299,7 +299,7 @@ ___
 #### Arguments 
 * **--name / -n**: Name 
 * --description / -d: Brief description of the Gameta command
-* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .gameta file 
     with new data
 * **_--command / -c_**: CLI commands to be applied
 * _--tags / -t_: Tagged repositories to apply CLI commands to
@@ -468,7 +468,7 @@ ___
 
 ### gameta venv register
 
-Registers a new virtual environment in the .meta file
+Registers a new virtual environment in the .gameta file
 
 ### Arguments
 * **--name / -n**: Name of the virtual environment to be registered
@@ -492,7 +492,7 @@ ___
 
 ### gameta venv unregister
 
-Unregisters an existing virtual environment in the .meta file
+Unregisters an existing virtual environment in the .gameta file
 
 ### Arguments
 * **--name / -n**: Name of the virtual environment to be registered

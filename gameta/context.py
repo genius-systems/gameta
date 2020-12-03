@@ -106,26 +106,26 @@ class GitIgnore(File):
             click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
 
 
-class Meta(File):
+class Gameta(File):
     """
-    Interface for the .meta file
+    Interface for the .gameta file
 
     Attributes:
         context (GametaContext): Reference to Gameta Context
-        file_name (str): Reference to the .meta file
+        file_name (str): Reference to the .gameta file
     """
 
-    def __init__(self, context: 'GametaContext', file_name: str = '.meta'):
-        super(Meta, self).__init__(context, file_name)
+    def __init__(self, context: 'GametaContext', file_name: str = '.gameta'):
+        super(Gameta, self).__init__(context, file_name)
 
     def load(self) -> None:
         """
-        Loads data from the .meta file, validates it and populates the GametaContext
+        Loads data from the .gameta file, validates it and populates the GametaContext
 
         Returns:
             None
         """
-        # Attempt to load .meta file
+        # Attempt to load .gameta file
         try:
             with open(self.file_name, 'r') as f:
                 self.context.gameta_data = json.load(f)
@@ -136,7 +136,7 @@ class Meta(File):
 
     def export(self) -> None:
         """
-        Exports data from the GametaContext to the .meta file
+        Exports data from the GametaContext to the .gameta file
 
         Returns:
             None
@@ -153,7 +153,7 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
-        schema (Dict): JSON Schema for Gameta .meta file
+        schema (Dict): JSON Schema for Gameta .gameta file
         validators (Dict[str, jsonschema.Draft7Validator]): JSON Schema validators for each object component
         reserved_params (Dict[str, List[str]): Reserved parameters for each object group
         project_dir (Optional[str]): Project directory
@@ -185,7 +185,7 @@ class GametaContext(object):
         }
 
         self.files: Dict[str, File] = {
-            'meta': Meta(self),
+            'gameta': Gameta(self),
             'gitignore': GitIgnore(self)
         }
 
@@ -205,15 +205,15 @@ class GametaContext(object):
         return basename(self.project_dir)
 
     @property
-    def meta(self) -> str:
+    def gameta(self) -> str:
         """
-        Returns the path to the .meta file of the project, i.e. where it should be if the Project has not been
+        Returns the path to the .gameta file of the project, i.e. where it should be if the Project has not been
         initialised
 
         Returns:
-            str: Path to the project's .meta file
+            str: Path to the project's .gameta file
         """
-        return self.files['meta'].file
+        return self.files['gameta'].file
 
     @property
     def gitignore(self) -> str:
@@ -401,7 +401,7 @@ class GametaContext(object):
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
-        in .meta file
+        in .gameta file
 
         Args:
             commands (List[str]): Commands to be applied
@@ -442,7 +442,7 @@ class GametaContext(object):
         
         Args:
             repo (str): Repository name of parameters to be generated
-            repo_details (Dict): Repository details from .meta file
+            repo_details (Dict): Repository details from .gameta file
             python (bool): Flag to indicate if Python variables should be generated, defaults to False
 
         Returns:

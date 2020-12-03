@@ -22,7 +22,7 @@ class TestVenvCreate(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_venv_create_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -43,7 +43,7 @@ class TestVenvCreate(TestCase):
             'name': 'test',
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
@@ -59,7 +59,7 @@ class TestVenvCreate(TestCase):
                 f"Successfully registered {params['name']}\n"
                 f"Successfully created virtualenv {params['name']}\n"
             )
-            self.assertCountEqual(listdir(f), ['.venv', '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), ['.venv', '.gameta', '.gitignore'])
             self.assertTrue(
                 all(
                     i in listdir(join(f, '.venv'))
@@ -74,7 +74,7 @@ class TestVenvCreate(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -126,7 +126,7 @@ class TestVenvCreate(TestCase):
                 f"Successfully registered {params['name']}\n"
                 f"Successfully created virtualenv {params['name']}\n"
             )
-            self.assertCountEqual(listdir(f), [params['directory'], '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), [params['directory'], '.gameta', '.gitignore'])
             self.assertTrue(
                 all(
                     i in listdir(join(f, params['directory']))
@@ -141,7 +141,7 @@ class TestVenvCreate(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -160,7 +160,7 @@ class TestVenvCreate(TestCase):
             'directory': 'test/another_test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
@@ -176,7 +176,7 @@ class TestVenvCreate(TestCase):
                 f"Successfully registered {params['name']}\n"
                 f"Successfully created virtualenv {params['name']}\n"
             )
-            self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), ['test', '.gameta', '.gitignore'])
             self.assertCountEqual(listdir(join(f, 'test')), ['another_test'])
             self.assertTrue(
                 all(
@@ -192,7 +192,7 @@ class TestVenvCreate(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -218,7 +218,7 @@ class TestVenvCreate(TestCase):
             'directory': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             makedirs(join(f, params['directory']))
             with open(join(f, params['directory'], 'test.txt'), 'w') as t:
                 t.write('Hello World!')
@@ -237,7 +237,7 @@ class TestVenvCreate(TestCase):
                 f"Successfully registered {params['name']}\n"
                 f"Successfully created virtualenv {params['name']}\n"
             )
-            self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), ['test', '.gameta', '.gitignore'])
             self.assertTrue(
                 all(
                     i in listdir(join(f, params['directory']))
@@ -252,7 +252,7 @@ class TestVenvCreate(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -278,7 +278,7 @@ class TestVenvCreate(TestCase):
             'directory': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             makedirs(join(f, params['directory']))
             with open(join(f, params['directory'], 'test.txt'), 'w') as t:
                 t.write('Hello World!')
@@ -297,7 +297,7 @@ class TestVenvCreate(TestCase):
                 f"Successfully registered {params['name']}\n"
                 f"Successfully created virtualenv {params['name']}\n"
             )
-            self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), ['test', '.gameta', '.gitignore'])
             self.assertTrue(
                 all(
                     i in listdir(join(f, params['directory']))
@@ -312,7 +312,7 @@ class TestVenvCreate(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -340,7 +340,7 @@ class TestVenvRegister(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_venv_add_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -413,8 +413,8 @@ class TestVenvRegister(TestCase):
                 f"Registering virtualenv in {join(f, params['directory'])} as {params['name']}\n"
                 f"Successfully registered {params['name']}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -437,9 +437,9 @@ class TestVenvRegister(TestCase):
         with self.runner.isolated_filesystem() as f:
             venv.create(params['directory1'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
             venv.create(params['directory2'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['name1']: join(f, params['directory1'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -453,8 +453,8 @@ class TestVenvRegister(TestCase):
                 f"Registering virtualenv in {join(f, params['directory2'])} as {params['name2']}\n"
                 f"Successfully registered {params['name2']}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -484,9 +484,9 @@ class TestVenvRegister(TestCase):
         with self.runner.isolated_filesystem() as f:
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
             venv.create(params['directory2'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['name']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -507,8 +507,8 @@ class TestVenvRegister(TestCase):
                 f"Registering virtualenv in {join(f, params['directory2'])} as {params['name']}\n"
                 f"Successfully registered {params['name']}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -537,9 +537,9 @@ class TestVenvRegister(TestCase):
         with self.runner.isolated_filesystem() as f:
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
             venv.create(params['directory2'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['name']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -552,8 +552,8 @@ class TestVenvRegister(TestCase):
                 result.output,
                 f"Error: Virtualenv {params['name']} exists and overwrite flag is False\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -581,7 +581,7 @@ class TestVenvUnregister(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_venv_unregister_key_parameters_not_provided(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -602,7 +602,7 @@ class TestVenvUnregister(TestCase):
             'name': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -622,9 +622,9 @@ class TestVenvUnregister(TestCase):
         }
         with self.runner.isolated_filesystem() as f:
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['name']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -638,7 +638,7 @@ class TestVenvUnregister(TestCase):
                 f"Unregistering virtualenv {params['name']}\n"
                 f"Virtualenv {params['name']} successfully unregistered\n"
             )
-            self.assertCountEqual(listdir(f), ['test', '.meta', '.gitignore'])
+            self.assertCountEqual(listdir(f), ['test', '.gameta', '.gitignore'])
             self.assertTrue(
                 all(
                     i in listdir(join(f, params['directory']))
@@ -653,7 +653,7 @@ class TestVenvUnregister(TestCase):
                     ]
                 )
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -678,9 +678,9 @@ class TestVenvUnregister(TestCase):
         }
         with self.runner.isolated_filesystem() as f:
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['name']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -695,8 +695,8 @@ class TestVenvUnregister(TestCase):
                 f"Unregistering virtualenv {params['name']}\n"
                 f"Virtualenv {params['name']} successfully unregistered\n"
             )
-            self.assertCountEqual(listdir(f), ['.meta', '.gitignore'])
-            with open(join(f, '.meta')) as m:
+            self.assertCountEqual(listdir(f), ['.gameta', '.gitignore'])
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {

@@ -43,8 +43,9 @@ def parameters_cli(context: GametaContext) -> None:
 @gameta_context
 def add(context: GametaContext, param: str, ptype: Optional[str], value: Optional[str], skip_prompt: bool) -> None:
     """
-    Adds/updates a parameter to all child repositories in the .meta file, users will automatically be prompted to enter
-    the parameter value corresponding to each repository. They can provide a type and value parameter to skip this step.
+    Adds/updates a parameter to all child repositories in the .gameta file, users will automatically be prompted to
+    enter the parameter value corresponding to each repository. They can provide a type and value parameter to skip this
+    step.
     \f
     Args:
         context (GametaContext): Gameta Context
@@ -102,7 +103,7 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
             details[param] = pvalue
             click.echo(f"Adding {param} value {pvalue} for {repo}")
         context.export()
-        click.echo(f"Successfully added parameter {param} to .meta file")
+        click.echo(f"Successfully added parameter {param} to .gameta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
@@ -141,6 +142,6 @@ def delete(context: GametaContext, param: str) -> None:
             except KeyError:
                 continue
         context.export()
-        click.echo(f"Successfully deleted parameter {param} from .meta file")
+        click.echo(f"Successfully deleted parameter {param} from .gameta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")

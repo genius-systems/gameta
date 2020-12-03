@@ -72,20 +72,20 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_meta_points_to_meta_file_if_provided(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 m.write('Hello world')
             self.context.project_dir = f
-            self.assertEqual(self.context.meta, join(f, '.meta'))
+            self.assertEqual(self.context.gameta, join(f, '.gameta'))
 
     def test_gameta_context_meta_points_to_meta_file_if_not_provided(self):
         with self.runner.isolated_filesystem() as f:
             self.context.project_dir = f
-            self.assertEqual(self.context.meta, join(f, '.meta'))
+            self.assertEqual(self.context.gameta, join(f, '.gameta'))
 
     def test_gameta_context_meta_no_project_dir(self):
         with self.runner.isolated_filesystem() as f:
             with self.assertRaises(TypeError):
-                self.context.meta
+                self.context.gameta
 
     def test_gameta_context_gitignore_to_gitignore_file_if_provided(self):
         with self.runner.isolated_filesystem() as f:
@@ -276,7 +276,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_empty_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w'):
+            with open(join(f, '.gameta'), 'w'):
                 pass
 
             self.context.project_dir = f
@@ -286,7 +286,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_malformed_repositories_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 output = {
                     'repositories': {
                         'test': 'malformed_metafile'
@@ -372,7 +372,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_missing_repositories_in_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 output = {
                     "commands": {
                         'hello_world': {
@@ -462,7 +462,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_malformed_commands_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -562,7 +562,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_malformed_constants_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -706,7 +706,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_malformed_virtualenvs_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -851,7 +851,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_full_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1012,7 +1012,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_meta_file_with_mergeable_constants(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1162,7 +1162,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_meta_and_gitignore_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1391,7 +1391,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_load_wrongly_formed_meta_file(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "gameta": {
@@ -1444,8 +1444,8 @@ class TestGametaContext(TestCase):
                 }
             }
             self.context.export()
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as f:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as f:
                 self.assertEqual(
                     json.load(f),
                     {
@@ -1465,7 +1465,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_export_meta_file_empty(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump({}, m)
             self.context.project_dir = f
             self.context.repositories = {
@@ -1479,8 +1479,8 @@ class TestGametaContext(TestCase):
                 }
             }
             self.context.export()
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as f:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as f:
                 self.assertEqual(
                     json.load(f),
                     {
@@ -1500,7 +1500,7 @@ class TestGametaContext(TestCase):
 
     def test_gameta_context_export_meta_file_populated(self):
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1559,8 +1559,8 @@ class TestGametaContext(TestCase):
                 'A': 'test'
             }
             self.context.export()
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta')) as f:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta')) as f:
                 self.assertEqual(
                     json.load(f),
                     {
@@ -1616,7 +1616,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open('.meta', 'w') as m:
+            with open('.gameta', 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1665,7 +1665,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1714,7 +1714,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1767,7 +1767,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1822,7 +1822,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1880,7 +1880,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -1939,7 +1939,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -2012,7 +2012,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -2086,7 +2086,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {
@@ -2145,7 +2145,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             makedirs(join(f, 'core', 'genisys'))
             makedirs(join(f, 'core', 'genisys-testing'))
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         "repositories": {

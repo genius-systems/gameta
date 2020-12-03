@@ -22,7 +22,7 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -47,7 +47,7 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -61,12 +61,12 @@ class TestReposAdd(TestCase):
                 f'Adding git repository {params["name"]}, {params["url"]} to '
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Adding {params["name"]} to .meta file\n'
+                f'Adding {params["name"]} to .gameta file\n'
                 f'Successfully added repository {params["name"]}\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -100,7 +100,7 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
             context = GametaContext()
             context.project_dir = f
@@ -115,12 +115,12 @@ class TestReposAdd(TestCase):
                 f'Adding git repository {params["name"]}, {params["url"]} to '
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Adding {params["name"]} to .meta file\n'
+                f'Adding {params["name"]} to .gameta file\n'
                 f'Successfully added repository {params["name"]}\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -154,7 +154,7 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -176,7 +176,7 @@ class TestReposAdd(TestCase):
                 )
             )
             self.assertFalse(exists(join(f, 'GitPython')))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -202,9 +202,9 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -225,11 +225,11 @@ class TestReposAdd(TestCase):
                 f'Adding git repository {params["name"]}, {params["url"]} to '
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Repository {params["name"]} has already been added to .meta file\n'
+                f'Repository {params["name"]} has already been added to .gameta file\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -261,9 +261,9 @@ class TestReposAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -283,12 +283,12 @@ class TestReposAdd(TestCase):
                 f'Adding git repository {params["name"]}, {params["url"]} to '
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Overwriting repository {params["name"]} in .meta file\n'
+                f'Overwriting repository {params["name"]} in .gameta file\n'
                 f'Successfully added repository {params["name"]}\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['gitdb', 'doc', 'setup.py']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -324,7 +324,7 @@ class TestReposAdd(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -339,12 +339,12 @@ class TestReposAdd(TestCase):
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} exists locally, skipping clone\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Adding {params["name"]} to .meta file\n'
+                f'Adding {params["name"]} to .gameta file\n'
                 f'Successfully added repository {params["name"]}\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -380,9 +380,9 @@ class TestReposAdd(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -403,11 +403,11 @@ class TestReposAdd(TestCase):
                 f'{join(f, params["path"])}\n'
                 f'Repository {params["name"]} exists locally, skipping clone\n'
                 f'Repository {params["name"]} has been added locally\n'
-                f'Repository {params["name"]} has already been added to .meta file\n'
+                f'Repository {params["name"]} has already been added to .gameta file\n'
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -440,7 +440,7 @@ class TestReposAdd(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -457,7 +457,7 @@ class TestReposAdd(TestCase):
                 f'(https://github.com/gitpython-developers/GitPython.git) '
                 f'does not match the requested url {params["url"]}\n'
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -484,7 +484,7 @@ class TestReposDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -509,9 +509,9 @@ class TestReposDelete(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -527,12 +527,12 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
                 f"Clearing repository {params['name']} locally\n"
                 f"Repository {params['name']} successfully deleted\n"
             )
             self.assertFalse(exists(join(f, 'GitPython')))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -561,9 +561,9 @@ class TestReposDelete(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -580,12 +580,12 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
                 f"Clearing repository {params['name']} locally\n"
                 f"Repository {params['name']} successfully deleted\n"
             )
             self.assertFalse(exists(join(f, 'GitPython')))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -614,9 +614,9 @@ class TestReposDelete(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -637,12 +637,12 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
                 f"Clearing repository {params['name']} locally\n"
                 f"Repository {params['name']} successfully deleted\n"
             )
             self.assertFalse(exists(join(f, 'GitPython')))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -671,9 +671,9 @@ class TestReposDelete(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -689,12 +689,12 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
                 f"Repository {params['name']} successfully deleted\n"
             )
             self.assertTrue(exists(join(f, 'GitPython')))
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -718,7 +718,7 @@ class TestReposDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -727,10 +727,10 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
-                f"Repository {params['name']} does not exist in the .meta file, ignoring\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
+                f"Repository {params['name']} does not exist in the .gameta file, ignoring\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -754,7 +754,7 @@ class TestReposDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -763,10 +763,10 @@ class TestReposDelete(TestCase):
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f"Deleting repository {params['name']} from .meta file\n"
+                f"Deleting repository {params['name']} from .gameta file\n"
                 f"Error: Cannot delete repository {params['name']} as it is a metarepo\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -793,9 +793,9 @@ class TestRepoLs(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -828,7 +828,7 @@ class TestRepoLs(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         'repositories': {}
@@ -856,7 +856,7 @@ class TestRepoUpdate(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -879,7 +879,7 @@ class TestRepoUpdate(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -888,7 +888,7 @@ class TestRepoUpdate(TestCase):
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
-                f'Error: Repository {params["name"]} does not exist in the .meta file, please add it first\n'
+                f'Error: Repository {params["name"]} does not exist in the .gameta file, please add it first\n'
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -902,7 +902,7 @@ class TestRepoUpdate(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -924,7 +924,7 @@ class TestRepoUpdate(TestCase):
                 f'url: {params["new_url"]}, path: {params["new_path"]})\n'
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -966,7 +966,7 @@ class TestRepoUpdate(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             copyfile(join(dirname(__file__), 'data', '.gitignore'), join(f, '.gitignore'))
             context = GametaContext()
             context.project_dir = f
@@ -989,7 +989,7 @@ class TestRepoUpdate(TestCase):
                 f'url: {params["new_url"]}, path: {params["new_path"]})\n'
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -1032,7 +1032,7 @@ class TestRepoUpdate(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             with open(join(dirname(__file__), 'data', '.gitignore'), 'r') as g1:
                 output = g1.readlines()
                 with open(join(f, '.gitignore'), 'w+') as g2:
@@ -1060,7 +1060,7 @@ class TestRepoUpdate(TestCase):
                 f'url: {params["new_url"]}, path: {params["new_path"]})\n'
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -1106,7 +1106,7 @@ class TestRepoUpdate(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -1130,7 +1130,7 @@ class TestRepoUpdate(TestCase):
                 "Sync complete\n"
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -1174,7 +1174,7 @@ class TestRepoUpdate(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -1197,7 +1197,7 @@ class TestRepoUpdate(TestCase):
                 "Sync complete\n"
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -1240,7 +1240,7 @@ class TestRepoUpdate(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -1263,7 +1263,7 @@ class TestRepoUpdate(TestCase):
                 "Sync complete\n"
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -1307,7 +1307,7 @@ class TestRepoUpdate(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -1329,7 +1329,7 @@ class TestRepoUpdate(TestCase):
                 "Sync complete\n"
                 f'Successfully updated repository {params["new_name"]} with new details\n'
             )
-            with open(join(f, '.meta')) as m:
+            with open(join(f, '.gameta')) as m:
                 self.assertEqual(
                     json.load(m),
                     {

@@ -26,7 +26,7 @@ class TestApply(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -53,7 +53,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -86,9 +86,9 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['gameta'].update({'test_dir': 'test_gameta'})
                     output['repositories']['gitdb'].update({'test_dir': 'test_gitdb'})
                     output['repositories']['GitPython'].update({'test_dir': 'test_gitpython'})
@@ -124,7 +124,7 @@ class TestApply(TestCase):
             )
             self.assertCountEqual(listdir(tempdir), ['test_gitdb', 'test_gitpython', 'test_gameta'])
             self.assertTrue(all(
-                i in listdir(join(tempdir, 'test_gameta')) for i in ['.git', '.meta', 'GitPython', 'core']
+                i in listdir(join(tempdir, 'test_gameta')) for i in ['.git', '.gameta', 'GitPython', 'core']
             ))
             self.assertTrue(all(i in listdir(join(tempdir, 'test_gitpython')) for i in ['git', 'doc', 'test']))
             self.assertTrue(all(i in listdir(join(tempdir, 'test_gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
@@ -143,7 +143,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -171,7 +171,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -199,7 +199,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -228,7 +228,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -258,7 +258,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -287,7 +287,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -327,9 +327,9 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update(
                         {
                             'constants': {
@@ -393,9 +393,9 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update(
                         {
                             'constants': {
@@ -438,9 +438,9 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update(
                         {
                             'constants': {
@@ -481,7 +481,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -501,7 +501,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -539,9 +539,9 @@ class TestApply(TestCase):
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['venv']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -622,9 +622,9 @@ class TestApply(TestCase):
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update(
                         {
                             'virtualenvs': {
@@ -681,9 +681,9 @@ class TestApply(TestCase):
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update({'virtualenvs': {params['venv']: join(f, params['directory'])}})
                     json.dump(output, m2)
             context = GametaContext()

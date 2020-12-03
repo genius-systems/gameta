@@ -47,7 +47,7 @@ class TestInit(TestCase):
                 f'Initialising {f} as a git repository\n'
                 f'Successfully initialised {basename(f)} as a metarepo\n'
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -79,7 +79,7 @@ class TestInit(TestCase):
                 f'Initialising metarepo in {f}\n'
                 f"Successfully initialised gameta as a metarepo\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -100,7 +100,7 @@ class TestInit(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -112,7 +112,7 @@ class TestInit(TestCase):
                 f'Initialising metarepo in {f}\n'
                 f"{f} is a metarepo, ignoring\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -133,7 +133,7 @@ class TestInit(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -145,7 +145,7 @@ class TestInit(TestCase):
                 f'Initialising metarepo in {f}\n'
                 f"Successfully initialised gameta as a metarepo\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -178,7 +178,7 @@ class TestInit(TestCase):
                 f'Initialising metarepo in {f}\n'
                 f"Successfully initialised gameta as a metarepo\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
@@ -208,7 +208,7 @@ class TestSync(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(f, '.meta'), 'w') as m:
+            with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
                         'repositories': {},
@@ -231,7 +231,7 @@ class TestSync(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -244,7 +244,7 @@ class TestSync(TestCase):
                 'Successfully synced GitPython to GitPython\n'
                 'Successfully synced gitdb to core/gitdb\n'
             )
-            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.meta'])
+            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.gameta'])
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
             self.assertCountEqual(listdir(join(f, 'core')), ['gitdb'])
             self.assertTrue(all(i in listdir(join(f, 'core', 'gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
@@ -256,7 +256,7 @@ class TestSync(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -272,7 +272,7 @@ class TestSync(TestCase):
                 "  stderr: 'fatal: destination path 'core/gitdb' already exists and is not an empty directory.\n"
                 "', skipping repo\n"
             )
-            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.meta'])
+            self.assertCountEqual(listdir(f), ['GitPython', 'core', '.git', '.gameta'])
             self.assertTrue(all(i in listdir(join(f, 'GitPython')) for i in ['git', 'doc', 'test']))
             self.assertCountEqual(listdir(join(f, 'core')), ['gitdb'])
             self.assertTrue(all(i in listdir(join(f, 'core', 'gitdb')) for i in ['gitdb', 'doc', 'setup.py']))
