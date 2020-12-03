@@ -5,7 +5,7 @@ from shutil import rmtree
 import click
 
 from gameta.cli import gameta_cli
-from gameta.context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['venv_cli']

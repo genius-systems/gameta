@@ -9,7 +9,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from gameta import __version__
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.cmd import add, delete, update, ls
 
 

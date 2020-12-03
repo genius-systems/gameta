@@ -4,7 +4,7 @@ from typing import Union
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['constants_cli']

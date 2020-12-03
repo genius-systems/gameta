@@ -1,9 +1,6 @@
 
-from gameta.cli import gameta_cli
-from gameta.context import gameta_context, GametaContext
 
-
-__all__ = ['schema_cli', 'schemas']
+__all__ = ['schemas']
 
 
 schemas = {
@@ -217,18 +214,3 @@ schemas = {
 }
 
 
-@gameta_cli.command("schema")
-@gameta_context
-def schema_cli(context: GametaContext) -> None:
-    """
-    Updates the schema version of the .meta file to the latest Gameta schema version
-
-    Args:
-        context (GametaContext): Gameta Context
-
-    Returns:
-        None
-
-    Raises:
-        click.ClickException: If errors occur during processing
-    """

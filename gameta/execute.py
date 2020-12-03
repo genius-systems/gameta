@@ -2,7 +2,7 @@ from typing import Tuple, Dict
 
 import click
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.cli import gameta_cli
 
 

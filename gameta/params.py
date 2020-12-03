@@ -5,7 +5,7 @@ from typing import Type, Optional, TypeVar
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['parameters_cli']

@@ -10,7 +10,7 @@ from click import Context
 from click.testing import CliRunner
 
 from gameta import __version__
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.venv import create, register, unregister
 
 

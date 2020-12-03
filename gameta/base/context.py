@@ -11,7 +11,8 @@ import click
 from jsonschema.validators import Draft7Validator
 
 from gameta import __version__
-from gameta.schemas import schemas
+
+from .schemas import schemas
 
 
 __all__ = [

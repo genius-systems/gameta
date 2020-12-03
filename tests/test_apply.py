@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.context import GametaContext, SHELL
+from gameta.base.context import GametaContext, SHELL
 from gameta.apply import apply
 
 

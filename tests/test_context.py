@@ -6,7 +6,7 @@ from unittest import TestCase, skipIf
 from click.testing import CliRunner
 
 from gameta import __version__
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 
 
 class TestGametaContext(TestCase):

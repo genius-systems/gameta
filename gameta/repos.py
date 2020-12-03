@@ -7,7 +7,7 @@ import click
 from git import Repo, GitError
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['repo_cli']
