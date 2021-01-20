@@ -8,11 +8,10 @@ from os.path import join, basename, normpath, abspath
 from typing import Optional, List, Generator, Dict, Tuple, Union
 
 import click
-from jsonschema.validators import Draft7Validator
 
 from gameta import __version__
 
-from .schemas import schemas
+from .schemas import schema_versions, Schema, get_schema_version
 
 
 __all__ = [
@@ -154,9 +153,7 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
-        schema (Dict): JSON Schema for Gameta .gameta file
-        validators (Dict[str, jsonschema.Draft7Validator]): JSON Schema validators for each object component
-        reserved_params (Dict[str, List[str]): Reserved parameters for each object group
+        schema (Schema): Schema class for Gameta .gameta file
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
         gameta_data (Dict): Gameta data extracted and exported
@@ -191,9 +188,7 @@ class GametaContext(object):
         }
 
         self.version: str = __version__
-        self.schema: Dict = {}
-        self.validators: Dict[str, Draft7Validator] = {}
-        self.reserved_params: Dict[str, List[str]] = {}
+        self.schema: Optional[Schema] = None
 
     @property
     def project_name(self) -> str:
@@ -240,14 +235,27 @@ class GametaContext(object):
                 return repo
 
     @property
-    def schema_version(self) -> Tuple[str]:
+    def schema_version(self) -> Tuple[int, int, int]:
         """
-        Returns the schema version
+        Returns the .gameta schema version
 
         Returns:
-            Tuple[str]
+            Tuple[int]
         """
-        return tuple(self.version.split('.')[:2])
+        return self.get_schema_version(self.version)
+
+    @staticmethod
+    def get_schema_version(version: str) -> Tuple[int, int, int]:
+        """
+        A convenience method for parsing and retrieving the schema version
+
+        Args:
+            version (str): Version string
+
+        Returns:
+            Tuple[int, int, int]: Tuple of schema parameters
+        """
+        return get_schema_version(version)
 
     def add_gitignore(self, path: str) -> None:
         """
@@ -301,29 +309,19 @@ class GametaContext(object):
         # Retrieve validation schemas
         try:
             self.version = self.gameta_data['version']
-            self.schema = schemas[self.schema_version]
+            self.schema = schema_versions[self.schema_version]
         except Exception as e:
             self.version = __version__
-            self.schema = schemas[self.schema_version]
+            self.schema = schema_versions[self.schema_version]
             click.echo(
                 f"Could not retrieve schema version, defaulting to latest Gameta schema version, "
                 f"error: {e.__class__.__name__}.{str(e)}"
             )
 
-        # Generating validators
-        self.validators = {
-            'meta': Draft7Validator(self.schema)
-        }
-        self.validators.update({k: Draft7Validator(v) for k, v in self.schema['definitions'].items()})
-        self.reserved_params = {
-            p: list(self.schema['definitions'][p]['properties'].keys())
-            for p in ['repositories', 'commands']
-        }
-
         # Validate repositories
         try:
             for repo in self.gameta_data['repositories'].values():
-                self.validators['repositories'].validate(repo)
+                self.schema.validators['repositories'].validate(repo)
             self.repositories = self.gameta_data['repositories']
             self.is_metarepo = True
             self.generate_tags()
@@ -335,7 +333,7 @@ class GametaContext(object):
         # Validate commands
         try:
             for command in self.gameta_data.get('commands', {}).values():
-                self.validators['commands'].validate(command)
+                self.schema.validators['commands'].validate(command)
             self.commands = self.gameta_data.get('commands', {})
         except Exception as e:
             self.commands = {}
@@ -343,7 +341,7 @@ class GametaContext(object):
 
         # Validate constants
         try:
-            self.validators['constants'].validate(self.gameta_data.get('constants', {}))
+            self.schema.validators['constants'].validate(self.gameta_data.get('constants', {}))
             self.constants = self.gameta_data.get('constants', {})
         except Exception as e:
             self.constants = {}

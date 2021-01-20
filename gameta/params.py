@@ -129,9 +129,9 @@ def delete(context: GametaContext, param: str) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
-    if param in context.reserved_params['repositories']:
+    if param in context.schema.reserved_params['repositories']:
         raise click.ClickException(
-            f"Parameter {param} is a reserved parameter {context.reserved_params['repositories']}"
+            f"Parameter {param} is a reserved parameter {context.schema.reserved_params['repositories']}"
         )
 
     try:
