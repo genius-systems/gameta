@@ -453,7 +453,7 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertEqual(
-                self.context.venvs,
+                self.context.virtualenvs,
                 {
                     'testenv': join(f, 'testenv'),
                     'testenv2': join(f, 'testenv2')
@@ -553,7 +553,7 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertEqual(
-                self.context.venvs,
+                self.context.virtualenvs,
                 {
                     'testenv': join(f, 'testenv'),
                     'testenv2': join(f, 'testenv2')
@@ -697,7 +697,7 @@ class TestGametaContext(TestCase):
             )
             self.assertEqual(self.context.constants, {})
             self.assertEqual(
-                self.context.venvs,
+                self.context.virtualenvs,
                 {
                     'testenv': join(f, 'testenv'),
                     'testenv2': join(f, 'testenv2')
@@ -847,7 +847,7 @@ class TestGametaContext(TestCase):
                     'A': 'test'
                 }
             )
-            self.assertEqual(self.context.venvs, {})
+            self.assertEqual(self.context.virtualenvs, {})
 
     def test_gameta_context_load_full_meta_file(self):
         with self.runner.isolated_filesystem() as f:
@@ -1003,7 +1003,7 @@ class TestGametaContext(TestCase):
                 }
             )
             self.assertEqual(
-                self.context.venvs,
+                self.context.virtualenvs,
                 {
                     'testenv': join(f, 'testenv'),
                     'testenv2': join(f, 'testenv2')

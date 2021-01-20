@@ -118,7 +118,7 @@ def add(
         except SyntaxError:
             raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
     # Virtualenv must registered before it can be used
-    if venv is not None and venv not in context.venvs:
+    if venv is not None and venv not in context.virtualenvs:
         raise click.ClickException(
             f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
         )
@@ -300,7 +300,7 @@ def update(
                 f"add it first"
             )
         # Virtualenv must be registered before it can be used
-        if updated_command['venv'] is not None and updated_command['venv'] not in context.venvs:
+        if updated_command['venv'] is not None and updated_command['venv'] not in context.virtualenvs:
             raise click.ClickException(
                 f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
             )

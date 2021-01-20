@@ -174,7 +174,7 @@ class GametaContext(object):
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
-        self.venvs: Dict = {}
+        self.virtualenvs: Dict = {}
         self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
@@ -351,10 +351,10 @@ class GametaContext(object):
 
         # Validate virtualenvs
         try:
-            self.validators['virtualenvs'].validate(self.gameta_data.get('virtualenvs', {}))
-            self.venvs = self.gameta_data.get('virtualenvs', {})
+            self.schema.validators['virtualenvs'].validate(self.gameta_data.get('virtualenvs', {}))
+            self.virtualenvs = self.gameta_data.get('virtualenvs', {})
         except Exception as e:
-            self.venvs = {}
+            self.virtualenvs = {}
             click.echo(f"Malformed virtualenvs element, error: {e.__class__.__name__}.{str(e)}")
 
     def export(self) -> None:
@@ -372,8 +372,8 @@ class GametaContext(object):
             self.gameta_data['commands'] = self.commands
         if self.constants:
             self.gameta_data['constants'] = self.constants
-        if self.venvs:
-            self.gameta_data['virtualenvs'] = self.venvs
+        if self.virtualenvs:
+            self.gameta_data['virtualenvs'] = self.virtualenvs
 
         for file, interface in self.files.items():
             interface.export()
@@ -527,7 +527,7 @@ class GametaContext(object):
         Returns:
             List[str]: Prepared commands to be executed by subprocess
         """
-        return self.shell([f". {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
+        return self.shell([f". {join(self.virtualenvs[venv], 'bin', 'activate')}"] + commands)
 
     def python(self, commands: List[str], shell: bool = True) -> List[str]:
         """

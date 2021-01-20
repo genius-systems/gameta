@@ -129,10 +129,10 @@ def register(context: GametaContext, name: str, path: str, overwrite: bool) -> N
         raise click.ClickException(f'Path {path} does not exist')
     if not (exists(join(path, 'bin', 'activate')) and exists(join(path, 'bin', 'python'))):
         raise click.ClickException(f'Path {path} is not a valid virtualenv')
-    if name in context.venvs and not overwrite:
+    if name in context.virtualenvs and not overwrite:
         raise click.ClickException(f'Virtualenv {name} exists and overwrite flag is {overwrite}')
     click.echo(f"Registering virtualenv in {path} as {name}")
-    context.venvs[name] = path
+    context.virtualenvs[name] = path
     context.export()
     click.echo(f"Successfully registered {name}")
 
@@ -160,12 +160,12 @@ def unregister(context: GametaContext, name: str, delete: bool) -> None:
     Raises:
         click.ClickException: If errors occur during processing
     """
-    if name not in context.venvs:
+    if name not in context.virtualenvs:
         raise click.ClickException(f"Virtualenv {name} has not been registered")
     if delete:
-        click.echo(f"Deleting virtualenv {name} in path {context.venvs[name]}")
-        rmtree(context.venvs[name], ignore_errors=True)
+        click.echo(f"Deleting virtualenv {name} in path {context.virtualenvs[name]}")
+        rmtree(context.virtualenvs[name], ignore_errors=True)
     click.echo(f"Unregistering virtualenv {name}")
-    del context.venvs[name]
+    del context.virtualenvs[name]
     context.export()
     click.echo(f"Virtualenv {name} successfully unregistered")

@@ -95,7 +95,7 @@ def apply(
             except SyntaxError:
                 raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
 
-        if venv is not None and venv not in context.venvs:
+        if venv is not None and venv not in context.virtualenvs:
             raise click.ClickException(f"Virtualenv {venv} has not been registered")
 
         # Python subprocess does not handle multiple commands
