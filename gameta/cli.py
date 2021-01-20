@@ -45,3 +45,11 @@ def gameta_cli(context: GametaContext, project_dir: str, version: bool) -> None:
     context.load()
 
 
+from .init import *
+from .repos import *
+from .tags import *
+from .apply import *
+from .params import *
+from .cmd import *
+from .constants import *
+from .execute import *
