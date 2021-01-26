@@ -5,7 +5,7 @@ from shutil import rmtree
 import click
 
 from gameta.cli import gameta_cli
-from gameta.context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['venv_cli']
@@ -63,8 +63,19 @@ def create(
         pip (bool): Flag to include pip in the virtualenv, defaults to true
         symlinks (bool): Flag to create symlinks to the python executable instead of actual files, defaults to False
 
+    Examples:
+        $ gameta venv create -n test  # Creates and registers a new virtualenv named test in project directory
+        $ gameta venv create -n test -d venv  # Creates a new virtualenv test in directory /path/to/project_dir/venv
+        $ gameta venv create -n test -o  # Creates virtualenv and overwrites existing directory
+        $ gameta venv create -n test -s  # Adds all site packages to created virtualenv
+        $ gameta venv create -n test -np  # Do not add pip to the created virtualenv
+        $ gameta venv create -n test -l  # Use symlinks instead of a physical copy of the Python3 interpreter
+
     Returns:
         None
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     click.echo(
         f"Creating virtualenv in {join(context.obj.project_dir, directory)} with the following config: "
@@ -96,7 +107,7 @@ def create(
 @gameta_context
 def register(context: GametaContext, name: str, path: str, overwrite: bool) -> None:
     """
-    Stores a reference to the virtual environment in the .meta file
+    Stores a reference to the virtual environment in the .gameta file
     \f
     Args:
         context (GametaContext): Gameta Context
@@ -106,15 +117,22 @@ def register(context: GametaContext, name: str, path: str, overwrite: bool) -> N
 
     Returns:
         None
+
+    Examples:
+        $ gameta venv register -n test -p /path/to/venv  # Registers a virtualenv
+        $ gameta venv register -n test -p /path/to/venv  # Overwrites existing virtualenv test if it exists
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
     if not exists(path):
         raise click.ClickException(f'Path {path} does not exist')
     if not (exists(join(path, 'bin', 'activate')) and exists(join(path, 'bin', 'python'))):
         raise click.ClickException(f'Path {path} is not a valid virtualenv')
-    if name in context.venvs and not overwrite:
+    if name in context.virtualenvs and not overwrite:
         raise click.ClickException(f'Virtualenv {name} exists and overwrite flag is {overwrite}')
     click.echo(f"Registering virtualenv in {path} as {name}")
-    context.venvs[name] = path
+    context.virtualenvs[name] = path
     context.export()
     click.echo(f"Successfully registered {name}")
 
@@ -134,13 +152,20 @@ def unregister(context: GametaContext, name: str, delete: bool) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta venv unregister -n test  # Unregisters a virtualenv in gameta
+        $ gameta venv unregister -n test -d  # Unregisters and deletes the virtualenv
+
+    Raises:
+        click.ClickException: If errors occur during processing
     """
-    if name not in context.venvs:
+    if name not in context.virtualenvs:
         raise click.ClickException(f"Virtualenv {name} has not been registered")
     if delete:
-        click.echo(f"Deleting virtualenv {name} in path {context.venvs[name]}")
-        rmtree(context.venvs[name], ignore_errors=True)
+        click.echo(f"Deleting virtualenv {name} in path {context.virtualenvs[name]}")
+        rmtree(context.virtualenvs[name], ignore_errors=True)
     click.echo(f"Unregistering virtualenv {name}")
-    del context.venvs[name]
+    del context.virtualenvs[name]
     context.export()
     click.echo(f"Virtualenv {name} successfully unregistered")

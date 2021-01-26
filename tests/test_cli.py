@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.cli import gameta_cli
 from gameta import __version__
 

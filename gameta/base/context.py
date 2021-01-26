@@ -9,8 +9,9 @@ from typing import Optional, List, Generator, Dict, Tuple, Union
 
 import click
 
+from gameta import __version__
 
-from jsonschema.validators import Draft7Validator
+from .schemas import supported_versions, Schema, to_schema_tuple
 
 
 __all__ = [
@@ -105,26 +106,26 @@ class GitIgnore(File):
             click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
 
 
-class Meta(File):
+class Gameta(File):
     """
-    Interface for the .meta file
+    Interface for the .gameta file
 
     Attributes:
         context (GametaContext): Reference to Gameta Context
-        file_name (str): Reference to the .meta file
+        file_name (str): Reference to the .gameta file
     """
 
-    def __init__(self, context: 'GametaContext', file_name: str = '.meta'):
-        super(Meta, self).__init__(context, file_name)
+    def __init__(self, context: 'GametaContext', file_name: str = '.gameta'):
+        super(Gameta, self).__init__(context, file_name)
 
     def load(self) -> None:
         """
-        Loads data from the .meta file, validates it and populates the GametaContext
+        Loads data from the .gameta file, validates it and populates the GametaContext
 
         Returns:
             None
         """
-        # Attempt to load .meta file
+        # Attempt to load .gameta file
         try:
             with open(self.file_name, 'r') as f:
                 self.context.gameta_data = json.load(f)
@@ -133,58 +134,14 @@ class Meta(File):
         except Exception as e:
             click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
 
-        # Validate repositories
-        try:
-            for repo in self.context.gameta_data['repositories'].values():
-                self.context.validators['repositories'].validate(repo)
-            self.context.repositories = self.context.gameta_data['repositories']
-            self.context.is_metarepo = True
-            self.context.generate_tags()
-        except Exception as e:
-            self.context.repositories = {}
-            self.context.tags = {}
-            click.echo(f"Malformed repository element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Validate commands
-        try:
-            for command in self.context.gameta_data.get('commands', {}).values():
-                self.context.validators['commands'].validate(command)
-            self.context.commands = self.context.gameta_data.get('commands', {})
-        except Exception as e:
-            self.context.commands = {}
-            click.echo(f"Malformed commands element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Validate constants
-        try:
-            self.context.validators['constants'].validate(self.context.gameta_data.get('constants', {}))
-            self.context.constants = self.context.gameta_data.get('constants', {})
-        except Exception as e:
-            self.context.constants = {}
-            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
-
-        # Validate virtualenvs
-        try:
-            self.context.validators['virtualenvs'].validate(self.context.gameta_data.get('virtualenvs', {}))
-            self.context.venvs = self.context.gameta_data.get('virtualenvs', {})
-        except Exception as e:
-            self.context.venvs = {}
-            click.echo(f"Malformed virtualenvs element, error: {e.__class__.__name__}.{str(e)}")
-
     def export(self) -> None:
         """
-        Exports data from the GametaContext to the .meta file
+        Exports data from the GametaContext to the .gameta file
 
         Returns:
             None
         """
         try:
-            self.context.gameta_data['repositories'] = self.context.repositories
-            if self.context.commands:
-                self.context.gameta_data['commands'] = self.context.commands
-            if self.context.constants:
-                self.context.gameta_data['constants'] = self.context.constants
-            if self.context.venvs:
-                self.context.gameta_data['virtualenvs'] = self.context.venvs
             with open(self.file, 'w') as f:
                 json.dump(self.context.gameta_data, f, indent=2)
         except Exception as e:
@@ -196,10 +153,7 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
-        __schema__ (Dict): JSON Schema for Gameta .meta file
-        validators (Dict[str, jsonschema.Draft7Validator]): JSON Schema validators for each object component
-        reserved_params (Dict[str, List[str]): Reserved parameters for each object group
-
+        schema (Schema): Schema class for Gameta .gameta file
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
         gameta_data (Dict): Gameta data extracted and exported
@@ -211,135 +165,13 @@ class GametaContext(object):
         env_vars (Dict): Extracted environment variables with keys prefixed with $
         files (Dict[str, File]): File formats supported
     """
-    __schema__: Dict = {
-        '$schema': "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-            "virtualenvs": {
-                "$ref": "#/definitions/virtualenvs"
-            },
-            "repositories": {
-                "$ref": "#/definitions/repositories"
-            },
-            "commands": {
-                "$ref": "#/definitions/commands"
-            },
-            "constants": {
-                "$ref": "#/definitions/constants"
-            },
-            "required": [
-                "repositories"
-            ]
-        },
-        'definitions': {
-            "virtualenvs": {
-                "type": "object",
-                "propertyNames": {
-                    "pattern": "^[a-zA-Z0-9_-]"
-                },
-                "additionalProperties": {
-                    "type": "string"
-                }
-            },
-            "repositories": {
-                "type": "object",
-                "properties": {
-                    "url": {
-                        "type": ["string", "null"],
-                        "format": "uri"
-                    },
-                    "path": {
-                        "type": "string"
-                    },
-                    "tags": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "__metarepo__": {
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "url", "path", "__metarepo__"
-                ]
-            },
-            "commands": {
-                "type": "object",
-                "properties": {
-                    "commands": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "raise_errors": {
-                        "type": "boolean"
-                    },
-                    "all": {
-                        "type": "boolean"
-                    },
-                    "shell": {
-                        "type": "boolean"
-                    },
-                    "python": {
-                        "type": "boolean"
-                    },
-                    "verbose": {
-                        "type": "boolean"
-                    },
-                    "repositories": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                    },
-                    "tags": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                    },
-                    "venv": {
-                        "type": ["string", "null"]
-                    }
-                },
-                "minProperties": 10,
-                "maxProperties": 10,
-                "additionalProperties": False,
-            },
-            "constants": {
-                "type": "object",
-                "propertyNames": {
-                    "pattern": "^[$A-Z0-9_-]"
-                }
-            }
-        }
-    }
-
-    validators = {
-        'meta': Draft7Validator(__schema__),
-        'repositories': Draft7Validator(__schema__['definitions']['repositories']),
-        'commands': Draft7Validator(__schema__['definitions']['commands']),
-        'constants': Draft7Validator(__schema__['definitions']['constants']),
-        'virtualenvs': Draft7Validator(__schema__['definitions']['virtualenvs'])
-    }
-
-    reserved_params: Dict[str, List[str]] = {
-        'repositories': list(__schema__['definitions']['repositories']['properties'].keys()),
-        'commands': list(__schema__['definitions']['commands']['properties'].keys())
-    }
 
     def __init__(self):
         self.project_dir: Optional[str] = None
         self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
-        self.venvs: Dict = {}
+        self.virtualenvs: Dict = {}
         self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
         self.repositories: Dict[str, Dict] = {}
@@ -351,9 +183,12 @@ class GametaContext(object):
         }
 
         self.files: Dict[str, File] = {
-            'meta': Meta(self),
+            'gameta': Gameta(self),
             'gitignore': GitIgnore(self)
         }
+
+        self.version: str = __version__
+        self.schema: Optional[Schema] = None
 
     @property
     def project_name(self) -> str:
@@ -366,15 +201,15 @@ class GametaContext(object):
         return basename(self.project_dir)
 
     @property
-    def meta(self) -> str:
+    def gameta(self) -> str:
         """
-        Returns the path to the .meta file of the project, i.e. where it should be if the Project has not been
+        Returns the path to the .gameta file of the project, i.e. where it should be if the Project has not been
         initialised
 
         Returns:
-            str: Path to the project's .meta file
+            str: Path to the project's .gameta file
         """
-        return self.files['meta'].file
+        return self.files['gameta'].file
 
     @property
     def gitignore(self) -> str:
@@ -390,7 +225,7 @@ class GametaContext(object):
     @property
     def metarepo(self) -> str:
         """
-        Returns the primary metarepo's name.
+        Returns the primary metarepo's name
 
         Returns:
             str: Name of the primary metarepo
@@ -398,6 +233,29 @@ class GametaContext(object):
         for repo in self.repositories:
             if self.is_primary_metarepo(repo):
                 return repo
+
+    @property
+    def schema_version(self) -> Tuple[int, int, int]:
+        """
+        Returns the .gameta schema version
+
+        Returns:
+            Tuple[int]
+        """
+        return self.get_schema_version(self.version)
+
+    @staticmethod
+    def get_schema_version(version: str) -> Tuple[int, int, int]:
+        """
+        A convenience method for parsing and retrieving the schema version
+
+        Args:
+            version (str): Version string
+
+        Returns:
+            Tuple[int, int, int]: Tuple of schema parameters
+        """
+        return to_schema_tuple(version)
 
     def add_gitignore(self, path: str) -> None:
         """
@@ -448,6 +306,56 @@ class GametaContext(object):
         for file, interface in self.files.items():
             interface.load()
 
+        # Retrieve validation schemas
+        try:
+            self.version = self.gameta_data['version']
+            self.schema = supported_versions[self.schema_version]
+        except Exception as e:
+            self.version = __version__
+            self.schema = supported_versions[self.schema_version]
+            click.echo(
+                f"Could not retrieve schema version, defaulting to latest Gameta schema version, "
+                f"error: {e.__class__.__name__}.{str(e)}"
+            )
+            click.echo("To debug this issue, run `gameta schema validate`")
+
+        # Validate repositories
+        try:
+            for repo in self.gameta_data['repositories'].values():
+                self.schema.validators['repositories'].validate(repo)
+            self.repositories = self.gameta_data['repositories']
+            self.is_metarepo = True
+            self.generate_tags()
+        except Exception as e:
+            self.repositories = {}
+            self.tags = {}
+            click.echo(f"Malformed repository element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate commands
+        try:
+            for command in self.gameta_data.get('commands', {}).values():
+                self.schema.validators['commands'].validate(command)
+            self.commands = self.gameta_data.get('commands', {})
+        except Exception as e:
+            self.commands = {}
+            click.echo(f"Malformed commands element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate constants
+        try:
+            self.schema.validators['constants'].validate(self.gameta_data.get('constants', {}))
+            self.constants = self.gameta_data.get('constants', {})
+        except Exception as e:
+            self.constants = {}
+            click.echo(f"Malformed constants element, error: {e.__class__.__name__}.{str(e)}")
+
+        # Validate virtualenvs
+        try:
+            self.schema.validators['virtualenvs'].validate(self.gameta_data.get('virtualenvs', {}))
+            self.virtualenvs = self.gameta_data.get('virtualenvs', {})
+        except Exception as e:
+            self.virtualenvs = {}
+            click.echo(f"Malformed virtualenvs element, error: {e.__class__.__name__}.{str(e)}")
+
     def export(self) -> None:
         """
         Exports data to all supported file formats
@@ -455,6 +363,17 @@ class GametaContext(object):
         Returns:
             None
         """
+
+        # Moving this here in the event we wish to validate the outgoing data and for consistency's sake
+        self.gameta_data['version'] = self.version
+        self.gameta_data['repositories'] = self.repositories
+        if self.commands:
+            self.gameta_data['commands'] = self.commands
+        if self.constants:
+            self.gameta_data['constants'] = self.constants
+        if self.virtualenvs:
+            self.gameta_data['virtualenvs'] = self.virtualenvs
+
         for file, interface in self.files.items():
             interface.export()
 
@@ -482,7 +401,7 @@ class GametaContext(object):
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
-        in .meta file
+        in .gameta file
 
         Args:
             commands (List[str]): Commands to be applied
@@ -510,7 +429,7 @@ class GametaContext(object):
                         venv, self.python(repo_commands, shell=False) if python else repo_commands
                     )
                 elif python:
-                        command: List[str] = self.python(repo_commands)
+                    command: List[str] = self.python(repo_commands)
                 elif shell:
                     command: List[str] = self.shell(repo_commands)
                 else:
@@ -523,7 +442,7 @@ class GametaContext(object):
         
         Args:
             repo (str): Repository name of parameters to be generated
-            repo_details (Dict): Repository details from .meta file
+            repo_details (Dict): Repository details from .gameta file
             python (bool): Flag to indicate if Python variables should be generated, defaults to False
 
         Returns:
@@ -549,7 +468,7 @@ class GametaContext(object):
         combined_details.update(self.constants)
         combined_details.update(self.env_vars)
         return combined_details
-        
+
     @staticmethod
     def tokenise(command: str) -> List[str]:
         """
@@ -607,7 +526,7 @@ class GametaContext(object):
         Returns:
             List[str]: Prepared commands to be executed by subprocess
         """
-        return self.shell([f". {join(self.venvs[venv], 'bin', 'activate')}"] + commands)
+        return self.shell([f". {join(self.virtualenvs[venv], 'bin', 'activate')}"] + commands)
 
     def python(self, commands: List[str], shell: bool = True) -> List[str]:
         """

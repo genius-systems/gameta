@@ -1,4 +1,4 @@
-# Command Reference
+# Command Reference (Deprecated)
 
 Like `git` the `gameta` command delegates to subcommand groups based on its
 first argument. There are several subcommand groups:

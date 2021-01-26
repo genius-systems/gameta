@@ -4,7 +4,7 @@ from typing import Tuple, Dict, Optional, Callable, Any
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['command_cli']
@@ -85,6 +85,16 @@ def add(
     Returns:
         None
 
+    Examples:
+        $ gameta cmd add -n cmd_name -c "git fetch --all --tags --prune" -c "git pull"  # Multiple shell commands
+        $ gameta cmd add -n cmd_name -ve "test" -c "pip install cryptography"  # With a registered virtualenv named test
+        $ gameta cmd add -n cmd_name -s -e -v -c "git fetch --all --tags --prune"  # In a separate shell, verbose,
+                                                                                     terminate if errors occur
+        $ gameta cmd add -n cmd_name -c "git pull" -a  # Applies to all repositories
+        $ gameta cmd add -n cmd_name -c "git pull" -t test  # Applies to repositories tagged with test
+        $ gameta cmd add -n cmd_name -c "git pull" -r test  # Applies to the repository named test
+        $ gameta cmd add -n cmd_name -p 'print("Hello World")'  # Executes a Python script
+
     Raises:
         click.ClickException: If errors occur during processing
     """
@@ -108,7 +118,7 @@ def add(
         except SyntaxError:
             raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
     # Virtualenv must registered before it can be used
-    if venv is not None and venv not in context.venvs:
+    if venv is not None and venv not in context.virtualenvs:
         raise click.ClickException(
             f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
         )
@@ -155,6 +165,9 @@ def delete(context: GametaContext, name: str) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta cmd delete -n cmd_name  # Deletes an existing command
 
     Raises:
         click.ClickException: If errors occur during processing
@@ -227,6 +240,11 @@ def update(
     Returns:
         None
 
+    Examples:
+        $ gameta cmd update -n test -c "git fetch --all --tags --prune"  # Updates the CLI commands of test
+        $ gameta cmd update -n test -ve test  # Updates the virtualenv of test
+        $ gameta cmd update -n test -ns  # Updates test to execute in the same shell
+
     Raises:
         click.ClickException: If errors occur during processing
     """
@@ -282,7 +300,7 @@ def update(
                 f"add it first"
             )
         # Virtualenv must be registered before it can be used
-        if updated_command['venv'] is not None and updated_command['venv'] not in context.venvs:
+        if updated_command['venv'] is not None and updated_command['venv'] not in context.virtualenvs:
             raise click.ClickException(
                 f"Virtualenv {venv} has not been registered, please run `gameta venv register` to register it first"
             )
@@ -325,6 +343,9 @@ def ls(context: GametaContext) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta cmd ls  # Lists all the existing commands in the command store
 
     Raises:
         click.ClickException: If errors occur during processing

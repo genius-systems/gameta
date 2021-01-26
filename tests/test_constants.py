@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.constants import add, delete
 
 
@@ -18,7 +18,7 @@ class TestConstantsAdd(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_constants_add_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -41,7 +41,7 @@ class TestConstantsAdd(TestCase):
             'value': 1
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -52,12 +52,13 @@ class TestConstantsAdd(TestCase):
                 result.output,
                 f"Adding constant {params['name']}\n"
                 f"Successfully added constant {params['name'].upper()}: {params['value']} (type: {params['type']}) "
-                f"to .meta file\n"
+                f"to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -92,7 +93,7 @@ class TestConstantsAdd(TestCase):
             'value': 'hello_world'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -104,10 +105,11 @@ class TestConstantsAdd(TestCase):
                 f"Adding constant {params['name']}\n"
                 f"Error: BadParameter.{params['value']} is not a valid boolean\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -139,7 +141,7 @@ class TestConstantsAdd(TestCase):
             'value': 'True'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -150,12 +152,13 @@ class TestConstantsAdd(TestCase):
                 result.output,
                 f"Adding constant {params['name']}\n"
                 f"Successfully added constant {params['name'].upper()}: {params['value']} (type: {params['type']}) "
-                f"to .meta file\n"
+                f"to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -191,7 +194,7 @@ class TestConstantsDelete(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_constants_delete_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -212,9 +215,9 @@ class TestConstantsDelete(TestCase):
             'name': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update({'constants': {'TEST': "hello_world"}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -226,12 +229,13 @@ class TestConstantsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting constant {params['name']}\n"
-                f"Successfully deleted constant {params['name']} from .meta file\n"
+                f"Successfully deleted constant {params['name']} from .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -262,9 +266,9 @@ class TestConstantsDelete(TestCase):
             'name': 'TEST'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update({'constants': {'TEST': "hello_world"}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -276,12 +280,13 @@ class TestConstantsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting constant {params['name']}\n"
-                f"Successfully deleted constant {params['name']} from .meta file\n"
+                f"Successfully deleted constant {params['name']} from .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -312,9 +317,9 @@ class TestConstantsDelete(TestCase):
             'name': 'hello'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output.update({'constants': {'TEST': "hello_world"}})
                     json.dump(output, m2)
             context = GametaContext()
@@ -326,12 +331,13 @@ class TestConstantsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting constant {params['name']}\n"
-                f"Error: Constant {params['name']} does not exist in .meta file\n"
+                f"Error: Constant {params['name']} does not exist in .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -364,7 +370,7 @@ class TestConstantsDelete(TestCase):
             'name': 'hello'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(f, '.meta'), 'w+') as m:
+            with open(join(f, '.gameta'), 'w+') as m:
                 json.dump({}, m)
             context = GametaContext()
             context.project_dir = f
@@ -375,7 +381,7 @@ class TestConstantsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting constant {params['name']}\n"
-                f"Error: Constant {params['name']} does not exist in .meta file\n"
+                f"Error: Constant {params['name']} does not exist in .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(json.load(m), {})

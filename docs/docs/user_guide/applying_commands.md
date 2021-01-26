@@ -22,7 +22,7 @@ There are 2 ways users can select repositories:
 
 Tags provide a means to group and organise your child repositories and apply CLI
 commands selectively to these repositories. Supposing that one has the 
-following .meta file: 
+following .gameta file: 
 
 ```json
 {
@@ -140,7 +140,7 @@ ___
 
 ### Parameterising with Parameters
 
-Consider the following .meta file below containing the "branch" parameter that specifies
+Consider the following .gameta file below containing the "branch" parameter that specifies
 an existing git branch:
 
 ```json
@@ -189,7 +189,7 @@ cd core/gitdb && git checkout feature_a && python setup.py bdist_wheel && cd ../
 
 ### Parameterising with Constants
 
-Consider the following .meta file below that contains the BRANCH constant that specifies
+Consider the following .gameta file below that contains the BRANCH constant that specifies
 a branch:
 
 ```json
@@ -238,7 +238,7 @@ cd core/gitdb && git checkout master && python setup.py bdist_wheel && cd ../..
 
 ### Parameterising with Environment Variables
 
-Consider the following .meta file below:
+Consider the following .gameta file below:
 
 ```json
 {

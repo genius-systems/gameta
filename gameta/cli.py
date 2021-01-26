@@ -4,7 +4,7 @@ from os.path import abspath
 
 import click
 
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 from gameta import __version__
 
 
@@ -53,3 +53,4 @@ from .params import *
 from .cmd import *
 from .constants import *
 from .execute import *
+from .schemas import *

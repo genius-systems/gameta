@@ -13,6 +13,7 @@ first argument. There are several subcommand groups:
 8. gameta exec
 9. gameta const
 10. gameta venv
+11. gameta schema
 
 ___
 **Note**
@@ -23,7 +24,7 @@ ___
 
 ## gameta
 
-Main CLI group, loads .meta files and delegates subcommands to other groups
+Main CLI group, loads .gameta files and delegates subcommands to other groups
 
 ### Arguments
 
@@ -40,16 +41,17 @@ to populate the project name and Git URL from the .git folder.
 
 * --git / -g: Indicates that Gameta should initialise this folder as a git 
   repository
-* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .gameta file 
   with new data
 
 ## gameta sync
 
-Syncs all child repositories specified in the .meta file locally.
+Syncs all child repositories specified in the .gameta file locally.
 
 ## gameta repo
 
-Repository subcommand group, contains the following commands:
+Repository subcommand group for managing repositories, contains the 
+following commands:
 
 1. gameta repo add
 2. gameta repo delete
@@ -58,14 +60,14 @@ Repository subcommand group, contains the following commands:
 
 ### gameta repo add
 
-Adds a new child repository to the .meta file and clone it. 
+Adds a new child repository to the .gameta file and clone it. 
 
 ___
 **Note**
 
 If the repository is already cloned to the path provided, then Gameta will 
 attempt to extract its details and match them against the arguments that user
-provides before adding it to the .meta file.
+provides before adding it to the .gameta file.
 ___
 
 #### Arguments
@@ -73,12 +75,12 @@ ___
 * **--name / -n**: Name of the child repository to be stored
 * **--url / -u**: URL of the child repository to be stored
 * **--path / -p**: Relative local path within the project directory to clone the child repository to
-* --overwrite / -o: Indicates that Gameta should overwrite the repository details in the .meta file
+* --overwrite / -o: Indicates that Gameta should overwrite the repository details in the .gameta file
     if they exist
 
 ### gameta repo delete
 
-Deletes an existing child repository from the .meta file and its local clone.
+Deletes an existing child repository from the .gameta file and its local clone.
 
 #### Arguments
 
@@ -103,7 +105,8 @@ Lists all repositories added
 
 ## gameta tags
 
-Tags subcommand group, contains the following commands:
+Tags subcommand group for managing repository tags, contains the 
+following commands:
 
 1. gameta tags add
 2. gameta tags delete
@@ -134,7 +137,8 @@ ___
 
 ## gameta params
 
-Parameters subcommand group, contains the following commands:
+Parameters subcommand group for adding repository parameters, contains 
+the following commands:
 
 1. gameta params add
 2. gameta params delete
@@ -271,7 +275,8 @@ ___
 
 ## gameta cmd
 
-Command subcommand group, contains the following commands:
+Command subcommand group for managing gameta commands, contains 
+the following commands:
 
 1. gameta cmd add
 2. gameta cmd delete
@@ -280,7 +285,7 @@ Command subcommand group, contains the following commands:
 
 ### gameta cmd add
 
-Adds a Gameta command to the Gameta command store within the .meta file
+Adds a Gameta command to the Gameta command store within the .gameta file
 
 ___
 **Note**
@@ -299,7 +304,7 @@ ___
 #### Arguments 
 * **--name / -n**: Name 
 * --description / -d: Brief description of the Gameta command
-* --overwrite / -o: Indicates that Gameta should overwrite the existing .meta file 
+* --overwrite / -o: Indicates that Gameta should overwrite the existing .gameta file 
     with new data
 * **_--command / -c_**: CLI commands to be applied
 * _--tags / -t_: Tagged repositories to apply CLI commands to
@@ -368,7 +373,8 @@ Executes a sequence of Gameta commands from the command store
 
 ## gameta const
 
-Constants subcommand group, contains the following commands:
+Constants subcommand group for managing Gameta constants, contains
+the following commands:
 
 1. gameta const add
 2. gameta const delete
@@ -438,7 +444,8 @@ ___
 
 ## gameta venv
 
-Virtualenv subcommand group, contains the following commands:
+Virtualenv subcommand group for managing virtual environments, 
+contains the following commands:
 
 1. gameta venv create
 2. gameta venv register
@@ -468,7 +475,7 @@ ___
 
 ### gameta venv register
 
-Registers a new virtual environment in the .meta file
+Registers a new virtual environment in the .gameta file
 
 ### Arguments
 * **--name / -n**: Name of the virtual environment to be registered
@@ -492,10 +499,64 @@ ___
 
 ### gameta venv unregister
 
-Unregisters an existing virtual environment in the .meta file
+Unregisters an existing virtual environment in the .gameta file
 
 ### Arguments
 * **--name / -n**: Name of the virtual environment to be registered
 * --delete / -d: Deletes the virtual environment
+
+## gameta schema
+
+Schema subcommand group for validating and updating schemas, contains
+the following commands:
+
+1. gameta schema validate
+2. gameta schema update
+3. gameta schema ls
+
+### gameta schema validate
+
+Validates the .gameta file data according to a specified schema 
+version, printing all validation errors for debugging
+
+### Arguments
+* --path / -p: Absolute path to the .gameta file to be validated
+* --verbose / -v: Prints verbose error details
+* --schema-version / -s: Specified schema version, defaults to the 
+  latest gameta version installed
+  
+### gameta schema update
+
+Updates the .gameta file data to the specified schema version
+
+___
+**Note**
+   
+Does not support downgrading of .gameta file schema versions. 
+___
+___
+**Note**
+   
+This command can only be performed if the .gameta file data is 
+validated against the existing schema. Run `gameta schema validate`
+to fix all validation issues before updating
+___
+___
+**Note**
+   
+Users can only update the schema to a schema version that is 
+supported by the current gameta version, use `gameta schema ls` to
+list all supported schema versions
+___
+
+### Arguments
+* --path / -p: Absolute path to the .gameta file to be updated
+* --schema-version / -s: Specified schema version to be updated to, 
+  defaults to the latest gameta version installed 
+
+### gameta schema ls
+
+Lists all supported schema versions that this version of gameta
+supports
 
 [Applying Commands]: ../../user_guide/applying_commands.md

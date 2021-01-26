@@ -4,7 +4,7 @@ from typing import Union
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['constants_cli']
@@ -63,7 +63,7 @@ def add(context: GametaContext, name: str, ctype: str, value: str) -> None:
         value: Union[int, float, bool, str] = click.types.convert_type(constant_type)(value)
         context.constants[name.upper()] = value
         context.export()
-        click.echo(f"Successfully added constant {name}: {value} (type: {ctype}) to .meta file")
+        click.echo(f"Successfully added constant {name}: {value} (type: {ctype}) to .gameta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
@@ -95,10 +95,10 @@ def delete(context: GametaContext, name: str) -> None:
         elif name.upper() in context.constants:
             del context.constants[name.upper()]
         else:
-            raise click.ClickException(f"Constant {name} does not exist in .meta file")
+            raise click.ClickException(f"Constant {name} does not exist in .gameta file")
 
         context.export()
-        click.echo(f"Successfully deleted constant {name} from .meta file")
+        click.echo(f"Successfully deleted constant {name} from .gameta file")
     except click.ClickException:
         raise
     except Exception as e:

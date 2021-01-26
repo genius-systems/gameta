@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['tags_cli']
@@ -52,7 +52,7 @@ def add(context: GametaContext, name: str, tags: List[str]) -> None:
     """
     click.echo(f"Adding tags {list(tags)} to {name}")
     if name not in context.repositories:
-        raise click.ClickException(f"Repository {name} does not exist in .meta file")
+        raise click.ClickException(f"Repository {name} does not exist in .gameta file")
 
     try:
         repo_details: Dict = context.repositories[name]
@@ -87,7 +87,7 @@ def delete(context: GametaContext, name: str, tags: Tuple[str]) -> None:
     """
     click.echo(f"Deleting tags {list(tags)} from {name}")
     if name not in context.repositories:
-        raise click.ClickException(f"Repository {name} does not exist in .meta file")
+        raise click.ClickException(f"Repository {name} does not exist in .gameta file")
 
     tags: List[str] = list(tags)
     if context.is_primary_metarepo(name) and 'metarepo' in tags:

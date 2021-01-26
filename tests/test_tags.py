@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.tags import add, delete
 
 
@@ -21,7 +21,7 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -45,7 +45,7 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(f, '.meta'), 'w+') as m:
+            with open(join(f, '.gameta'), 'w+') as m:
                 json.dump({
                     'repositories': {}
                 }, m)
@@ -61,7 +61,7 @@ class TestTagsAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding tags {params['tags']} to {params['name']}\n"
-                f"Error: Repository {params['name']} does not exist in .meta file\n"
+                f"Error: Repository {params['name']} does not exist in .gameta file\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -73,7 +73,7 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -86,7 +86,7 @@ class TestTagsAdd(TestCase):
             self.assertEqual(
                 result.output,
                 f"Adding tags {params['tags']} to {params['name']}\n"
-                f"Error: Repository {params['name']} does not exist in .meta file\n"
+                f"Error: Repository {params['name']} does not exist in .gameta file\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -98,9 +98,9 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -121,10 +121,11 @@ class TestTagsAdd(TestCase):
                 f"Adding tags {params['tags']} to {params['name']}\n"
                 f"Successfully added tags to repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -151,9 +152,9 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -175,10 +176,11 @@ class TestTagsAdd(TestCase):
                 f"Adding tags {params['tags']} to {params['name']}\n"
                 f"Successfully added tags to repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -205,9 +207,9 @@ class TestTagsAdd(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -229,10 +231,11 @@ class TestTagsAdd(TestCase):
                 f"Adding tags {params['tags']} to {params['name']}\n"
                 f"Successfully added tags to repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -261,7 +264,7 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -285,7 +288,7 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(f, '.meta'), 'w+') as m:
+            with open(join(f, '.gameta'), 'w+') as m:
                 json.dump({
                     'repositories': {}
                 }, m)
@@ -301,7 +304,7 @@ class TestTagsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting tags {params['tags']} from {params['name']}\n"
-                f"Error: Repository {params['name']} does not exist in .meta file\n"
+                f"Error: Repository {params['name']} does not exist in .gameta file\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -313,7 +316,7 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -326,7 +329,7 @@ class TestTagsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting tags {params['tags']} from {params['name']}\n"
-                f"Error: Repository {params['name']} does not exist in .meta file\n"
+                f"Error: Repository {params['name']} does not exist in .gameta file\n"
             )
 
     @patch('gameta.cli.click.Context.ensure_object')
@@ -338,9 +341,9 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -361,10 +364,11 @@ class TestTagsDelete(TestCase):
                 f"Deleting tags {params['tags']} from {params['name']}\n"
                 f"Successfully deleted tags from repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -391,9 +395,9 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -415,10 +419,11 @@ class TestTagsDelete(TestCase):
                 f"Deleting tags {params['tags']} from {params['name']}\n"
                 f"Successfully deleted tags from repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -445,9 +450,9 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['GitPython'] = {
                         "url": 'https://github.com/gitpython-developers/GitPython.git',
                         'path': 'GitPython',
@@ -469,10 +474,11 @@ class TestTagsDelete(TestCase):
                 f"Deleting tags {params['tags']} from {params['name']}\n"
                 f"Successfully deleted tags from repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",
@@ -499,9 +505,9 @@ class TestTagsDelete(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['gameta'].update({
                         'tags': ['metarepo', 'a', 'b', 'c']
                     })
@@ -521,10 +527,11 @@ class TestTagsDelete(TestCase):
                 "Unable to delete the metarepo tag from metarepo, removing it before deleting other tags\n"
                 f"Successfully deleted tags from repository {params['name']}\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertCountEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         "repositories": {
                             "gameta": {
                                 "path": ".",

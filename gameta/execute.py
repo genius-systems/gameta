@@ -2,7 +2,7 @@ from typing import Tuple, Dict
 
 import click
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.cli import gameta_cli
 
 
@@ -23,6 +23,9 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
 
     Returns:
         None
+
+    Examples:
+        $ gameta exec -c cmd_1 -c cmd_2 -c cmd_3
 
     Raises:
         click.ClickException: If errors occur during processing

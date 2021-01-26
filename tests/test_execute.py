@@ -10,7 +10,7 @@ from unittest.mock import patch
 from click import Context
 from click.testing import CliRunner
 
-from gameta.context import GametaContext, SHELL
+from gameta.base.context import GametaContext, SHELL
 from gameta.execute import execute
 
 
@@ -24,7 +24,7 @@ class TestExec(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -47,7 +47,7 @@ class TestExec(TestCase):
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
-            copyfile(join(dirname(__file__), 'data', '.meta'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
@@ -60,11 +60,12 @@ class TestExec(TestCase):
                 f"Error: One of the commands in {list(params['commands'])} does not exist in the Gameta command store, "
                 f"please run `gameta cmd add` to add it first\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta'), 'r') as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'gameta': {
                                 '__metarepo__': True,
@@ -101,9 +102,9 @@ class TestExec(TestCase):
                 template.extractall(join(f, 'core'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output['commands'] = {}
                     output['commands']['hello_world'] = params['hello_world']
                     json.dump(output, m2)
@@ -123,11 +124,12 @@ class TestExec(TestCase):
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
                 f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][2]}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta'), 'r') as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
@@ -210,9 +212,9 @@ class TestExec(TestCase):
                 template.extractall(join(f, 'core'))
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update(
                         {
                             'commands': {
@@ -262,11 +264,12 @@ class TestExec(TestCase):
                 f"{[params['actual_repositories'][0]]} in a separate shell\n"
                 f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][0]}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta'), 'r') as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
@@ -358,9 +361,9 @@ class TestExec(TestCase):
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
                 template.extractall(f)
             venv.create(params['directory'], clear=False, with_pip=True, symlinks=False, system_site_packages=False)
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output.update(
                         {
                             'commands': {
@@ -406,11 +409,12 @@ class TestExec(TestCase):
                 f"with virtualenv {params['venv']}\n"
                 f"Executing {output[0]} {output[1]} {output[2]} in {params['actual_repositories'][0]}\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta'), 'r') as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,

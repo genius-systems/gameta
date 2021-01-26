@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.context import GametaContext
+from gameta.base import GametaContext
 from gameta.params import add, delete
 
 
@@ -18,7 +18,7 @@ class TestParamsAdd(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_params_add_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -39,7 +39,7 @@ class TestParamsAdd(TestCase):
             'parameter': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -52,12 +52,13 @@ class TestParamsAdd(TestCase):
                 f"Adding {params['parameter']} value None for gameta\n"
                 f"Adding {params['parameter']} value None for GitPython\n"
                 f"Adding {params['parameter']} value None for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -91,7 +92,7 @@ class TestParamsAdd(TestCase):
             'value': 'hello_world'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -104,12 +105,13 @@ class TestParamsAdd(TestCase):
                 f"Adding {params['parameter']} value {params['value']} for gameta\n"
                 f"Adding {params['parameter']} value {params['value']} for GitPython\n"
                 f"Adding {params['parameter']} value {params['value']} for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -143,7 +145,7 @@ class TestParamsAdd(TestCase):
             'type': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -167,7 +169,7 @@ class TestParamsAdd(TestCase):
             'user_prompt': ['gameta', 'GitPython', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -188,12 +190,13 @@ class TestParamsAdd(TestCase):
                 f"Please enter the parameter value for repository gitdb or >* to skip [hello_world]: "
                 f"{params['user_prompt'][2]}\n"
                 f"Adding {params['parameter']} value {params['user_prompt'][2]} for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -228,7 +231,7 @@ class TestParamsAdd(TestCase):
             'user_prompt': ['gameta', '>*', 'gitdb']
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -250,12 +253,13 @@ class TestParamsAdd(TestCase):
                 f"Please enter the parameter value for repository gitdb or >* to skip [hello_world]: "
                 f"{params['user_prompt'][2]}\n"
                 f"Adding {params['parameter']} value {params['user_prompt'][2]} for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -291,7 +295,7 @@ class TestParamsAdd(TestCase):
             'user_prompt': [{'a': [1, 2, 3]}, {'a': [4, 5, 6]}, {'a': [1, 6, 7], 'c': [4, 2, 8]}]
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -313,12 +317,13 @@ class TestParamsAdd(TestCase):
                 f"Please enter the parameter value for repository gitdb or >* to skip [hello_world]: "
                 f"{json.dumps(params['user_prompt'][2])}\n"
                 f"Adding {params['parameter']} value {params['user_prompt'][2]} for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -354,7 +359,7 @@ class TestParamsAdd(TestCase):
             'user_prompt': [{'a': [1, 2, 3]}, ['a', [4, 5, 6]], {'a': [1, 6, 7], 'c': [4, 2, 8]}]
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -378,12 +383,13 @@ class TestParamsAdd(TestCase):
                 f"Please enter the parameter value for repository gitdb or >* to skip [hello_world]: "
                 f"{json.dumps(params['user_prompt'][2])}\n"
                 f"Adding {params['parameter']} value {params['user_prompt'][2]} for gitdb\n"
-                f"Successfully added parameter {params['parameter']} to .meta file\n"
+                f"Successfully added parameter {params['parameter']} to .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -419,7 +425,7 @@ class TestParamsDelete(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_params_delete_parameters_missing_key_parameters(self, mock_ensure_object):
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -440,7 +446,7 @@ class TestParamsDelete(TestCase):
             'parameter': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -450,12 +456,13 @@ class TestParamsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting parameter {params['parameter']}\n"
-                f"Successfully deleted parameter {params['parameter']} from .meta file\n"
+                f"Successfully deleted parameter {params['parameter']} from .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -485,9 +492,9 @@ class TestParamsDelete(TestCase):
             'parameter': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
                     output['repositories']['GitPython'].update({'test': {'a': [4, 5, 6]}})
                     output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
@@ -501,12 +508,13 @@ class TestParamsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting parameter {params['parameter']}\n"
-                f"Successfully deleted parameter {params['parameter']} from .meta file\n"
+                f"Successfully deleted parameter {params['parameter']} from .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -536,9 +544,9 @@ class TestParamsDelete(TestCase):
             'parameter': 'test'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
                     output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
                     json.dump(output, m2)
@@ -551,12 +559,13 @@ class TestParamsDelete(TestCase):
             self.assertEqual(
                 result.output,
                 f"Deleting parameter {params['parameter']}\n"
-                f"Successfully deleted parameter {params['parameter']} from .meta file\n"
+                f"Successfully deleted parameter {params['parameter']} from .gameta file\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',
@@ -586,9 +595,9 @@ class TestParamsDelete(TestCase):
             'parameter': 'url'
         }
         with self.runner.isolated_filesystem() as f:
-            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w+') as m2:
+                with open(join(f, '.gameta'), 'w+') as m2:
                     output['repositories']['gameta'].update({"test": {'a': [1, 2, 3]}})
                     output['repositories']['GitPython'].update({'test': {'a': [4, 5, 6]}})
                     output['repositories']['gitdb'].update({'test': {'a': [1, 6, 7], 'c': [4, 2, 8]}})
@@ -604,10 +613,11 @@ class TestParamsDelete(TestCase):
                 f"Error: Parameter {params['parameter']} is a reserved parameter "
                 f"['url', 'path', 'tags', '__metarepo__']\n"
             )
-            with open(join(f, '.meta'), 'r') as m:
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
+                        "version": '0.3.0',
                         'repositories': {
                             'GitPython': {
                                 'path': 'GitPython',

@@ -5,7 +5,7 @@ from typing import Type, Optional, TypeVar
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['parameters_cli']
@@ -43,8 +43,9 @@ def parameters_cli(context: GametaContext) -> None:
 @gameta_context
 def add(context: GametaContext, param: str, ptype: Optional[str], value: Optional[str], skip_prompt: bool) -> None:
     """
-    Adds/updates a parameter to all child repositories in the .meta file, users will automatically be prompted to enter
-    the parameter value corresponding to each repository. They can provide a type and value parameter to skip this step.
+    Adds/updates a parameter to all child repositories in the .gameta file, users will automatically be prompted to
+    enter the parameter value corresponding to each repository. They can provide a type and value parameter to skip this
+    step.
     \f
     Args:
         context (GametaContext): Gameta Context
@@ -59,8 +60,8 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
         None
 
     Examples:
-        $ gameta parameters add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
-        $ gameta parameters add -p test -t str -v hello_world -u  # Prompts user input for parameter values
+        $ gameta params add -p test -t str -v hello_world  # Adds parameter test with value hello_world to all repos
+        $ gameta params add -p test -t str -v hello_world -u  # Prompts user input for parameter values
 
     Raises:
         click.ClickException: If errors occur during processing
@@ -102,7 +103,7 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
             details[param] = pvalue
             click.echo(f"Adding {param} value {pvalue} for {repo}")
         context.export()
-        click.echo(f"Successfully added parameter {param} to .meta file")
+        click.echo(f"Successfully added parameter {param} to .gameta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
@@ -122,12 +123,15 @@ def delete(context: GametaContext, param: str) -> None:
     Returns:
         None
 
+    Examples:
+        $ git params delete -p branch  # To delete the branch parameter
+
     Raises:
         click.ClickException: If errors occur during processing
     """
-    if param in context.reserved_params['repositories']:
+    if param in context.schema.reserved_params['repositories']:
         raise click.ClickException(
-            f"Parameter {param} is a reserved parameter {context.reserved_params['repositories']}"
+            f"Parameter {param} is a reserved parameter {context.schema.reserved_params['repositories']}"
         )
 
     try:
@@ -138,6 +142,6 @@ def delete(context: GametaContext, param: str) -> None:
             except KeyError:
                 continue
         context.export()
-        click.echo(f"Successfully deleted parameter {param} from .meta file")
+        click.echo(f"Successfully deleted parameter {param} from .gameta file")
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")

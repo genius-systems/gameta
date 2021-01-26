@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional
 import click
 
 from .cli import gameta_cli
-from .context import gameta_context, GametaContext
+from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['apply']
@@ -95,7 +95,7 @@ def apply(
             except SyntaxError:
                 raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
 
-        if venv is not None and venv not in context.venvs:
+        if venv is not None and venv not in context.virtualenvs:
             raise click.ClickException(f"Virtualenv {venv} has not been registered")
 
         # Python subprocess does not handle multiple commands
