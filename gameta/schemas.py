@@ -32,13 +32,16 @@ def schema_cli() -> None:
 @click.option('--path', '-p', type=str, default=None,
               help='Absolute path to directory containing .gameta file to validate')
 @click.option('--verbose', '-v', is_flag=True, default=False, help='Prints verbose error details')
-def validate(path: str, verbose: bool) -> None:
+@click.option('--schema-version', '-s', 'version', type=str, default=__version__,
+              help='.gameta schema version to validate against, defaults to the latest version')
+def validate(path: str, verbose: bool, version: str) -> None:
     """
-    Validates the .gameta schema version
+    Validates the .gameta data against a specified schema version
     \f
     Args:
         path (str): Absolute path to .gameta schema to validate
         verbose (bool): Prints verbose error details
+        version (str): .gameta schema version to validate against
 
     Returns:
         None
@@ -93,7 +96,8 @@ def validate(path: str, verbose: bool) -> None:
 
 
 @schema_cli.command()
-@click.option('--version', '-v', type=str, required=True, help='.gameta schema version to upgrade to')
+@click.option('--schema-version', '-s', 'version', type=str, default=__version__,
+              help='.gameta schema version to upgrade to, defaults to the latest version')
 @click.option('--path', '-p', type=str, default=None,
               help='Absolute path to directory containing .gameta file to validate')
 def update(version: str, path: str) -> None:
@@ -190,3 +194,20 @@ def update(version: str, path: str) -> None:
         raise click.ClickException(
             f"Error {e.__class__.__name__}.{str(e)} updating schema from {curr_version_str} to {version}"
         )
+
+
+@schema_cli.command()
+def ls() -> None:
+    """
+    Lists all the schema versions that the current version of gameta supports
+    \f
+    Returns:
+        None
+
+    Raises:
+        click.ClickException: If errors occur during processing
+    """
+    click.echo(
+        f"Supported schema versions: "
+        f"{', '.join(['.'.join([str(v) for v in version]) for version in supported_versions])}"
+    )

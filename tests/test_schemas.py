@@ -3,13 +3,11 @@ from os import makedirs
 from os.path import join, dirname
 from shutil import copyfile
 from unittest import TestCase
-from unittest.mock import patch
 
 from click.testing import CliRunner
 
 from gameta import __version__
-from gameta.base import GametaContext
-from gameta.schemas import validate, update
+from gameta.schemas import validate, update, ls
 
 
 class TestSchemaValidate(TestCase):
@@ -267,28 +265,10 @@ class TestSchemaUpdate(TestCase):
         self.runner = CliRunner()
         self.update = update
 
-    @patch('gameta.cli.click.Context.ensure_object')
-    def test_schema_update_key_parameters_not_provided(self, mock_ensure_object):
-        with self.runner.isolated_filesystem() as f:
-            copyfile(join(dirname(__file__), 'data', '.gameta'), join(f, '.gameta'))
-            context = GametaContext()
-            context.project_dir = f
-            context.load()
-            mock_ensure_object.return_value = context
-            result = self.runner.invoke(self.update)
-            self.assertEqual(result.exit_code, 2)
-            self.assertEqual(
-                result.output,
-                "Usage: update [OPTIONS]\n"
-                "Try 'update --help' for help.\n"
-                "\n"
-                "Error: Missing option '--version' / '-v'.\n"
-            )
-
     def test_schema_update_successful_update(self):
         test_params = {
             'curr_version': '0.2.5',
-            'desired_version': '0.3.0'
+            'desired_version': __version__
         }
         with self.runner.isolated_filesystem() as f:
             with open(join(dirname(__file__), 'data', '.gameta_v025'), 'r') as m1:
@@ -296,7 +276,7 @@ class TestSchemaUpdate(TestCase):
                 with open(join(f, '.gameta'), 'w') as m2:
                     output['repositories']['gameta']['test_param'] = 'test'
                     json.dump(output, m2)
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
@@ -379,7 +359,7 @@ class TestSchemaUpdate(TestCase):
         }
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.gameta_v025'), join(f, '.gameta'))
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -393,7 +373,7 @@ class TestSchemaUpdate(TestCase):
         }
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.gameta_v025'), join(f, '.gameta'))
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -407,7 +387,7 @@ class TestSchemaUpdate(TestCase):
         }
         with self.runner.isolated_filesystem() as f:
             copyfile(join(dirname(__file__), 'data', '.gameta_full'), join(f, '.gameta'))
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -421,7 +401,7 @@ class TestSchemaUpdate(TestCase):
             'desired_version': '0.3.0'
         }
         with self.runner.isolated_filesystem() as f:
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -440,7 +420,7 @@ class TestSchemaUpdate(TestCase):
                 with open(join(f, '.gameta'), 'w') as m2:
                     del output['repositories']['gameta']['url']
                     json.dump(output, m2)
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
@@ -458,10 +438,25 @@ class TestSchemaUpdate(TestCase):
                 with open(join(f, '.gameta'), 'w') as m2:
                     output['version'] = test_params['curr_version']
                     json.dump(output, m2)
-            result = self.runner.invoke(self.update, ["-v", test_params['desired_version']])
+            result = self.runner.invoke(self.update, ["-s", test_params['desired_version']])
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
                 f"Error: Current version of .gameta file ({test_params['curr_version']}) "
                 f"is not supported by gameta version {__version__}\n"
+            )
+
+
+class TestSchemaLs(TestCase):
+    def setUp(self) -> None:
+        self.runner = CliRunner()
+        self.ls = ls
+
+    def test_schema_ls_all(self):
+        with self.runner.isolated_filesystem() as f:
+            result = self.runner.invoke(self.ls)
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Supported schema versions: 0.2.5, 0.3.0\n"
             )
