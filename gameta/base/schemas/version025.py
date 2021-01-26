@@ -10,6 +10,8 @@ class Version025Schema(Schema):
     """
     Schema for Gameta schema version 0.2.5
     """
+
+    @property
     def structures(self) -> Dict[str, Dict]:
         """
         Returns a set of dictionaries that structure input for each schema class object, containing all default values
@@ -31,10 +33,16 @@ v025: Version025Schema = Version025Schema(
         "type": "object",
         "properties": {
             "repositories": {
-                "$ref": "#/definitions/repositories"
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/definitions/repositories"
+                }
             },
             "commands": {
-                "$ref": "#/definitions/commands"
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/definitions/commands"
+                }
             },
             "constants": {
                 "$ref": "#/definitions/constants"

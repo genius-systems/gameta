@@ -288,6 +288,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.gameta'), 'w') as m:
                 output = {
+                    "version": __version__,
                     'repositories': {
                         'test': 'malformed_metafile'
                     },
@@ -374,6 +375,7 @@ class TestGametaContext(TestCase):
         with self.runner.isolated_filesystem() as f:
             with open(join(f, '.gameta'), 'w') as m:
                 output = {
+                    "version": __version__,
                     "commands": {
                         'hello_world': {
                             'commands': ['git fetch --all --tags --prune', 'git pull'],
@@ -465,6 +467,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -565,6 +568,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -709,6 +713,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -854,6 +859,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1015,6 +1021,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1165,6 +1172,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1237,6 +1245,7 @@ class TestGametaContext(TestCase):
             self.assertCountEqual(
                 self.context.gameta_data,
                 {
+                    "version": __version__,
                     "repositories": {
                         "gameta": {
                             "url": "https://github.com/testing/gameta.git",
@@ -1619,6 +1628,7 @@ class TestGametaContext(TestCase):
             with open('.gameta', 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1668,6 +1678,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1717,6 +1728,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -1770,6 +1782,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",
@@ -1825,6 +1838,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",
@@ -1883,6 +1897,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",
@@ -1942,6 +1957,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",
@@ -2015,6 +2031,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",
@@ -2089,6 +2106,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/testing/gameta.git",
@@ -2148,6 +2166,7 @@ class TestGametaContext(TestCase):
             with open(join(f, '.gameta'), 'w') as m:
                 json.dump(
                     {
+                        "version": __version__,
                         "repositories": {
                             "gameta": {
                                 "url": "https://github.com/test/gameta.git",

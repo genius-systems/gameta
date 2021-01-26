@@ -42,9 +42,7 @@ class Schema(object):
         """
         self.version: str = version
         self.__schema: Dict = schema
-        self.__validators: Dict[str, Draft7Validator] = {
-            'gameta': Draft7Validator(self.__schema)
-        }
+        self.__validators: Dict[str, Draft7Validator] = {'gameta': Draft7Validator(self.__schema)}
         self.__validators.update({k: Draft7Validator(v) for k, v in self.__schema['definitions'].items()})
         self.__reserved_params: Dict[str, List[str]] = {
             p: list(self.schema['definitions'][p]['properties'].keys())

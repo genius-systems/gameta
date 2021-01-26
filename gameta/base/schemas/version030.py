@@ -2,8 +2,6 @@ from typing import Dict
 
 from .schema import Schema
 
-from gameta import __version__
-
 
 __all__ = ['v030']
 
@@ -38,33 +36,36 @@ v030: Version030Schema = Version030Schema(
         "type": "object",
         "properties": {
             "version": {
-                "$ref": "#/definitions/version"
+                "type": "string",
+                "pattern": "^([0-9]+.){2}([0-9]+[ab]?[0-9]?)$"
             },
             "virtualenvs": {
                 "$ref": "#/definitions/virtualenvs"
             },
             "repositories": {
-                "$ref": "#/definitions/repositories"
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/definitions/repositories"
+                }
             },
             "commands": {
-                "$ref": "#/definitions/commands"
+                "type": "object",
+                "additionalProperties": {
+                    "$ref": "#/definitions/commands"
+                }
             },
             "constants": {
                 "$ref": "#/definitions/constants"
             },
             "required": [
-                "version", "repositories"
+                "version"
             ]
         },
         'definitions': {
-            "version": {
-                "type": "string",
-                "pattern": "^([0-9].){2}([0-9]){1}(.?[ab0-9]){1}?$"
-            },
             "virtualenvs": {
                 "type": "object",
                 "propertyNames": {
-                    "pattern": "^[a-zA-Z0-9_-]"
+                    "pattern": "^[a-zA-Z0-9_-]+$"
                 },
                 "additionalProperties": {
                     "type": "string"
@@ -144,7 +145,7 @@ v030: Version030Schema = Version030Schema(
             "constants": {
                 "type": "object",
                 "propertyNames": {
-                    "pattern": "^[$A-Z0-9_-]"
+                    "pattern": "^\$?[A-Z0-9_-]+$"
                 }
             }
         }

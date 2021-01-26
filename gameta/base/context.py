@@ -11,7 +11,7 @@ import click
 
 from gameta import __version__
 
-from .schemas import schema_versions, Schema, get_schema_version
+from .schemas import supported_versions, Schema, get_schema_version
 
 
 __all__ = [
@@ -309,14 +309,15 @@ class GametaContext(object):
         # Retrieve validation schemas
         try:
             self.version = self.gameta_data['version']
-            self.schema = schema_versions[self.schema_version]
+            self.schema = supported_versions[self.schema_version]
         except Exception as e:
             self.version = __version__
-            self.schema = schema_versions[self.schema_version]
+            self.schema = supported_versions[self.schema_version]
             click.echo(
                 f"Could not retrieve schema version, defaulting to latest Gameta schema version, "
                 f"error: {e.__class__.__name__}.{str(e)}"
             )
+            click.echo("To debug this issue, run `gameta schema validate`")
 
         # Validate repositories
         try:
