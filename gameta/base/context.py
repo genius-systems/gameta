@@ -11,7 +11,7 @@ import click
 
 from gameta import __version__
 
-from .schemas import supported_versions, Schema, get_schema_version
+from .schemas import supported_versions, Schema, to_schema_tuple
 
 
 __all__ = [
@@ -255,7 +255,7 @@ class GametaContext(object):
         Returns:
             Tuple[int, int, int]: Tuple of schema parameters
         """
-        return get_schema_version(version)
+        return to_schema_tuple(version)
 
     def add_gitignore(self, path: str) -> None:
         """

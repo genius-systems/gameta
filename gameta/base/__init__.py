@@ -1,11 +1,11 @@
 
-from .schemas import supported_versions, get_schema_version, Schema
+from .schemas import supported_versions, to_schema_tuple, Schema, to_schema_str
 from .context import GametaContext, gameta_context
 
 
 __all__ = [
     # Schemas
-    'supported_versions', 'Schema', 'get_schema_version',
+    'supported_versions', 'Schema', 'to_schema_tuple', 'to_schema_str',
 
     # Context
     'GametaContext', 'gameta_context'

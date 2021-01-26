@@ -7,8 +7,9 @@ import click
 from jsonschema import Draft7Validator, ValidationError
 
 from gameta import __version__
+from gameta.base.schemas.schema import to_schema_str
 from gameta.cli import gameta_cli
-from gameta.base import supported_versions, Schema, get_schema_version
+from gameta.base import supported_versions, Schema, to_schema_tuple
 
 
 __all__ = ['schema_cli']
@@ -57,13 +58,13 @@ def validate(path: str, verbose: bool, version: str) -> None:
         )
 
     # Handle case where gameta version does not support schema context
-    if get_schema_version(gameta_data['version']) not in supported_versions:
+    if to_schema_tuple(gameta_data['version']) not in supported_versions:
         raise click.ClickException(
             f"Gameta schema version {gameta_data['version']} is not supported by Gameta version {__version__}"
         )
 
     click.echo(f"Validating .gameta schema found in {gameta_path}")
-    schema: Schema = supported_versions[get_schema_version(gameta_data['version'])]
+    schema: Schema = supported_versions[to_schema_tuple(gameta_data['version'])]
     errors: Dict[str, Dict[str, str]] = {}
     validators: Dict[str, Draft7Validator] = schema.validators
 
@@ -121,7 +122,7 @@ def update(version: str, path: str) -> None:
         with open(gameta_path) as f:
             gameta_data: Dict = json.load(f)
         curr_version_str: str = gameta_data.get('version', '0.2.5')
-        curr_version: Tuple[int, int, int] = get_schema_version(curr_version_str)
+        curr_version: Tuple[int, int, int] = to_schema_tuple(curr_version_str)
     except Exception as e:
         raise click.ClickException(
             f"Could not load .gameta data from path {gameta_path} provided due to {e.__class__.__name__}.{str(e)}"
@@ -140,7 +141,7 @@ def update(version: str, path: str) -> None:
 
     # Extract desired schema
     try:
-        desired_version: Tuple[int, int, int] = get_schema_version(version)
+        desired_version: Tuple[int, int, int] = to_schema_tuple(version)
     except Exception:
         raise click.ClickException(f"Invalid version string {version} provided")
 
@@ -209,5 +210,5 @@ def ls() -> None:
     """
     click.echo(
         f"Supported schema versions: "
-        f"{', '.join(['.'.join([str(v) for v in version]) for version in supported_versions])}"
+        f"{', '.join([to_schema_str(version) for version in supported_versions])}"
     )

@@ -7,20 +7,38 @@ from typing import Dict, List, Tuple, Pattern
 from jsonschema import Draft7Validator
 
 
-__all__ = ['Schema', 'get_schema_version']
+__all__ = ['Schema', 'to_schema_tuple', 'to_schema_str']
 
 
 schema_expression: Pattern = re.compile(r'(?P<maj>[0-9]+)\.(?P<min>[0-9]+)\.(?P<patch>[0-9]+).*')
 
 
-def get_schema_version(version: str) -> Tuple[int, int, int]:
+def to_schema_tuple(version: str) -> Tuple[int, int, int]:
     """
-    Breaks down the schema version
+    Converts a schema version string into schema version tuple
+
+    Args:
+        version (str): Schema version string
 
     Returns:
-        Tuple[int, int, int]: Parsed schema version
+        Tuple[int, int, int]: Schema version tuple
     """
     return tuple(int(i) for i in schema_expression.search(version).groups())
+
+
+def to_schema_str(version: Tuple[int, int, int]) -> str:
+    """
+    Converts a schema version tuple into a schema version string
+
+    Args:
+        version (Tuple[int, int, int]): Schema version tuple
+
+    Returns:
+        str: Schema version string
+    """
+    if not version or any(not isinstance(i, int) for i in version):
+        raise TypeError("Invalid version")
+    return '.'.join(str(i) for i in version)
 
 
 class Schema(object):

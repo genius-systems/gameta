@@ -1,11 +1,11 @@
 from typing import Dict, Tuple
 
-from .schema import Schema, get_schema_version
+from .schema import Schema, to_schema_tuple, to_schema_str
 from .version025 import v025
 from .version030 import v030
 
 
-__all__ = ['supported_versions', 'get_schema_version', 'Schema']
+__all__ = ['supported_versions', 'to_schema_tuple', 'to_schema_str', 'Schema']
 
 
 supported_versions: Dict[Tuple[int, int, int], Schema] = {
