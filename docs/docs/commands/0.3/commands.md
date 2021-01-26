@@ -13,6 +13,7 @@ first argument. There are several subcommand groups:
 8. gameta exec
 9. gameta const
 10. gameta venv
+11. gameta schema
 
 ___
 **Note**
@@ -49,7 +50,8 @@ Syncs all child repositories specified in the .gameta file locally.
 
 ## gameta repo
 
-Repository subcommand group, contains the following commands:
+Repository subcommand group for managing repositories, contains the 
+following commands:
 
 1. gameta repo add
 2. gameta repo delete
@@ -103,7 +105,8 @@ Lists all repositories added
 
 ## gameta tags
 
-Tags subcommand group, contains the following commands:
+Tags subcommand group for managing repository tags, contains the 
+following commands:
 
 1. gameta tags add
 2. gameta tags delete
@@ -134,7 +137,8 @@ ___
 
 ## gameta params
 
-Parameters subcommand group, contains the following commands:
+Parameters subcommand group for adding repository parameters, contains 
+the following commands:
 
 1. gameta params add
 2. gameta params delete
@@ -271,7 +275,8 @@ ___
 
 ## gameta cmd
 
-Command subcommand group, contains the following commands:
+Command subcommand group for managing gameta commands, contains 
+the following commands:
 
 1. gameta cmd add
 2. gameta cmd delete
@@ -368,7 +373,8 @@ Executes a sequence of Gameta commands from the command store
 
 ## gameta const
 
-Constants subcommand group, contains the following commands:
+Constants subcommand group for managing Gameta constants, contains
+the following commands:
 
 1. gameta const add
 2. gameta const delete
@@ -438,7 +444,8 @@ ___
 
 ## gameta venv
 
-Virtualenv subcommand group, contains the following commands:
+Virtualenv subcommand group for managing virtual environments, 
+contains the following commands:
 
 1. gameta venv create
 2. gameta venv register
@@ -497,5 +504,59 @@ Unregisters an existing virtual environment in the .gameta file
 ### Arguments
 * **--name / -n**: Name of the virtual environment to be registered
 * --delete / -d: Deletes the virtual environment
+
+## gameta schema
+
+Schema subcommand group for validating and updating schemas, contains
+the following commands:
+
+1. gameta schema validate
+2. gameta schema update
+3. gameta schema ls
+
+### gameta schema validate
+
+Validates the .gameta file data according to a specified schema 
+version, printing all validation errors for debugging
+
+### Arguments
+* --path / -p: Absolute path to the .gameta file to be validated
+* --verbose / -v: Prints verbose error details
+* --schema-version / -s: Specified schema version, defaults to the 
+  latest gameta version installed
+  
+### gameta schema update
+
+Updates the .gameta file data to the specified schema version
+
+___
+**Note**
+   
+Does not support downgrading of .gameta file schema versions. 
+___
+___
+**Note**
+   
+This command can only be performed if the .gameta file data is 
+validated against the existing schema. Run `gameta schema validate`
+to fix all validation issues before updating
+___
+___
+**Note**
+   
+Users can only update the schema to a schema version that is 
+supported by the current gameta version, use `gameta schema ls` to
+list all supported schema versions
+___
+
+### Arguments
+* --path / -p: Absolute path to the .gameta file to be updated
+* --schema-version / -s: Specified schema version to be updated to, 
+  defaults to the latest gameta version installed 
+
+### gameta schema ls
+
+Lists all supported schema versions that this version of gameta
+supports
 
 [Applying Commands]: ../../user_guide/applying_commands.md
