@@ -2,7 +2,7 @@ import re
 
 from abc import abstractmethod
 from copy import deepcopy
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Pattern
 
 from jsonschema import Draft7Validator
 
@@ -10,7 +10,7 @@ from jsonschema import Draft7Validator
 __all__ = ['Schema', 'get_schema_version']
 
 
-schema_expression: re.Pattern = re.compile(r'(?P<maj>[0-9]+)\.(?P<min>[0-9]+)\.(?P<patch>[0-9]+).*')
+schema_expression: Pattern = re.compile(r'(?P<maj>[0-9]+)\.(?P<min>[0-9]+)\.(?P<patch>[0-9]+).*')
 
 
 def get_schema_version(version: str) -> Tuple[int, int, int]:
