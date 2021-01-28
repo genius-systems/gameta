@@ -12,7 +12,8 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.base.context import GametaContext, SHELL
+from gameta.base.context import GametaContext
+from gameta.base.command import SHELL, Command
 from gameta.apply import apply
 
 
@@ -640,7 +641,15 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            subprocess.check_output(context.virtualenv(params['venv'], ['pip3 install cryptography']))
+            subprocess.check_output(
+                Command(
+                    commands=['pip3 install cryptography'],
+                    parameters={},
+                    shell=False,
+                    python=False,
+                    venv=params['venv']
+                ).generate()
+            )
             result = self.runner.invoke(
                 self.apply,
                 [

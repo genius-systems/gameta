@@ -3,7 +3,7 @@ import shlex
 from abc import abstractmethod
 from contextlib import contextmanager
 from copy import deepcopy
-from os import getenv, getcwd, chdir, environ
+from os import getcwd, chdir, environ
 from os.path import join, basename, normpath, abspath
 from typing import Optional, List, Generator, Dict, Tuple, Union
 
@@ -11,6 +11,7 @@ import click
 
 from gameta import __version__
 
+from .command import Command
 from .schemas import supported_versions, Schema, to_schema_tuple
 
 
@@ -18,9 +19,6 @@ __all__ = [
     # Contexts
     'GametaContext', 'gameta_context',
 ]
-
-
-SHELL = getenv('SHELL', '/bin/sh')
 
 
 class File(object):
@@ -414,27 +412,21 @@ class GametaContext(object):
             None
         """
         repositories: List[Tuple[str, Dict[str, str]]] = [
-            (repo, details) for repo, details in self.repositories.items() if repo in repos
+            (repo, repo_details) for repo, repo_details in self.repositories.items() if repo in repos
         ]
 
-        for repo, details in repositories:
-            # Generate complete set of parameters for substitution
+        for repo, repo_details in repositories:
 
-            with self.cd(details['path']):
-                repo_commands: List[str] = [
-                    c.format(**self.generate_parameters(repo, details, python)) for c in deepcopy(commands)
-                ]
-                if venv is not None:
-                    command: List[str] = self.virtualenv(
-                        venv, self.python(repo_commands, shell=False) if python else repo_commands
-                    )
-                elif python:
-                    command: List[str] = self.python(repo_commands)
-                elif shell:
-                    command: List[str] = self.shell(repo_commands)
-                else:
-                    command: List[str] = self.tokenise(' && '.join(repo_commands))
-                yield repo, command
+            # Generate complete set of parameters for substitution
+            with self.cd(repo_details['path']):
+                with Command(
+                        commands,
+                        self.generate_parameters(repo, repo_details, python),
+                        shell,
+                        python,
+                        self.virtualenvs.get(venv)
+                ) as c:
+                    yield repo, c
 
     def generate_parameters(self, repo: str, repo_details: Dict, python: bool = False) -> Dict:
         """
@@ -469,19 +461,6 @@ class GametaContext(object):
         combined_details.update(self.env_vars)
         return combined_details
 
-    @staticmethod
-    def tokenise(command: str) -> List[str]:
-        """
-        Tokenises the commands into a form that is readily acceptable by subprocess
-
-        Args:
-            command (str): Constructed commands to be tokenised
-
-        Returns:
-            List[str]: Tokenised commands
-        """
-        return shlex.split(command)
-
     @contextmanager
     def cd(self, sub_directory: str) -> Generator[str, None, None]:
         """
@@ -498,49 +477,6 @@ class GametaContext(object):
         chdir(path)
         yield path
         chdir(cwd)
-
-    def shell(self, commands: List[str]) -> List[str]:
-        """
-        Prepares commands to be executed in a separate shell as subprocess does not natively handle piping
-
-        Args:
-            commands (List[str]): User-defined commands
-
-        Returns:
-            List[str]: Shell command string to be executed by subprocess
-        """
-        return self.tokenise(
-            f'{SHELL} -c "' +
-            ' && '.join(commands) +
-            '"'
-        )
-
-    def virtualenv(self, venv: str, commands: List[str]) -> List[str]:
-        """
-        Prepares commands to be executed by a virtualenv by sourcing it prior to execution
-
-        Args:
-            venv (str): Name of virtualenv to be activated
-            commands (List[str]): Python scripts or shell commands
-
-        Returns:
-            List[str]: Prepared commands to be executed by subprocess
-        """
-        return self.shell([f". {join(self.virtualenvs[venv], 'bin', 'activate')}"] + commands)
-
-    def python(self, commands: List[str], shell: bool = True) -> List[str]:
-        """
-        Prepares commands to be executed by the system Python interpreter via shell
-
-        Args:
-            commands List[str]: Python scripts
-            shell: Flag to indicate if shell should be used to generate the command
-
-        Returns:
-            List[str]: Python prepared commands to be executed by subprocess
-        """
-        commands: List[str] = ["python3 -c \'{}\'".format(command.replace('"', '\\\"')) for command in commands]
-        return self.shell(commands) if shell else commands
 
 
 gameta_context = click.make_pass_decorator(GametaContext, ensure=True)

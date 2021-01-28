@@ -58,6 +58,7 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
 
     from gameta.apply import apply
 
+    # Check if commands exist in the command store
     g_context: GametaContext = context.obj
     if any(c not in g_context.commands for c in commands):
         raise click.ClickException(
@@ -65,6 +66,7 @@ def execute(context: click.Context, commands: Tuple[str]) -> None:
             f"`gameta cmd add` to add it first"
         )
 
+    # Execute the commands
     try:
         click.echo(f"Executing {list(commands)}")
         for command in commands:

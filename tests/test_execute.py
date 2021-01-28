@@ -10,7 +10,8 @@ from unittest.mock import patch
 from click import Context
 from click.testing import CliRunner
 
-from gameta.base.context import GametaContext, SHELL
+from gameta.base.context import GametaContext
+from gameta.base.command import SHELL
 from gameta.execute import execute
 
 
