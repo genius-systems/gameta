@@ -97,9 +97,11 @@ def apply(
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
                 if verbose:
-                    click.echo(subprocess.check_output(c))
+                    with subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as cmd:
+                        for line in iter(cmd.stdout.readline, b''):
+                            click.echo(line.rstrip())
                 else:
-                    subprocess.check_output(c)
+                    subprocess.run(c, stderr=subprocess.STDOUT, check=True)
             except subprocess.SubprocessError as e:
                 if raise_errors:
                     raise click.ClickException(
