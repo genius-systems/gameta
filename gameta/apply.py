@@ -1,5 +1,4 @@
 import subprocess
-import sys
 from typing import List, Tuple
 
 import click
@@ -98,9 +97,11 @@ def apply(
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
                 if verbose:
-                    subprocess.run(c, stdout=sys.stdout, stderr=sys.stderr)
+                    with subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as cmd:
+                        for line in iter(cmd.stdout.readline, b''):
+                            click.echo(line.rstrip())
                 else:
-                    subprocess.run(c, stderr=sys.stderr)
+                    subprocess.run(c, stderr=subprocess.STDOUT, check=True)
             except subprocess.SubprocessError as e:
                 if raise_errors:
                     raise click.ClickException(
