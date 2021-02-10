@@ -659,7 +659,7 @@ class TestCommandAdd(TestCase):
     def test_command_add_shell_command_with_virtualenv(self, mock_ensure_object):
         params = {
             'name': 'hello_world',
-            'commands': ['pip install cryptography'],
+            'commands': ['pip install cryptography==3.3.2'],
             'description': 'Install cryptography into virtualenv test',
             'tags': [],
             'repositories': ['gameta'],
@@ -908,7 +908,7 @@ class TestCommandAdd(TestCase):
     def test_command_add_shell_command_with_nonexistent_virtualenv(self, mock_ensure_object):
         params = {
             'name': 'hello_world',
-            'commands': ['pip install cryptography'],
+            'commands': ['pip install cryptography==3.3.2'],
             'description': 'Install cryptography into virtualenv test',
             'tags': [],
             'repositories': ['gameta'],
