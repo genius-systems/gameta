@@ -65,7 +65,7 @@ gameta = "gameta.cli:gameta_cli"
 
 [tool.poetry.plugins."gameta.cli"]
 apply = "gameta.apply:apply"
-cmd = "gameta.cmd:cmd_cli"
+cmd = "gameta.cmd:command_cli"
 const = "gameta.constants:constants_cli"
 exec = "gameta.execute:execute"
 init = "gameta.init:init"
