@@ -312,7 +312,7 @@ class TestExec(TestCase):
         params = {
             'commands': ['hello_world', 'hello_world2'],
             'hello_world': {
-                'commands': ['pip3 install cryptography'],
+                'commands': ['pip3 install cryptography==3.3.2'],
                 'description': '',
                 'tags': [],
                 'repositories': [],

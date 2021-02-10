@@ -515,7 +515,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_shell_command_with_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip3 install cryptography=3.3.2'],
+            'commands': ['pip3 install cryptography==3.3.2'],
             'actual_repositories': ['gameta'],
             'venv': 'test',
             'directory': 'test'
@@ -656,7 +656,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_with_nonexistent_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip3 install cryptography=3.3.2'],
+            'commands': ['pip3 install cryptography==3.3.2'],
             'actual_repositories': ['gameta'],
             'invalid_venv': 'venv',
             'venv': 'test',
