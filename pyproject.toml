@@ -39,6 +39,7 @@ isolated_build = True
 envlist = py36,py37,py38,py39
 
 [testenv]
+download = true
 deps = -etests/cli_plugin
 commands = python -m unittest discover -v -s ./tests -t .
 
