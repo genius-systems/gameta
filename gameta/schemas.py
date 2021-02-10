@@ -8,14 +8,13 @@ from jsonschema import Draft7Validator, ValidationError
 
 from gameta import __version__
 from gameta.base.schemas.schema import to_schema_str
-from gameta.cli import gameta_cli
 from gameta.base import supported_versions, Schema, to_schema_tuple
 
 
 __all__ = ['schema_cli']
 
 
-@gameta_cli.group('schema')
+@click.group('schema')
 def schema_cli() -> None:
     """
     CLI for managing .gameta schemas

@@ -3,13 +3,12 @@ from typing import Tuple, Dict
 import click
 
 from gameta.base import GametaContext
-from gameta.cli import gameta_cli
 
 
 __all__ = ['execute']
 
 
-@gameta_cli.command("exec")
+@click.command("exec")
 @click.option('--command', '-c', 'commands', type=str, multiple=True, required=True,
               help='Gameta commands to be invoked')
 @click.pass_context

@@ -3,14 +3,13 @@ from typing import Tuple, Dict, Optional, Callable, Any
 
 import click
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['command_cli']
 
 
-@gameta_cli.group('cmd')
+@click.group('cmd')
 @gameta_context
 def command_cli(context: GametaContext) -> None:
     """

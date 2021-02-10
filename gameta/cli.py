@@ -1,8 +1,10 @@
 
 from os import getcwd, chdir
 from os.path import abspath
+from typing import Union
 
 import click
+import pkg_resources
 
 from gameta.base import gameta_context, GametaContext
 from gameta import __version__
@@ -45,12 +47,20 @@ def gameta_cli(context: GametaContext, project_dir: str, version: bool) -> None:
     context.load()
 
 
-from .init import *
-from .repos import *
-from .tags import *
-from .apply import *
-from .params import *
-from .cmd import *
-from .constants import *
-from .execute import *
-from .schemas import *
+def import_gameta_plugins(cli: click.Group) -> click.Group:
+    """
+    Imports the command line interfaces of all Gameta plugins into the system
+
+    Args:
+        cli (click.Group): Gameta command line interface
+
+    Returns:
+        click.Group: Gameta command line interface with plugin interfaces attached
+    """
+    for entry_point in pkg_resources.iter_entry_points('gameta.cli'):
+        cli.add_command(cmd=entry_point.load())
+
+    return cli
+
+
+gameta_cli = import_gameta_plugins(gameta_cli)

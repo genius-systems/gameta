@@ -6,14 +6,13 @@ from typing import Dict, Optional
 import click
 from git import Repo, GitError
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['repo_cli']
 
 
-@gameta_cli.group('repo')
+@click.group('repo')
 @gameta_context
 def repo_cli(context: GametaContext) -> None:
     """

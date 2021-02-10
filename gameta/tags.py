@@ -2,14 +2,13 @@ from typing import List, Dict, Tuple
 
 import click
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['tags_cli']
 
 
-@gameta_cli.group('tags')
+@click.group('tags')
 @gameta_context
 def tags_cli(context: GametaContext) -> None:
     """

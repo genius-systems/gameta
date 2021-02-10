@@ -515,7 +515,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_shell_command_with_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip3 install cryptography'],
+            'commands': ['pip3 install cryptography==3.3.2'],
             'actual_repositories': ['gameta'],
             'venv': 'test',
             'directory': 'test'
@@ -628,7 +628,7 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            subprocess.check_output(context.virtualenv(params['venv'], ['pip3 install cryptography']))
+            subprocess.check_output(context.virtualenv(params['venv'], ['pip3 install cryptography==3.3.2']))
             result = self.runner.invoke(
                 self.apply,
                 [
@@ -649,14 +649,13 @@ class TestApply(TestCase):
                 f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
                 f"{output[0][1][2]} in {params['actual_repositories'][0]}\n"
                 f"This is the decrypted message: {params['decrypted_message']}\n"
-                "\n"
             )
             self.assertTrue(all(i in listdir(f) for i in [params['encryption_file_name'], 'key']))
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_with_nonexistent_virtualenv(self, mock_ensure_object):
         params = {
-            'commands': ['pip3 install cryptography'],
+            'commands': ['pip3 install cryptography==3.3.2'],
             'actual_repositories': ['gameta'],
             'invalid_venv': 'venv',
             'venv': 'test',

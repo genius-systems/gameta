@@ -3,14 +3,13 @@ from typing import Union
 
 import click
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['constants_cli']
 
 
-@gameta_cli.group('const')
+@click.group('const')
 @gameta_context
 def constants_cli(context: GametaContext) -> None:
     """
