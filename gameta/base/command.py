@@ -1,5 +1,6 @@
 import shlex
 from copy import deepcopy
+from dataclasses import dataclass
 from os import getenv
 from os.path import join
 from types import TracebackType
@@ -12,26 +13,46 @@ __all__ = ['Command']
 SHELL = getenv('SHELL', '/bin/sh')
 
 
-class Command(object):
+@dataclass
+class Config:
     """
-    A generic base class for handling a set of commands, providing functionality to render the commands according to the
-    given configuration.
+    Holds the configuration parameters for each set of commands
 
     Attributes:
-        __commands (List[str]): List of pre-rendered commands
-        __parameters (Dict): Parameters to substitute into commands
-        use_shell (bool): Configuration flag to indicate if command should be executed in a separate shell
-        use_python (bool): Configuration flag to indicate if commands are to be executed as Python commands
-        venv (Optional[str]): Virtual environment path to render command with, if provided
+        python (bool): Use Python generator
+        shell (bool): Flag to indicate that shell generator should be used
+        venv (Optional[str]): Indicates that virtualenv generator should be used
     """
-    def __init__(self, commands: List[str], parameters: Dict, shell: bool, python: bool, venv: Optional[str] = None):
-        self.__commands: List[str] = commands
-        self.__parameters: Dict = parameters
+    python: bool
+    shell: bool
+    venv: Optional[str] = None
 
-        # Python subprocess does not handle multiple commands hence we need to execute them in a separate shell
-        self.use_shell: bool = True if len(self.__commands) > 1 else shell
-        self.use_python: bool = python
-        self.venv: Optional[str] = venv
+    def __getitem__(self, item):
+        return self.__dict__[item]
+
+
+class Command(object):
+    """
+    A generic base class for handling a set of commands, providing functionality to generate the commands according to
+    the given configuration.
+
+    Attributes:
+        commands (List[str]): List of pre-rendered commands
+        params (Dict): Parameters to substitute into commands
+        config (Config): Configuration class that holds all the relevant rendering configurations
+    """
+    def __init__(self, commands: List[str], params: Dict, shell: bool, python: bool, venv: Optional[str] = None):
+        self.commands: List[str] = commands
+        self.params: Dict = params
+        self.config: Config = Config(
+            **{
+                # Python subprocess does not handle multiple commands
+                # hence we need to execute these in a separate shell
+                'shell': True if len(self.commands) > 1 else shell,
+                'python': python,
+                'venv': venv
+            }
+        )
 
     def __enter__(self) -> List[str]:
         """
@@ -68,20 +89,23 @@ class Command(object):
         Returns:
             List[str]: Tokenised commands prepared for subprocess execution
         """
+        # Perform parameter substitutions
         substituted_commands: List[str] = self.substitute()
 
-        if self.venv:
-            if self.use_python:
+        # Prepare commands according to configuration provided
+        if self.config.venv:
+            if self.config.python:
                 prepared_command: str = self.shell(self.virtualenv(self.python(substituted_commands)))
             else:
                 prepared_command: str = self.shell(self.virtualenv(substituted_commands))
-        elif self.use_python:
+        elif self.config.python:
             prepared_command: str = self.shell(self.python(substituted_commands))
-        elif self.use_shell:
+        elif self.config.shell:
             prepared_command: str = self.shell(substituted_commands)
         else:
             prepared_command: str = ' && '.join(substituted_commands)
 
+        # Tokenise results for subprocess execution
         return self.tokenise(prepared_command)
 
     def substitute(self) -> List[str]:
@@ -91,7 +115,7 @@ class Command(object):
         Returns:
             List[str]: Set of commands post-substitution
         """
-        return [c.format(**self.__parameters) for c in deepcopy(self.__commands)]
+        return [c.format(**self.params) for c in deepcopy(self.commands)]
 
     def virtualenv(self, commands: List[str]) -> List[str]:
         """
@@ -103,9 +127,10 @@ class Command(object):
         Returns:
             List[str]: Prepared commands to be executed by subprocess
         """
-        return [f". {join(self.venv, 'bin', 'activate')}"] + commands
+        return [f". {join(self.config.venv, 'bin', 'activate')}"] + commands
 
-    def python(self, commands: List[str]) -> List[str]:
+    @staticmethod
+    def python(commands: List[str]) -> List[str]:
         """
         Prepares commands to be executed by the system Python interpreter via shell
 
@@ -120,7 +145,7 @@ class Command(object):
     @staticmethod
     def shell(commands: List[str]) -> str:
         """
-        Prepares commands to be executed in a separate shell as subprocess does not natively handle piping or mutiple
+        Prepares commands to be executed in a separate shell as subprocess does not natively handle piping or multiple
         commands
 
         Args:
