@@ -4,6 +4,7 @@ from os.path import join, dirname
 from unittest import TestCase
 from unittest.mock import patch
 
+import click
 from click.testing import CliRunner
 
 from gameta.base import GametaContext
@@ -28,3 +29,15 @@ class TestGametaCli(TestCase):
             result = self.runner.invoke(self.cli, ["-v"])
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(result.output, f"Gameta version: {__version__}\n")
+
+    def test_cli_all_gameta_plugins_loaded(self):
+        self.assertTrue(
+            isinstance(self.cli.get_command(c), click.BaseCommand) for c in
+            ['apply', 'cmd', 'const', 'exec', 'init', 'params', 'repo', 'schema', 'sync', 'tags', 'venv']
+        )
+
+    def test_cli_additional_plugins_loaded(self):
+        self.assertTrue(
+            isinstance(self.cli.get_command(c), click.BaseCommand) for c in
+            ['test']
+        )
