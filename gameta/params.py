@@ -4,19 +4,18 @@ from typing import Type, Optional, TypeVar
 
 import click
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
-__all__ = ['parameters_cli']
+__all__ = ['params_cli']
 
 
 T = TypeVar('T', int, float, str, bool, dict, list)
 
 
-@gameta_cli.group('params')
+@click.group('params')
 @gameta_context
-def parameters_cli(context: GametaContext) -> None:
+def params_cli(context: GametaContext) -> None:
     """
     CLI for managing parameters in metarepos
     \f
@@ -33,7 +32,7 @@ def parameters_cli(context: GametaContext) -> None:
         raise click.ClickException(f"{context.project_dir} is not a metarepo, initialise it with 'gameta init'")
 
 
-@parameters_cli.command()
+@params_cli.command()
 @click.option('--param', '-p', type=str, required=True, help="Parameter name to be added to all child repositories")
 @click.option('--type', '-t', 'ptype', type=click.Choice(['int', 'float', 'str', 'bool', 'dict', 'list']),
               default='str', help='Parameter type to be added')
@@ -108,7 +107,7 @@ def add(context: GametaContext, param: str, ptype: Optional[str], value: Optiona
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
 
 
-@parameters_cli.command()
+@params_cli.command()
 @click.option('--param', '-p', type=str, required=True,
               help="Parameter name to be deleted from all child repositories")
 @gameta_context

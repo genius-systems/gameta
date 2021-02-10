@@ -3,14 +3,13 @@ from typing import List, Tuple, Optional
 
 import click
 
-from .cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['apply']
 
 
-@gameta_cli.command()
+@click.command()
 @click.option('--command', '-c', 'commands', type=str, required=True, multiple=True, help='CLI Commands to be executed')
 @click.option('--tags', '-t', type=str, multiple=True, default=(), help='Repository tags to apply CLI commands to')
 @click.option('--repositories', '-r', type=str, multiple=True, default=(), help='Repositories to apply CLI commands to')

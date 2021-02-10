@@ -61,3 +61,16 @@ tox-pyenv = "^1.1.0"
 
 [tool.poetry.scripts]
 gameta = "gameta.cli:gameta_cli"
+
+[tool.poetry.plugins."gameta.cli"]
+apply = "gameta.apply:apply"
+cmd = "gameta.cmd:cmd_cli"
+const = "gameta.constants:constants_cli"
+exec = "gameta.execute:execute"
+init = "gameta.init:init"
+params = "gameta.params:params_cli"
+repo = "gameta.repos:repo_cli"
+schema = "gameta.schemas:schema_cli"
+sync = "gameta.sync:sync"
+tags = "gameta.tags:tags_cli"
+venv = "gameta.venv:venv_cli"

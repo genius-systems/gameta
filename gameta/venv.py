@@ -4,14 +4,13 @@ from shutil import rmtree
 
 import click
 
-from gameta.cli import gameta_cli
 from gameta.base import gameta_context, GametaContext
 
 
 __all__ = ['venv_cli']
 
 
-@gameta_cli.group("venv")
+@click.group("venv")
 @gameta_context
 def venv_cli(context: GametaContext):
     """
