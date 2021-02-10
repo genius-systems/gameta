@@ -649,7 +649,6 @@ class TestApply(TestCase):
                 f"Executing {SHELL} -c . {join(f, 'test', 'bin', 'activate')} && "
                 f"{output[0][1][2]} in {params['actual_repositories'][0]}\n"
                 f"This is the decrypted message: {params['decrypted_message']}\n"
-                "\n"
             )
             self.assertTrue(all(i in listdir(f) for i in [params['encryption_file_name'], 'key']))
 
