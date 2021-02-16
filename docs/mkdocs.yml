@@ -8,14 +8,26 @@ theme: readthedocs
 
 nav:
   - Home: index.md
-  - Metarepos: metarepos.md
   - Command Reference:
       - Version 0.3: commands/0.3/commands.md
       - Version 0.2 (Deprecated): commands/0.2/commands.md
       - Version 0.1 (Deprecated): commands/0.1/commands.md
   - User Guide:
-      - Applying Commands: user_guide/applying_commands.md
-      - Best Practices: user_guide/best_practices.md
+      - Repositories:
+          - Managing Repositories: user_guide/repositories/managing_repositories.md
+      - Execution Toolkit:
+          - Gameta Commands vs Gameta Scripts: user_guide/commands/commands_vs_scripts.md
+          - Parameter Substitution: user_guide/commands/command_execution.md
+          - Applying Gameta Commands: user_guide/commands/command_execution.md
+          - Executing Gameta Scripts: user_guide/commands/command_execution.md
+      - Customisation:
+          - Extending CLI Functionality: user_guide/customisation/extending_cli_functionality.md
+          - Adding VCS Systems: user_guide/customisation/adding_vcs_systems.md
+          - Adding Scripting Languages: user_guide/customisation/adding_scripting_languages.md
+      - Applications:
+          - Best Practices: user_guide/applications/best_practices.md
+          - Use Cases: user_guide/applications/use_cases.md
+  - Metarepos: metarepos.md
   - About:
       - Contributing: about/contributing.md
       - License: about/license.md
