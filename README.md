@@ -75,11 +75,9 @@ gameta sync
 ## Repository Management
 
 Gameta aims to provide a unifying set of functionalities to manage repositories of
-various kinds. Some of these include:
+various kinds. It presently supports the following VCS system(s):
 
 1. Git
-2. Mercurial (To be implemented)
-3. SVN (To be implemented)
 
 For more details on the various repository management functionality, see the 
 [Repository Management](https://genius-systems.github.io/gameta/user_guide/repositories/managing_repositories.md)

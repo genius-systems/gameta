@@ -17,7 +17,6 @@ nav:
           - Managing Repositories: user_guide/repositories/managing_repositories.md
       - Execution Toolkit:
           - Gameta Commands vs Gameta Scripts: user_guide/commands/commands_vs_scripts.md
-          - Parameter Substitution: user_guide/commands/parameter_substitution.md
           - Applying Gameta Commands: user_guide/commands/applying_commands.md
           - Executing Gameta Scripts: user_guide/commands/executing_scripts.md
       - Customisation:

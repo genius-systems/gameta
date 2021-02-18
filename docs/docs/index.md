@@ -75,11 +75,9 @@ gameta sync
 ## Repository Management
 
 Gameta aims to provide a unifying set of functionalities to manage repositories of
-various kinds. Some of these include:
+various kinds. It presently supports the following VCS system(s):
 
 1. Git
-2. Mercurial (To be implemented)
-3. SVN (To be implemented)
 
 For more details on the various repository management functionality, see the 
 [Repository Management] page.
@@ -151,7 +149,7 @@ Gameta commands only support the following parameter substitution methods:
 1. Repository parameter substitution
 2. Gameta constants substitution
 
-See the [Parameter Substitution] page for more details.
+See the [Applying Commands] page for more details.
 ___
 
 ```bash
@@ -260,9 +258,8 @@ extended.
 [Repository Management]: user_guide/repositories/managing_repositories.md
 [Applying Commands]: user_guide/commands/applying_commands.md
 [Commands vs Scripts]: user_guide/commands/commands_vs_scripts.md
-[Parameter Substitution]: user_guide/commands/parameter_substitution.md
 [Gameta Scripts]: user_guide/commands/executing_scripts.md
-[parameter substitution]: user_guide/commands/parameter_substitution.md
+[parameter substitution]: user_guide/commands/executing_scripts.md
 [Use Cases]: user_guide/applications/use_cases.md
 [Best Practices]: user_guide/applications/best_practices.md
 [Extending CLI Functionality]: user_guide/customisation/extending_cli_functionality.md
