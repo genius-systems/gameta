@@ -16,7 +16,7 @@ storing shell commands that are regularly executed and do not require the
 development of an entire script.
 
 Gameta Commands enable users to compose, store, reuse and customise these
-short CLI commands into script-like functionality. This enables you to 
+short CLI commands into scriptlets. This enables you to 
 easily construct simple, portable scripts to manage your repositories. 
 
 Supposing that you normally run the following commands to build and 
@@ -211,18 +211,20 @@ AWS_SECRET_KEY=YYY \
 gameta exec generate_key build_script
 ```
 
-See the [Executing Scripts] and [Use Cases] pages for more details on how to
-use Gameta Scripts.
+See the [Executing Scripts] and [Use Cases] pages for more details on how to use Gameta Scripts.
 
 ## Comparing Gameta Commands vs Gameta Scripts
 
-The table below summarises the differences between Gameta Commands and Gameta
-Scripts:
+The table below summarises the differences between Gameta Commands and Gameta Scripts:
 
 | Aspect        | Gameta Commands | Gameta Scripts  |
 | ------------- | ----------------- | --------------- |
 | Purpose       | Simple shell commands | Complex programmes |
-| Parameter 
+| Parameter Substitution | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li></ul> | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li><li>Bash Commands</li><li>Or logic</li></ul>
+| Substitution Format | Single curly braces "{ }" </br> | Double curly braces "{{ }}" |
+| Execution | `gameta exec -c cmd` | `gameta exec script` |  
+| Storage | Inside `.gameta` JSON file | Under `.gameta/scripts` |
+
 
 [Applying Commands]: applying_commands.md
 [Use Cases]: ../applications/use_cases.md
