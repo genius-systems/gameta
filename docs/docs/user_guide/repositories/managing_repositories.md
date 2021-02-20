@@ -28,14 +28,14 @@ supported operations.
 Gameta provides functionality to initialise local repositories. This can be done
 with the command below:
 
-```bash
+```shell
 gameta repo init
 ```
 
 You will have to update the repository URL manually later with the following 
 command:
 
-```bash
+```shell
 gameta repo update -u "http://url/of/repo"
 ```
 
@@ -53,7 +53,7 @@ of these, Gameta also provides other common VCS operations so users can handle
 basic VCS workflows with Gameta. The following commands illustrates a VCS workflow
 handled by Gameta:
 
-```bash
+```shell
 # Lists all available branches
 gameta repo branch ls
 
@@ -78,6 +78,5 @@ gameta repo branch delete test_branch
 
 All of these functionalities are housed under the `gameta repo` command group, see
 [Commands] for the full set of repository management operations.
-
 
 [Commands]: ../../commands/0.3/commands.md

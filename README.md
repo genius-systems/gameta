@@ -24,7 +24,7 @@ only tested in Linux environments.
 
 Gameta can be easily installed and updated via pip:
 
-```bash
+```shell
 $ pip install gameta  # install
 $ pip install -U gameta  # update
 ```
@@ -33,7 +33,7 @@ $ pip install -U gameta  # update
 
 Getting started is really easy.
 
-```bash
+```shell
 gameta init
 ```
 
@@ -68,7 +68,7 @@ within the `.gameta` folder.
 If your workspace contains a `.gameta` folder and a `.gameta` JSON file, simply run
 the following command to sync all linked repositories locally:
 
-```bash
+```shell
 gameta sync
 ```
 
@@ -138,7 +138,7 @@ See the
 page for more details:
 ___
 
-```bash
+```shell
 gameta apply -a -c "git fetch --all --tags --prune" -c "git merge"
 ```
 
@@ -149,7 +149,7 @@ The command above does the following to all repositories:
 
 Users can store Gameta commands and execute them.
 
-```bash
+```shell
 # Adds a new Gameta command named 'update_source'
 gameta cmd add \
   -n update_source \                              # Name of the command
@@ -176,33 +176,51 @@ workflow.
 
 Supposing one has this existing build script that builds a simple C++ programme:
 
-```bash
+```shell
 #!/bin/bash
 
 mkdir build && cd build
 cmake ../ && make && make install
 ```
 
-To utilise this script as a Gameta script, we must first register it before we 
-can execute it:
+To utilise this script as a Gameta script, we must first register it:
 
-```bash
+```shell
 # Register the script
 gameta scripts register \
   -n build_script \         # Name of the script
-  -c linux.build            # Category of the script
-  -d "Builds on Linux"      # A brief description of the script
-  -l shell                  # Language that the script is written in
+  -c linux.build  \         # Category of the script
+  -d "Builds on Linux" \    # A brief description of the script
+  -l shell \                # Language that the script is written in
+  -p current/path/to/script # Path where the script is currently stored
+```
 
+This will create a copy of the script in the `.gameta` folder under the scripts
+folder:
+
+```
+.gameta
+|--> .gameta  # File for storing Gameta configuration
+|--> scripts  # Folder for storing Gameta scripts
+     |--> linux
+          |--> build
+               |--> build_script.sh
+|--> configs  # Folder for storing user-defined configurations
+```
+
+To execute this script, run the following command:
+
+```shell
 # Execute the script
 gameta exec build_script
 ```
 
 You can also leverage Gameta's powerful 
 [parameter substitution](https://genius-systems.github.io/gameta/user_guide/commands/parameter_substitution.md)
-functionality to customise the build script for different purposes:
+functionality to customise the build script in the `.gameta/scripts/linux/build` 
+folder for different purposes:
 
-```bash
+```shell
 #!/bin/bash
 
 mkdir build && cd build
@@ -215,14 +233,14 @@ mkdir build && cd build
 cmake ../ {{ compiler_flags | existing_config | }} && make && make install
 ```
 
-```bash
+```shell
 # Updates the Gameta script with a parameter for substitution
 gameta scripts register \
-  -n build_script \           # Name of the script
-  -c linux.build              # Category of the script
-  -d "Builds on Linux"        # A brief description of the script
-  -l shell                    # Language that the script is written in
-  -p compiler_flags,-DDEBUG   # Registers the compiler_flags parameter with a default value
+  -n build_script \              # Name of the script
+  -c linux.build  \              # Category of the script
+  -d "Builds on Linux" \         # A brief description of the script
+  -l shell \                     # Language that the script is written in
+  --param compiler_flags,-DDEBUG # Registers the compiler_flags parameter with a default value
 
 # Execute the script with user customised behaviour
 gameta exec build_script -p compiler_flags=-DTEST_FLAG1,-DTEST_FLAG2

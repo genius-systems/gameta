@@ -165,13 +165,13 @@ Environment variables parameters are acceptable parameter values. These paramete
 values will be substituted by the appropriate environment variables. For example 
 the following `gameta params` command below is acceptable:
 
-```bash
+```shell
 gameta params add -p branch -y -v '${BITBUCKET_BRANCH}'
 ```
 
 This will result in the configuration below:
 
-```JSON
+```json
 {
   "projects": {
     "gameta": {
@@ -250,7 +250,7 @@ ___
 Python scripts are entered as is, use `''` to help enter multi-line Python scripts and
 handle imports. This approach also works for more complex shell scripts. An example is
 provided below.
-```
+```shell
 gameta apply -p -c '
 from os import getcwd
 print(getcwd())
@@ -399,7 +399,7 @@ automatically substituted with the corresponding environment variables extracted
 from the environment i.e. the resultant substitution from the constant store and
 run-time environment configuration below is `world`.
 
-```JSON
+```json
 {
   "constants": {
     "$BRANCH": "hello"
@@ -407,7 +407,7 @@ run-time environment configuration below is `world`.
 }
 ``` 
 
-```bash
+```shell
 export BRANCH=world
 ```
 ___

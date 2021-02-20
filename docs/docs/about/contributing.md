@@ -27,7 +27,7 @@ want to provide feedback for a new feature or want to confirm if a bug you
 have encountered is fixed in the git master. It is **strongly** recommended
 that you do this within a [virtualenv].
 
-```bash
+```shell
 pip install git+https://github.com/genius-systems/gameta.git@master
 ```
 
@@ -37,7 +37,7 @@ First you'll need to fork and clone the repository. Once you have a local
 copy, run the following command. It is **strongly** recommended that you do
 this within a [virtualenv].
 
-```bash
+```shell
 pip install --editable .
 ```
 

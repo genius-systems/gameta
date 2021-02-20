@@ -10,7 +10,7 @@ repositories. There are 3 parts to this section:
 ## Applying CLI Commands Directly
 
 Gameta can be used to execute a CLI command directly with `gameta apply`. This
-is useful when you want to execute a CLI command over various repositories or
+is useful when you want to execute CLI commands over various repositories or
 configure it before execution. 
 
 By default, Gameta applies CLI commands to only the main repository. It also 
@@ -55,7 +55,7 @@ following .gameta file:
 If you only want to build the Python repositories tagged with the 'extension' tag, 
 you can run the following command:
 
-```bash
+```shell
 gameta apply -c "python setup.py sdist bdist_wheel" -t git
 ```
 
@@ -65,7 +65,7 @@ Users can apply a CLI command directly to a specified set of repositories, witho
 needing to create tags. The same effect as described above can be achieved with
 the following command:
 
-```bash
+```shell
 gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 ```
 
@@ -74,7 +74,7 @@ gameta apply -c "python setup.py sdist bdist_wheel" -r GitPython -r gitdb
 Users can apply a CLI command to all repositories managed by Gameta with the 
 `--all / -a` flag:
 
-```bash
+```shell
 gameta apply -c "python setup.py sdist bdist_wheel" -a
 ```
 
@@ -350,13 +350,13 @@ the name `hello`.
 
 Run the following to invoke `hello`:
 
-```bash
+```shell
 gameta exec -c hello 
 ``` 
 
 Multiple Gameta commands can be stored and executed in sequence:
 
-```bash
+```shell
 gameta exec -c hello -c world
 ```
 
