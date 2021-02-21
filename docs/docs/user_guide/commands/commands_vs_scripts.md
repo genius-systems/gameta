@@ -221,7 +221,7 @@ The table below summarises the differences between Gameta Commands and Gameta Sc
 | ------------- | ----------------- | --------------- |
 | Purpose       | Simple shell commands | Complex programmes |
 | Parameter Substitution | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li></ul> | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li><li>Bash Commands</li><li>Or logic</li></ul>
-| Substitution Format | Single curly braces "{ }" </br> | Double curly braces "{{ }}" |
+| Substitution Format | Single curly braces "{ }" | Double curly braces "{{ }}" |
 | Execution | `gameta exec -c cmd` | `gameta exec script` |  
 | Storage | Inside `.gameta` JSON file | Under `.gameta/scripts` |
 
