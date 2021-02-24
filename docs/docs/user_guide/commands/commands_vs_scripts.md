@@ -4,11 +4,11 @@ This section introduces the various command execution features of Gameta,
 including the subtle differences between them. It comprises the following 
 parts:
 
-1. Gameta Commands
-2. Gameta Scripts
+1. Introducing Gameta Commands
+2. Introducing Gameta Scripts
 3. Comparing Gameta Commands and Gameta Scripts
 
-## Gameta Commands
+## Introducing Gameta Commands
 
 Gameta Commands are a lightweight means of storing and executing simple
 shell commands that do not require much customisation. They are useful for 
@@ -114,12 +114,12 @@ gameta exec -c build_distribute_pipeline
 See the [Applying Commands] and [Use Cases] pages for more details on how to use 
 Gameta Commands.
 
-## Gameta Scripts
+## Introducing Gameta Scripts
 
-Gameta Scripts enable you to create scripts with complex logic to manage your 
-operations. Gameta scripts supports multiple languages i.e. you can write them
-your preferred programming language (shell, Python, JavaScript, Lua...) and 
-Gameta will handle the execution for you.
+Gameta Scripts is a language agnostic script executor that enables you to create 
+scripts with complex logic to manage your operations. Gameta scripts supports 
+multiple languages i.e. you can write them your preferred programming language 
+(shell, Python, JavaScript, Lua...) and Gameta will handle the execution for you.
 
 ---
 **Note**
@@ -220,6 +220,7 @@ The table below summarises the differences between Gameta Commands and Gameta Sc
 | Aspect        | Gameta Commands | Gameta Scripts  |
 | ------------- | ----------------- | --------------- |
 | Purpose       | Simple shell commands | Complex programmes |
+| Parameterisation | Not supported | Supported |
 | Parameter Substitution | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li></ul> | <ul><li>Repository Parameters</li><li>Gameta Constants</li><li>Environment Variables</li><li>Bash Commands</li><li>Or logic</li></ul>
 | Substitution Format | Single curly braces "{ }" | Double curly braces "{{ }}" |
 | Execution | `gameta exec -c cmd` | `gameta exec script` |  

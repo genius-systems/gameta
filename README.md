@@ -192,7 +192,7 @@ gameta scripts register \
   -c linux.build  \         # Category of the script
   -d "Builds on Linux" \    # A brief description of the script
   -l shell \                # Language that the script is written in
-  -p current/path/to/script # Path where the script is currently stored
+  -p current/path/to/script # Relative path where the script is currently stored
 ```
 
 This will create a copy of the script in the `.gameta` folder under the scripts
