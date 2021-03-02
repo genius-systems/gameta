@@ -107,8 +107,6 @@ class TestApply(TestCase):
                     '--command', params['commands'][3],
                 ]
             )
-            print(result.output)
-            print(result.exit_code)
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
                 result.output,
