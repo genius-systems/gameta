@@ -2061,7 +2061,6 @@ class TestCommandExec(TestCase):
                     '-c', params['commands'][2],
                 ]
             )
-            print(result.output)
             output = [c for c in context.obj.apply(params['hello_world3']['commands'], python=True)][0][1]
             self.assertEqual(result.exit_code, 0)
             self.assertEqual(
@@ -2121,3 +2120,79 @@ class TestCommandExec(TestCase):
             self.assertTrue(exists(join(f, params['encryption_file_name'])))
             with open(join(f, params['encryption_file_name']), 'r') as e:
                 self.assertEqual(len(e.read()), params['key_len'])
+
+    @patch('gameta.cli.click.core.Context')
+    def test_command_exec_command_failed(self, mock_context):
+        params = {
+            'commands': ['hello_world'],
+            'hello_world': {
+                'commands': ['rm test'],
+                'description': '',
+                'tags': ['a', 'b'],
+                'repositories': ['gameta'],
+                'verbose': False,
+                'shell': False,
+                'python': False,
+                'raise_errors': True
+            },
+            'actual_repositories': ['GitPython', 'gameta', 'gitdb']
+
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.meta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.meta'), 'w') as m2:
+                    output['commands'] = {}
+                    output['commands']['hello_world'] = params['hello_world']
+                    json.dump(output, m2)
+            gameta_context = GametaContext()
+            gameta_context.project_dir = f
+            gameta_context.load()
+            context = Context(exec, obj=gameta_context)
+            mock_context.return_value = context
+            result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Executing {params['commands']}\n"
+                f"Executing Gameta command {params['commands'][0]}\n"
+                f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
+                f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
+                f"occurred when executing command ['rm', 'test'] in gameta\n"
+            )
+            self.assertTrue(exists(join(f, '.meta')))
+            with open(join(f, '.meta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        'projects': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': params['hello_world']
+                        }
+                    }
+                )
