@@ -58,41 +58,42 @@ def apply(
     Raises:
         click.ClickException: If errors occur during processing
     """
-    try:
-        repos: List[str] = sorted(
-            list(
-                set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
-                set([repo for repo in repositories if repo in context.repositories])
-            )
+    repos: List[str] = sorted(
+        list(
+            set([repo for tag in tags for repo in context.tags.get(tag, [])]) |
+            set([repo for repo in repositories if repo in context.repositories])
+        )
+    )
+
+    if python:
+        try:
+            for command in commands:
+                compile(command, 'test', 'exec')
+        except SyntaxError:
+            raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
+
+    # Python subprocess does not handle multiple commands
+    # hence we need to handle it in a separate shell
+    if len(commands) > 1:
+        click.echo("Multiple commands detected, executing in a separate shell")
+        shell = True
+
+    if shell:
+        click.echo(
+            f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())} "
+            f"in a separate shell"
+        )
+    elif python:
+        click.echo(
+            f"Applying Python commands {list(commands)} to repos "
+            f"{repos if repos else list(context.repositories.keys())} in a separate shell"
+        )
+    else:
+        click.echo(
+            f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
         )
 
-        if python:
-            try:
-                for command in commands:
-                    compile(command, 'test', 'exec')
-            except SyntaxError:
-                raise click.ClickException(f"One of the commands in {list(commands)} is not a valid Python script")
-
-        # Python subprocess does not handle multiple commands
-        # hence we need to handle it in a separate shell
-        if len(commands) > 1:
-            click.echo("Multiple commands detected, executing in a separate shell")
-            shell = True
-
-        if shell:
-            click.echo(
-                f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())} "
-                f"in a separate shell"
-            )
-        elif python:
-            click.echo(
-                f"Applying Python commands {list(commands)} to repos "
-                f"{repos if repos else list(context.repositories.keys())} in a separate shell"
-            )
-        else:
-            click.echo(
-                f"Applying {list(commands)} to repos {repos if repos else list(context.repositories.keys())}"
-            )
+    try:
         for repo, c in context.apply(list(commands), repos=repos, shell=shell, python=python):
             click.echo(f"Executing {' '.join(c)} in {repo}")
             try:
@@ -100,15 +101,20 @@ def apply(
                     with subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as cmd:
                         for line in iter(cmd.stdout.readline, b''):
                             click.echo(line.rstrip())
+                        return_code: int = cmd.poll()
+                        if return_code:
+                            raise subprocess.CalledProcessError(return_code, cmd.args)
                 else:
                     subprocess.run(c, stderr=subprocess.STDOUT, check=True)
-            except subprocess.SubprocessError as e:
+            except subprocess.CalledProcessError as e:
                 if raise_errors:
-                    raise click.ClickException(
-                        f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {" ".join(c)} in {repo}'
+                    exception: click.ClickException = click.ClickException(
+                        f'{e.__class__.__name__}.{str(e)} occurred when executing command {e.cmd} in {repo}'
                     )
+                    exception.exit_code = e.returncode
+                    raise exception
                 click.echo(
-                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {" ".join(c)} in {repo}, '
+                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {e.cmd} in {repo}, '
                     f'continuing execution'
                 )
     except click.ClickException:

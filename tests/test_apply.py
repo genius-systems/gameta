@@ -453,7 +453,6 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
 
-            output = [c for c in context.apply(params['commands'], python=True)]
             result = self.runner.invoke(
                 self.apply, [
                     '--command', params['commands'][0],
@@ -470,7 +469,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_raise_errors(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', )
+            'commands': ['git fetch --all --tags --prune', ]
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -485,8 +484,62 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e'])
-            print(result.output)
+            self.assertTrue(result.exit_code in [128, 1])
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_failed_to_execute(self, mock_ensure_object):
+        params = {
+            'commands': ['rm test', ],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb'],
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e'])
             self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing rm test in {params['actual_repositories'][0]}\n"
+                f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
+                f"occurred when executing command ['rm', 'test'] in gameta\n"
+            )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_failed_to_execute_verbose(self, mock_ensure_object):
+        params = {
+            'commands': ['rm test', ],
+            'actual_repositories': ['gameta', 'GitPython', 'gitdb'],
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            copyfile(join(dirname(__file__), 'data', '.meta_other_repos'), join(f, '.meta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e', '-v'])
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing rm test in {params['actual_repositories'][0]}\n"
+                "rm: cannot remove 'test': No such file or directory\n"
+                f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
+                f"occurred when executing command ['rm', 'test'] in gameta\n"
+            )
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_verbose(self, mock_ensure_object):

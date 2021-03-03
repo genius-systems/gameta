@@ -379,5 +379,7 @@ def exec(context: click.Context, commands: Tuple[str]) -> None:
         for command in commands:
             click.echo(f"Executing Gameta command {command}")
             context.invoke(apply, **get_command(command))
+    except click.ClickException:
+        raise
     except Exception as e:
         raise click.ClickException(f"{e.__class__.__name__}.{str(e)}")
