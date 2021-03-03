@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: Test
-          command: git --version && tox
+          command: tox
   docs:
     docker:
       - image: "fkrull/multi-python:bionic"
