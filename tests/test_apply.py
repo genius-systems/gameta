@@ -469,7 +469,7 @@ class TestApply(TestCase):
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_raise_errors(self, mock_ensure_object):
         params = {
-            'commands': ('git fetch --all --tags --prune', )
+            'commands': ['./bash-127.sh']
         }
         with self.runner.isolated_filesystem() as f:
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
@@ -484,7 +484,7 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e'])
-            self.assertEqual(result.exit_code, 128)
+            self.assertEqual(result.exit_code, 127)
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_command_failed_to_execute(self, mock_ensure_object):
