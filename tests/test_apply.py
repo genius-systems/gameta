@@ -15,6 +15,7 @@ from gameta.apply import apply
 
 class TestApply(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.apply = apply
 
@@ -531,6 +532,7 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e', '-v'])
+            print(result.output)
             self.assertEqual(result.exit_code, 1)
             self.assertEqual(
                 result.output,
