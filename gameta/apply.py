@@ -107,6 +107,7 @@ def apply(
                 else:
                     subprocess.run(c, stderr=subprocess.STDOUT, check=True)
             except subprocess.CalledProcessError as e:
+                print(type(e))
                 if raise_errors:
                     exception: click.ClickException = click.ClickException(
                         f'{e.__class__.__name__}.{str(e)} occurred when executing command {e.cmd} in {repo}'
