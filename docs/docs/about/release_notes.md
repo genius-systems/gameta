@@ -20,6 +20,11 @@ The current members of the Gameta team.
 
 * [@darkvariantdivine](https://github.com/darkvariantdivine/)
 
+## Version 0.2.7 (2021-03-01)
+
+* Hotfixes for various issues:
+  * Raise appropriate error codes [link](https://github.com/genius-systems/gameta/issues/54)
+
 ## Version 0.2.6 (2021-01-28)
 
 * Hotfixes for various issues:
