@@ -5,6 +5,7 @@ parts:
 
 1. Introducing Gameta Scripts
 2. Using Gameta Scripts
+3. Parameter substitution
 
 ## Introducing Gameta Scripts
 
@@ -61,21 +62,6 @@ public_pem = public_key.public_bytes(
 )
 with open('public_key.pem', 'wb') as f:
     f.write(public_pem)
-
-
-with open("private_key.pem", "rb") as key_file:
-    private_key = serialization.load_pem_private_key(
-        key_file.read(),
-        password=None,
-        backend=default_backend()
-    )
-
-with open("public_key.pem", "rb") as key_file:
-    public_key = serialization.load_pem_public_key(
-        key_file.read(),
-        backend=default_backend()
-    )
-
 ```
 
 To utilise this script as a Gameta script, we must first register it:
@@ -114,5 +100,39 @@ when they register a new language, see the [Adding Scripting Languages] page for
 more details.
 ---
 
+This script can then be executed with the following command:
+
+```shell
+gameta exec generate_rsa_keys
+```
+
+## Parameter Substitution
+
+Gameta Scripts supports Gameta's full parameter substitution suite. This includes
+the following:
+
+1. Repository parameters
+2. Gameta Constants
+3. Environment variables
+4. Shell logic 
+5. Or logic
+
+Gameta Scripts are stored as Jinja2 templates, and these parameters are rendered
+in a temporary directory before execution. If no parameters are present, the 
+original script is merely copied over. Gameta then executes it with the relevant
+language executable e.g. `python`. 
+
+---
+**Note**
+
+You can also render a Gameta Script with the associated parameters using the 
+command below. See the [Commands Reference] page for more details.
+
+```shell
+gameta scripts render
+```
+---
+
 [Adding Scripting Languages]: ../customisation/adding_scripting_languages.md
 [here]: https://gist.github.com/gabrielfalcao/de82a468e62e73805c59af620904c124
+[Commands Reference]: ../../commands/0.3/commands.md
