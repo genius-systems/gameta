@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install -U setuptools-rust pip poetry
+          command: pip3 install setuptools-rust && pip3 install -U pip poetry
       - run:
           name: Test
           command: tox
