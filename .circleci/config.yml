@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip3 install setuptools-rust && pip3 install -U pip poetry
+          command: pip3 install -U cryptography==3.3.2 pip poetry
       - run:
           name: Test
           command: tox
