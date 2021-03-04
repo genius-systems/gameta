@@ -13,6 +13,7 @@ from gameta.tags import add, delete
 
 class TestTagsAdd(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.add = add
 
@@ -253,6 +254,7 @@ class TestTagsAdd(TestCase):
 
 class TestTagsDelete(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.delete = delete
 

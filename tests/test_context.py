@@ -10,6 +10,7 @@ from gameta.context import GametaContext
 
 class TestGametaContext(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.context = GametaContext()
         self.runner = CliRunner()
 
