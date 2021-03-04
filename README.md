@@ -1,5 +1,7 @@
 # Gameta
 
+[![genius-systems](https://circleci.com/gh/genius-systems/gameta.svg?style=svg)](https://circleci.com/gh/genius-systems/gameta)
+
 Gameta is a powerful CLI tool that helps you to manage 
 [meta-repositories](https://genius-systems.github.io/gameta/metarepos) or 
 [metarepos](https://genius-systems.github.io/gameta/metarepos). It allows 
