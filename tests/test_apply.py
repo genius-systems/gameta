@@ -493,7 +493,7 @@ class TestApply(TestCase):
     def test_apply_command_failed_to_execute(self, mock_ensure_object):
         params = {
             'commands': ['rm test', ],
-            'actual_repositories': ['gameta', 'GitPython', 'gitdb'],
+            'actual_repositories': ['gameta'],
         }
         with self.runner.isolated_filesystem() as f:
             copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
@@ -501,7 +501,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()
@@ -528,7 +528,7 @@ class TestApply(TestCase):
                 template.extractall(f)
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
                 template.extractall(join(f, 'core'))
-            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.meta'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
             context = GametaContext()
             context.project_dir = f
             context.load()

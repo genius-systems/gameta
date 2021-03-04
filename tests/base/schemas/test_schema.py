@@ -5,6 +5,7 @@ from gameta.base import to_schema_tuple, to_schema_str
 
 class TestToSchemaTuple(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.to_schema_tuple = to_schema_tuple
 
     def test_to_schema_tuple_none(self):
@@ -25,6 +26,7 @@ class TestToSchemaTuple(TestCase):
 
 class TestToSchemaStr(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.to_schema_str = to_schema_str
     
     def test_to_schema_str_none(self):

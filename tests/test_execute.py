@@ -458,6 +458,8 @@ class TestExec(TestCase):
             'hello_world': {
                 'commands': ['rm test'],
                 'description': '',
+                'all': False,
+                'venv': None,
                 'tags': ['a', 'b'],
                 'repositories': ['gameta'],
                 'verbose': False,
@@ -476,14 +478,14 @@ class TestExec(TestCase):
                 template.extractall(f)
             with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
                 output = json.load(m1)
-                with open(join(f, '.meta'), 'w') as m2:
+                with open(join(f, '.gameta'), 'w') as m2:
                     output['commands'] = {}
                     output['commands']['hello_world'] = params['hello_world']
                     json.dump(output, m2)
             gameta_context = GametaContext()
             gameta_context.project_dir = f
             gameta_context.load()
-            context = Context(exec, obj=gameta_context)
+            context = Context(self.exec, obj=gameta_context)
             mock_context.return_value = context
             result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
             self.assertEqual(result.exit_code, 1)
@@ -496,12 +498,13 @@ class TestExec(TestCase):
                 f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
                 f"occurred when executing command ['rm', 'test'] in gameta\n"
             )
-            self.assertTrue(exists(join(f, '.meta')))
-            with open(join(f, '.meta'), 'r') as m:
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
                 self.assertEqual(
                     json.load(m),
                     {
-                        'projects': {
+                        "version": '0.3.0',
+                        'repositories': {
                             'GitPython': {
                                 '__metarepo__': False,
                                 'path': 'GitPython',
