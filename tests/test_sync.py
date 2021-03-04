@@ -15,6 +15,7 @@ from gameta.sync import sync
 
 class TestSync(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.sync = sync
 

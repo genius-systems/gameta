@@ -129,15 +129,20 @@ def apply(
                     with subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as cmd:
                         for line in iter(cmd.stdout.readline, b''):
                             click.echo(line.rstrip())
+                        return_code: int = cmd.poll()
+                        if return_code:
+                            raise subprocess.CalledProcessError(return_code, cmd.args)
                 else:
                     subprocess.run(c, stderr=subprocess.STDOUT, check=True)
-            except subprocess.SubprocessError as e:
+            except subprocess.CalledProcessError as e:
                 if raise_errors:
-                    raise click.ClickException(
-                        f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {" ".join(c)} in {repo}'
+                    exception: click.ClickException = click.ClickException(
+                        f'{e.__class__.__name__}.{str(e)} occurred when executing command {e.cmd} in {repo}'
                     )
+                    exception.exit_code = e.returncode
+                    raise exception
                 click.echo(
-                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {" ".join(c)} in {repo}, '
+                    f'Error {e.__class__.__name__}.{str(e)} occurred when executing command {e.cmd} in {repo}, '
                     f'continuing execution'
                 )
     except click.ClickException:

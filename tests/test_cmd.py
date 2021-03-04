@@ -15,6 +15,7 @@ from gameta.cmd import add, delete, update, ls
 
 class TestCommandAdd(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.add = add
 
@@ -963,6 +964,7 @@ class TestCommandAdd(TestCase):
 
 class TestCommandDelete(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.delete = delete
 
@@ -1107,6 +1109,7 @@ class TestCommandDelete(TestCase):
 
 class TestCommandUpdate(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.update = update
 
@@ -2298,6 +2301,7 @@ class TestCommandUpdate(TestCase):
 
 class TestCommandLs(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.ls = ls
 
