@@ -10,6 +10,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: pip3 install -U cryptography==3.3.2 pip poetry
+      - run:
           name: Test
           command: tox
   docs:
@@ -39,7 +42,7 @@ jobs:
           command: python3.7 -m venv venv && source venv/bin/activate
       - run:
           name: Install dependencies
-          command: pip3 install -U pip poetry
+          command: pip3 install -U setuptools-rust pip poetry
       - run:
           name: Publish
           command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
