@@ -39,7 +39,7 @@ jobs:
           command: python3.7 -m venv venv && source venv/bin/activate
       - run:
           name: Install dependencies
-          command: pip3 install -U pip poetry
+          command: pip3 install -U setuptools-rust pip poetry
       - run:
           name: Publish
           command: poetry publish --build -u $PYPI_USER -p $PYPI_PASSWORD
