@@ -12,6 +12,7 @@ from gameta.schemas import validate, update, ls
 
 class TestSchemaValidate(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.validate = validate
 
@@ -262,6 +263,7 @@ class TestSchemaValidate(TestCase):
 
 class TestSchemaUpdate(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.update = update
 
@@ -449,6 +451,7 @@ class TestSchemaUpdate(TestCase):
 
 class TestSchemaLs(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.ls = ls
 

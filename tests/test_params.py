@@ -12,6 +12,7 @@ from gameta.params import add, delete
 
 class TestParamsAdd(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.add = add
 
@@ -419,6 +420,7 @@ class TestParamsAdd(TestCase):
 
 class TestParamsDelete(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.delete = delete
 

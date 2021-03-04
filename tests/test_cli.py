@@ -14,6 +14,7 @@ from gameta import __version__
 
 class TestGametaCli(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.cli = gameta_cli
 

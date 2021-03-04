@@ -15,6 +15,7 @@ from gameta.init import init
 
 class TestInit(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.init = init
 

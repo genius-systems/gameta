@@ -16,6 +16,7 @@ from gameta.venv import create, register, unregister
 
 class TestVenvCreate(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.create = create
         self.runner = CliRunner()
 
@@ -334,6 +335,7 @@ class TestVenvCreate(TestCase):
 
 class TestVenvRegister(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.register = register
         self.runner = CliRunner()
 
@@ -575,6 +577,7 @@ class TestVenvRegister(TestCase):
 
 class TestVenvUnregister(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.unregister = unregister
         self.runner = CliRunner()
 

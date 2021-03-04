@@ -5,6 +5,7 @@ from gameta.base import supported_versions
 
 class TestVersion030Schema(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.schema = supported_versions[(0, 3, 0)]
         self.validators = self.schema.validators
 

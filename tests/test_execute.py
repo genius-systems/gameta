@@ -16,6 +16,7 @@ from gameta.execute import execute
 
 class TestExec(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.exec = execute
 
@@ -449,3 +450,82 @@ class TestExec(TestCase):
                 )
             self.assertTrue(exists(join(f, params['encryption_file_name'])))
             self.assertTrue(exists(join(f, 'key')))
+
+    @patch('gameta.cli.click.core.Context')
+    def test_command_exec_command_failed(self, mock_context):
+        params = {
+            'commands': ['hello_world'],
+            'hello_world': {
+                'commands': ['rm test'],
+                'description': '',
+                'all': False,
+                'venv': None,
+                'tags': ['a', 'b'],
+                'repositories': ['gameta'],
+                'verbose': False,
+                'shell': False,
+                'python': False,
+                'raise_errors': True
+            },
+            'actual_repositories': ['GitPython', 'gameta', 'gitdb']
+
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with open(join(dirname(__file__), 'data', '.gameta_other_repos'), 'r') as m1:
+                output = json.load(m1)
+                with open(join(f, '.gameta'), 'w') as m2:
+                    output['commands'] = {}
+                    output['commands']['hello_world'] = params['hello_world']
+                    json.dump(output, m2)
+            gameta_context = GametaContext()
+            gameta_context.project_dir = f
+            gameta_context.load()
+            context = Context(self.exec, obj=gameta_context)
+            mock_context.return_value = context
+            result = self.runner.invoke(self.exec, ['-c', params['commands'][0]])
+            self.assertEqual(result.exit_code, 1)
+            self.assertEqual(
+                result.output,
+                f"Executing {params['commands']}\n"
+                f"Executing Gameta command {params['commands'][0]}\n"
+                f"Applying {params['hello_world']['commands']} to repos {params['actual_repositories']}\n"
+                f"Executing {params['hello_world']['commands'][0]} in {params['actual_repositories'][1]}\n"
+                f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
+                f"occurred when executing command ['rm', 'test'] in gameta\n"
+            )
+            self.assertTrue(exists(join(f, '.gameta')))
+            with open(join(f, '.gameta'), 'r') as m:
+                self.assertEqual(
+                    json.load(m),
+                    {
+                        "version": '0.3.0',
+                        'repositories': {
+                            'GitPython': {
+                                '__metarepo__': False,
+                                'path': 'GitPython',
+                                'tags': ['a', 'b', 'c'],
+                                'url': 'https://github.com/gitpython-developers/GitPython.git'
+                            },
+                            'gameta': {
+                                '__metarepo__': True,
+                                'path': '.',
+                                'tags': ['metarepo'],
+                                'url': 'git@github.com:genius-systems/gameta.git'
+                            },
+                            'gitdb': {
+                                '__metarepo__': False,
+                                'path': 'core/gitdb',
+                                'tags': ['a', 'c', 'd'],
+                                'url': 'https://github.com/gitpython-developers/gitdb.git'
+                            }
+                        },
+                        'commands': {
+                            'hello_world': params['hello_world']
+                        }
+                    }
+                )
