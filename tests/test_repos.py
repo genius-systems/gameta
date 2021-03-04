@@ -14,6 +14,7 @@ from gameta.repos import add, delete, ls, update
 
 class TestReposAdd(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.add = add
 
@@ -468,6 +469,7 @@ class TestReposAdd(TestCase):
 
 class TestReposDelete(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.delete = delete
 
@@ -771,6 +773,7 @@ class TestReposDelete(TestCase):
 
 class TestRepoLs(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.ls = ls
 
@@ -834,6 +837,7 @@ class TestRepoLs(TestCase):
 
 class TestRepoUpdate(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.update = update
 

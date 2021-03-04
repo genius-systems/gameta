@@ -532,16 +532,8 @@ class TestApply(TestCase):
             context.load()
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-e', '-v'])
-            print(result.output)
             self.assertEqual(result.exit_code, 1)
-            self.assertEqual(
-                result.output,
-                f"Applying {params['commands']} to repos {params['actual_repositories']}\n"
-                f"Executing rm test in {params['actual_repositories'][0]}\n"
-                "rm: cannot remove 'test': No such file or directory\n"
-                f"Error: CalledProcessError.Command '['rm', 'test']' returned non-zero exit status 1. "
-                f"occurred when executing command ['rm', 'test'] in gameta\n"
-            )
+            self.assertTrue("rm: cannot remove 'test': No such file or directory\n" in result.output)
 
     @patch('gameta.cli.click.Context.ensure_object')
     def test_apply_verbose(self, mock_ensure_object):

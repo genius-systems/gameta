@@ -12,6 +12,7 @@ from gameta.constants import add, delete
 
 class TestConstantsAdd(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.add = add
 
@@ -185,6 +186,7 @@ class TestConstantsAdd(TestCase):
 
 class TestConstantsDelete(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.delete = delete
 

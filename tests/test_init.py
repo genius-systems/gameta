@@ -15,6 +15,7 @@ from gameta.init import init, sync
 
 class TestInit(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.init = init
 
@@ -194,6 +195,7 @@ class TestInit(TestCase):
 
 class TestSync(TestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.runner = CliRunner()
         self.sync = sync
 
