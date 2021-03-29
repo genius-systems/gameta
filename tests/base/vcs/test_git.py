@@ -248,3 +248,29 @@ class TestGitRepo(TestCase):
                     '.github', '.circleci', '.git'
                 ]
             )
+
+    def test_git_repo_remove_ignore_files_not_found(self):
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(dirname(dirname(__file__)))), '.git'), join(f, '.git'))
+            copyfile(join(dirname(dirname(dirname(__file__))), 'data', '.gitignore'), join(f, '.gitignore'))
+            test_repo = Git.generate_repo(f)
+            self.assertEqual(len(test_repo.ignore_data), 132)
+            test_repo.remove_ignore(['test', 'hello', 'world'])
+            self.assertEqual(len(test_repo.ignore_data), 132)
+            with open(join(f, '.gitignore')) as g:
+                self.assertEqual(len(g.readlines()), 132)
+
+    def test_git_repo_remove_ignore_files_exist(self):
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(dirname(dirname(__file__)))), '.git'), join(f, '.git'))
+            copyfile(join(dirname(dirname(dirname(__file__))), 'data', '.gitignore'), join(f, '.gitignore'))
+            test_repo = Git.generate_repo(f)
+            self.assertEqual(len(test_repo.ignore_data), 132)
+            test_repo.remove_ignore(['__pycache__/', '.idea', '.pyre/'])
+            self.assertEqual(len(test_repo.ignore_data), 129)
+            with open(join(f, '.gitignore')) as g:
+                test_output = g.readlines()
+                self.assertEqual(len(test_output), 129)
+                self.assertNotIn('__pycache__/\n', test_output)
+                self.assertNotIn('.idea\n', test_output)
+                self.assertNotIn('.pyre/\n', test_output)

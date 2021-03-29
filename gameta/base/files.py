@@ -48,6 +48,8 @@ class File(object):
         with open(self.file, 'w+'):
             pass
 
+    clear = create
+
     @abstractmethod
     def load(self) -> Any:
         """

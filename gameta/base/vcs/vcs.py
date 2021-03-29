@@ -235,6 +235,23 @@ class GametaRepo(object):
             VCSError: If errors occur during execution
         """
 
+    @abstractmethod
+    def remove_ignore(self, files: List[str], *args: Tuple, **kwargs: Dict) -> None:
+        """
+        Removes files that have been ignored so that they can be tracked
+
+        Args:
+            files (List[str]): List of file globs to be removed, files are relative paths within repository directory
+            *args (Tuple): Generic args
+            **kwargs (Dict): Generic kwargs
+
+        Returns:
+            None
+
+        Raises:
+            VCSError: If errors occur during execution
+        """
+
     @property
     def name(self) -> Optional[str]:
         """

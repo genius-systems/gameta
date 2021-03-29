@@ -341,3 +341,30 @@ class GitRepo(GametaRepo):
             self.ignore_data.extend(data)
         except Exception as e:
             raise VCSError(f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore")
+
+    def remove_ignore(self, files: List[str], *args: Tuple, **kwargs: Dict) -> None:
+        """
+        Removes files that have been added to the .gitignore
+
+        Args:
+            files (List[str]): List of file globs to be removed, files are relative paths within repository directory
+            *args (Tuple): Generic args
+            **kwargs (Dict): Generic kwargs
+
+        Returns:
+            None
+
+        Raises:
+            VCSError: If errors occur during execution
+        """
+        try:
+            data: List[str] = [f + '\n' for f in files]
+            for f in data:
+                try:
+                    self.ignore_data.remove(f)
+                except ValueError:
+                    continue
+            self.ignore_file.clear()
+            self.ignore_file.export(self.ignore_data)
+        except Exception as e:
+            raise VCSError(f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore")
