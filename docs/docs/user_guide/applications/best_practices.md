@@ -30,7 +30,7 @@ You could use the following tags to help organise your repositories:
 
 And the following commands to help manage your DevOps operations:
 
-```bash
+```shell
 gameta apply -c run_go_tests -t go
 gameta apply -c run_nodejs_tests -t nodejs
 gameta apply -c build_go_backend -t go

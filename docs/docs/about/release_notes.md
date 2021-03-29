@@ -4,13 +4,13 @@
 
 To upgrade Gameta to the latest version, use pip:
 
-```bash
+```shell
 pip install -U gameta
 ```
 
 You can determine your currently installed version using `gameta --version`:
 
-```bash
+```shell
 gameta --version
 ```
 
