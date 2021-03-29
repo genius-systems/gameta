@@ -4,7 +4,7 @@ from typing import Dict, Type
 
 from .vcs import VCS, GametaRepo
 
-from ..imports import import_plugins
+from gameta.base.imports import import_plugins
 
 
 __all__ = ['vcs_interfaces', 'VCS', 'GametaRepo']
