@@ -1,0 +1,93 @@
+{
+  "version": "0.3.0",
+  "repositories": {
+    "gameta": {
+      "__metarepo__": true,
+      "path": ".",
+      "tags": [
+        "metarepo"
+      ],
+      "url": "git@github.com:genius-systems/gameta.git"
+    },
+    "GitPython": {
+      "__metarepo__": false,
+      "path": "GitPython",
+      "tags": [
+        "a",
+        "b",
+        "c"
+      ],
+      "url": "https://github.com/gitpython-developers/GitPython.git"
+    },
+    "gitdb": {
+      "__metarepo__": false,
+      "path": "core/gitdb",
+      "tags": [
+        "a",
+        "c",
+        "d"
+      ],
+      "url": "https://github.com/gitpython-developers/gitdb.git"
+    }
+  },
+  "commands": {
+    "hello_world": {
+      "commands": [
+        "git fetch --all --tags --prune"
+      ],
+      "description": "",
+      "tags": [
+        "a",
+        "b"
+      ],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": true,
+      "shell": false,
+      "python": false,
+      "venv": null,
+      "raise_errors": true
+    },
+    "hello_world2": {
+      "commands": [
+        "git fetch --all --tags --prune"
+      ],
+      "description": "",
+      "tags": [
+        "a",
+        "b"
+      ],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": true,
+      "shell": false,
+      "python": false,
+      "venv": null,
+      "raise_errors": true
+    },
+    "hello_world3": {
+      "commands": [
+        "from random import choice\nfrom string import ascii_lowercase, ascii_uppercase, digits, punctuation\nwith open(\"{ENCRYPTION_FILE_NAME}\", \"w\") as f:\n    f.write(\"\".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})]))"
+      ],
+      "description": "",
+      "tags": [],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": false,
+      "shell": false,
+      "python": true,
+      "venv": null,
+      "raise_errors": true
+    }
+  },
+  "constants": {
+    "ENCRYPTION_FILE_NAME": "encryption.txt",
+    "KEY_LEN": 16
+  }
+}

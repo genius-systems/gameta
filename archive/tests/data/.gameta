@@ -1,0 +1,11 @@
+{
+  "version": "0.3.0",
+  "repositories": {
+    "gameta": {
+      "__metarepo__": true,
+      "path": ".",
+      "tags": ["metarepo"],
+      "url": "git@github.com:genius-systems/gameta.git"
+    }
+  }
+}
