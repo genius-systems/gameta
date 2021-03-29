@@ -12,7 +12,8 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.base.context import GametaContext, SHELL
+from gameta.base.context import GametaContext
+from gameta.base.command import SHELL, Command
 from gameta.apply import apply
 
 
@@ -604,20 +605,20 @@ class TestApply(TestCase):
                 [
                     i
                     for i in context.apply(
-                        [
-                            'from cryptography.fernet import Fernet\n'
-                            'key = Fernet.generate_key()\n'
-                            'encryptor = Fernet(key)\n'
-                            'message = encryptor.encrypt(b"This is a secret message")\n'
-                            'with open("encryption.txt", "wb") as f:\n'
-                            '    f.write(message)\n'
-                            'with open("key", "wb") as f:\n'
-                            '    f.write(key)\n',
-                        ],
-                        repos=list(context.repositories),
-                        python=True,
-                        venv=params['venv']
-                    )
+                    [
+                        'from cryptography.fernet import Fernet\n'
+                        'key = Fernet.generate_key()\n'
+                        'encryptor = Fernet(key)\n'
+                        'message = encryptor.encrypt(b"This is a secret message")\n'
+                        'with open("encryption.txt", "wb") as f:\n'
+                        '    f.write(message)\n'
+                        'with open("key", "wb") as f:\n'
+                        '    f.write(key)\n',
+                    ],
+                    repos=list(context.repositories),
+                    python=True,
+                    venv=params['venv']
+                )
                 ][0][1]
             )
             self.assertTrue(exists(join(f, 'encryption.txt')))
@@ -676,7 +677,15 @@ class TestApply(TestCase):
             context.project_dir = f
             context.load()
             mock_ensure_object.return_value = context
-            subprocess.check_output(context.virtualenv(params['venv'], ['pip3 install cryptography==3.3.2']))
+            subprocess.check_output(
+                Command(
+                    commands=['pip3 install cryptography==3.3.2'],
+                    params={},
+                    shell=False,
+                    python=False,
+                    venv=params['venv']
+                ).generate()
+            )
             result = self.runner.invoke(
                 self.apply,
                 [
@@ -738,3 +747,40 @@ class TestApply(TestCase):
                 result.output,
                 f"Error: Virtualenv {params['invalid_venv']} has not been registered\n"
             )
+
+    @patch('gameta.cli.click.Context.ensure_object')
+    def test_apply_command_is_bash_function(self, mock_ensure_object):
+        params = {
+            'commands': [
+                "generate_version_info () {{ echo \"HELLO_WORLD=\\\"$1\\\"\" >> output.env; }}; "
+                "generate_version_info $(git rev-parse --abbrev-ref HEAD)"
+            ],
+            'output': "generate_version_info () { echo HELLO_WORLD=\"$1\" >> output.env; }; "
+                      "generate_version_info $(git rev-parse --abbrev-ref HEAD)",
+            'actual_repositories': ['GitPython', 'gitdb']
+        }
+        with self.runner.isolated_filesystem() as f:
+            copytree(join(dirname(dirname(__file__)), '.git'), join(f, '.git'))
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitpython.zip'), 'r') as template:
+                template.extractall(f)
+            with zipfile.ZipFile(join(dirname(__file__), 'data', 'gitdb.zip'), 'r') as template:
+                template.extractall(join(f, 'core'))
+            copyfile(join(dirname(__file__), 'data', '.gameta_other_repos'), join(f, '.gameta'))
+            context = GametaContext()
+            context.project_dir = f
+            context.load()
+            mock_ensure_object.return_value = context
+            result = self.runner.invoke(self.apply, ['--command', params['commands'][0], '-s', '-t', 'c'])
+            self.assertEqual(result.exit_code, 0)
+            self.assertEqual(
+                result.output,
+                f"Applying {params['commands']} to repos {params['actual_repositories']} in a separate shell\n"
+                f"Executing {SHELL} -c {params['output']} in {params['actual_repositories'][0]}\n"
+                f"Executing {SHELL} -c {params['output']} in {params['actual_repositories'][1]}\n"
+            )
+            self.assertTrue(exists(join(f, 'GitPython', 'output.env')))
+            with open(join(f, 'GitPython', 'output.env')) as t:
+                self.assertEqual(t.read(), 'HELLO_WORLD=master\n')
+            self.assertTrue(exists(join(f, 'core', 'gitdb', 'output.env')))
+            with open(join(f, 'core', 'gitdb', 'output.env')) as t:
+                self.assertEqual(t.read(), 'HELLO_WORLD=master\n')

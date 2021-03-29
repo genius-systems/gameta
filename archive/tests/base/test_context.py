@@ -194,41 +194,6 @@ class TestGametaContext(TestCase):
             with self.assertRaises(KeyError):
                 self.context.is_primary_metarepo('test')
 
-    def test_gameta_context_tokenise(self):
-        self.assertEqual(
-            self.context.tokenise('git clone https://github.com/libgit2/libgit2'),
-            ['git', 'clone', 'https://github.com/libgit2/libgit2']
-        )
-
-    def test_gameta_context_shell_pipe_command(self):
-        self.assertEqual(
-            self.context.shell([
-                'aws ecr get-login-password --region region | '
-                'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'
-            ]),
-            [
-                getenv('SHELL', '/bin/sh'),
-                '-c',
-                'aws ecr get-login-password --region region | '
-                'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'
-            ]
-        )
-
-    def test_gameta_context_shell_multiple_commands(self):
-        self.assertEqual(
-            self.context.shell([
-                'git clone https://github.com/libgit2/libgit2',
-                'git fetch --all --tags --prune',
-                'git merge'
-            ]),
-            [
-                getenv('SHELL', '/bin/sh'), '-c',
-                'git clone https://github.com/libgit2/libgit2 && '
-                'git fetch --all --tags --prune && '
-                'git merge'
-            ]
-        )
-
     def test_gameta_context_generate_tags_no_repositories(self):
         self.context.generate_tags()
         self.assertEqual({}, self.context.tags)
@@ -1720,7 +1685,10 @@ class TestGametaContext(TestCase):
             ):
                 self.assertEqual(getcwd(), cwd)
                 self.assertEqual(repo, repo_command[0])
-                self.assertEqual(repo_command[1], ['git', 'fetch', '--all', '--tags', '--prune', '&&', 'git', 'pull'])
+                self.assertEqual(
+                    repo_command[1],
+                    [getenv('SHELL', '/bin/sh'), '-c', 'git fetch --all --tags --prune && git pull']
+                )
 
     def test_gameta_context_apply_command_in_separate_shell(self):
         with self.runner.isolated_filesystem() as f:

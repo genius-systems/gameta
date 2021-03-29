@@ -7,10 +7,10 @@ name = "gameta"
 version = "0.3.0a1"
 description = "CLI Tool for managing meta-repositories"
 license = "MIT"
-authors = [ "David Lee <ltw_david@hotmail.com>",]
+authors = [ "David Lee <ltw_david@hotmail.com>", ]
 exclude = [ "tests", ]
 packages = [
-    {include = "gameta"},
+    { include = "gameta" },
 ]
 
 readme = "README.md"
