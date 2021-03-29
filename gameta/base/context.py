@@ -1,16 +1,16 @@
 import json
 import shlex
-from abc import abstractmethod
 from contextlib import contextmanager
 from copy import deepcopy
 from os import getenv, getcwd, chdir, environ
 from os.path import join, basename, normpath, abspath
-from typing import Optional, List, Generator, Dict, Tuple, Union
+from typing import Optional, List, Generator, Dict, Tuple, Union, Any
 
 import click
 
 from gameta import __version__
 
+from .files import File
 from .schemas import supported_versions, Schema, to_schema_tuple
 
 
@@ -23,127 +23,47 @@ __all__ = [
 SHELL = getenv('SHELL', '/bin/sh')
 
 
-class File(object):
-    """
-    Generic file interface for Gameta file formats
-
-    Attributes:
-        context (GametaContext): Reference to Gameta Context
-        file_name (str): Name of the reference file
-    """
-
-    def __init__(self, context: 'GametaContext', file_name: str):
-        self.context = context
-        self.file_name = file_name
-
-    @property
-    def file(self) -> str:
-        """
-        Returns the absolute path to the reference file
-
-        Returns:
-            str: Absolute path to the file
-        """
-        return join(self.context.project_dir, self.file_name)
-
-    @abstractmethod
-    def load(self) -> None:
-        """
-        Abstractmethod to load data and validate data from the file and populate the GametaContext
-
-        Returns:
-            None
-        """
-
-    @abstractmethod
-    def export(self) -> None:
-        """
-        Abstractmethod to export data from the GametaContext to the file
-
-        Returns:
-            None
-        """
-
-
-class GitIgnore(File):
-    """
-    Interface for the .gitignore file
-
-    Attributes:
-        context (GametaContext): Reference to Gameta Context
-        file_name (str): Reference to the .gitignore file
-    """
-    def __init__(self, context: 'GametaContext', file_name: str = '.gitignore'):
-        super(GitIgnore, self).__init__(context, file_name)
-
-    def load(self) -> None:
-        """
-        Loads data from the .gitignore file and populates the GametaContext
-
-        Returns:
-            None
-        """
-        try:
-            with open(self.file, 'r') as f:
-                self.context.gitignore_data = f.readlines()
-        except FileNotFoundError:
-            return
-        except Exception as e:
-            self.context.gitignore_data = []
-            click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
-
-    def export(self) -> None:
-        """
-        Exports data from the GametaContext to the .gitignore file
-
-        Returns:
-            None
-        """
-        try:
-            with open(self.file, 'w') as f:
-                f.writelines(self.context.gitignore_data)
-        except Exception as e:
-            click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
-
-
 class Gameta(File):
     """
     Interface for the .gameta file
 
     Attributes:
-        context (GametaContext): Reference to Gameta Context
+        path (str): Absolute path to the .gameta file
         file_name (str): Reference to the .gameta file
     """
 
-    def __init__(self, context: 'GametaContext', file_name: str = '.gameta'):
-        super(Gameta, self).__init__(context, file_name)
+    def __init__(self, path: str, file_name: str = '.gameta'):
+        super(Gameta, self).__init__(path, file_name)
 
-    def load(self) -> None:
+    def load(self) -> Optional[Any]:
         """
-        Loads data from the .gameta file, validates it and populates the GametaContext
+        Loads data from the .gameta file
 
         Returns:
-            None
+            Optional[Any]
         """
         # Attempt to load .gameta file
         try:
-            with open(self.file_name, 'r') as f:
-                self.context.gameta_data = json.load(f)
+            with open(self.file, 'r') as f:
+                return json.load(f)
+
+        # .gameta file does not exist
         except FileNotFoundError:
             return
+
         except Exception as e:
             click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
 
-    def export(self) -> None:
+    def export(self, data: Any) -> None:
         """
-        Exports data from the GametaContext to the .gameta file
+        Exports data to the .gameta file
 
         Returns:
             None
         """
         try:
             with open(self.file, 'w') as f:
-                json.dump(self.context.gameta_data, f, indent=2)
+                json.dump(data, f, indent=2)
         except Exception as e:
             click.echo(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
 
@@ -156,19 +76,17 @@ class GametaContext(object):
         schema (Schema): Schema class for Gameta .gameta file
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
-        gameta_data (Dict): Gameta data extracted and exported
+        gameta_data (Dict): Gameta data cache to store extracted data and updated data for export
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
         constants (Dict[str, Union[str, int, bool, float]]): Gameta constants data extracted
         commands (Dict): Gameta commands data extracted
-        gitignore_data (List[str]): Gitignore data extracted from the .gitignore file
         env_vars (Dict): Extracted environment variables with keys prefixed with $
         files (Dict[str, File]): File formats supported
     """
 
     def __init__(self):
         self.project_dir: Optional[str] = None
-        self.gitignore_data: List[str] = []
         self.is_metarepo: bool = False
         self.gameta_data: Dict = {}
         self.virtualenvs: Dict = {}
@@ -182,13 +100,25 @@ class GametaContext(object):
             for k, v in environ.items()
         }
 
-        self.files: Dict[str, File] = {
-            'gameta': Gameta(self),
-            'gitignore': GitIgnore(self)
-        }
+        self.files: Dict[str, File] = {}
 
         self.version: str = __version__
         self.schema: Optional[Schema] = None
+
+    def init(self, project_dir: str) -> None:
+        """
+        Initialises a GametaContext with the project directory. The __init__ process is split into 2 parts (object
+        creation and parameter initialisation) such that it can be used with click's context decorator, hence this
+        function has to be run to complete the initialisation process.
+
+        Args:
+            project_dir (str): Absolute path to the project directory
+
+        Returns:
+            None
+        """
+        self.project_dir = project_dir
+        self.files.update({'gameta': Gameta(self.gameta_folder)})
 
     @property
     def project_name(self) -> str:
@@ -199,6 +129,16 @@ class GametaContext(object):
             str: Name of the project
         """
         return basename(self.project_dir)
+
+    @property
+    def gameta_folder(self) -> str:
+        """
+        Returns the path to the .gameta folder of the project
+
+        Returns:
+            str: Absolute path to the .gameta folder
+        """
+        return join(self.project_dir, '.gameta')
 
     @property
     def gameta(self) -> str:
