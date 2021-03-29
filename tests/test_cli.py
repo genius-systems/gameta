@@ -24,8 +24,7 @@ class TestGametaCli(TestCase):
             with zipfile.ZipFile(join(dirname(__file__), 'data', 'git.zip'), 'r') as template:
                 template.extractall(f)
             context = GametaContext()
-            context.project_dir = f
-            context.load()
+            context.init(f)
             mock_ensure_object.return_value = context
             result = self.runner.invoke(self.cli, ["-v"])
             self.assertEqual(result.exit_code, 0)
