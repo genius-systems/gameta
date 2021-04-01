@@ -1,27 +1,23 @@
 import json
-import shlex
 from contextlib import contextmanager
-from copy import deepcopy
-from os import getcwd, chdir, environ
-from os.path import join, basename, normpath, abspath
-from typing import Optional, List, Generator, Dict, Tuple, Union, Any
+from os import environ
+from os.path import join, basename, abspath
+from typing import Optional, List, Dict, Tuple, Union, Any
 
 import click
 
 from gameta import __version__
 
 from .files import File
-from .command import Command
 from .schemas import supported_versions, Schema, to_schema_tuple
+from .vcs import vcs_interfaces, GametaRepo
+from .commands import Runner
 
 
 __all__ = [
     # Contexts
     'GametaContext', 'gameta_context',
 ]
-
-
-SHELL = getenv('SHELL', '/bin/sh')
 
 
 class Gameta(File):
@@ -89,11 +85,11 @@ class GametaContext(object):
     def __init__(self):
         self.project_dir: Optional[str] = None
         self.is_metarepo: bool = False
-        self.gameta_data: Dict = {}
-        self.virtualenvs: Dict = {}
+        self.gameta_data: Dict[str, Any] = {}
+        self.virtualenvs: Dict[str, str] = {}
         self.constants: Dict[str, Union[str, int, bool, float]] = {}
         self.commands: Dict = {}
-        self.repositories: Dict[str, Dict] = {}
+        self.repositories: Dict[str, Dict[str, Any]] = {}
         self.tags: Dict[str, List[str]] = {}
 
         self.env_vars: Dict = {
@@ -153,17 +149,6 @@ class GametaContext(object):
         return self.files['gameta'].file
 
     @property
-    def gitignore(self) -> str:
-        """
-        Returns the path to the .gitignore file of the project, i.e. where it should be if the Project has not been
-        initialised
-
-        Returns:
-            str: Path to the project's .gitignore file
-        """
-        return self.files['gitignore'].file
-
-    @property
     def metarepo(self) -> str:
         """
         Returns the primary metarepo's name
@@ -185,6 +170,29 @@ class GametaContext(object):
         """
         return self.get_schema_version(self.version)
 
+    @property
+    def runner(self) -> Runner:
+        """
+        Returns a runner populated with existing context values for executing commands
+
+        Returns:
+            Runner: Instantiated runner
+        """
+        return Runner(self.project_dir, self.repositories, self.virtualenvs, self.constants)
+
+    @contextmanager
+    def repo(self, repo: str) -> GametaRepo:
+        """
+        Convenience method to retrieve a GametaRepo for managing a particular repository
+
+        Args:
+            repo (str): Name of the repository
+
+        Returns:
+            GametaRepo: Instantiated GametaRepo
+        """
+        yield vcs_interfaces[self.repositories[repo]['vcs']].generate_repo(self.repositories[repo]['path'])
+
     @staticmethod
     def get_schema_version(version: str) -> Tuple[int, int, int]:
         """
@@ -197,33 +205,6 @@ class GametaContext(object):
             Tuple[int, int, int]: Tuple of schema parameters
         """
         return to_schema_tuple(version)
-
-    def add_gitignore(self, path: str) -> None:
-        """
-        Adds the path to the gitignore_data
-
-        Args:
-            path (str): Path to be added
-
-        Returns:
-            None
-        """
-        self.gitignore_data.append(path + '/\n')
-
-    def remove_gitignore(self, path: str) -> None:
-        """
-        Removes the path from the gitignore_data
-
-        Args:
-            path (str): Path to be removed
-
-        Returns:
-            None
-        """
-        try:
-            self.gitignore_data.remove(path + '/\n')
-        except ValueError:
-            return
 
     def is_primary_metarepo(self, repo: str) -> bool:
         """
@@ -307,7 +288,8 @@ class GametaContext(object):
 
         # Moving this here in the event we wish to validate the outgoing data and for consistency's sake
         self.gameta_data['version'] = self.version
-        self.gameta_data['repositories'] = self.repositories
+        if self.repositories:
+            self.gameta_data['repositories'] = self.repositories
         if self.commands:
             self.gameta_data['commands'] = self.commands
         if self.constants:
@@ -315,8 +297,7 @@ class GametaContext(object):
         if self.virtualenvs:
             self.gameta_data['virtualenvs'] = self.virtualenvs
 
-        for file, interface in self.files.items():
-            interface.export()
+        self.files['gameta'].export(self.gameta_data)
 
     def generate_tags(self) -> None:
         """
@@ -331,95 +312,6 @@ class GametaContext(object):
                     self.tags[tag].append(repo)
                 else:
                     self.tags[tag] = [repo]
-
-    def apply(
-            self,
-            commands: List[str],
-            repos: List[str] = (),
-            shell: bool = False,
-            python: bool = False,
-            venv: Optional[str] = None,
-    ) -> Generator[Tuple[str, str], None, None]:
-        """
-        Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
-        in .gameta file
-
-        Args:
-            commands (List[str]): Commands to be applied
-            repos (List[str]): Selected set of repositories
-            shell (bool): Flag to indicate if a separate shell should be used
-            python (bool): Flag to indicate if commands are to be tokenised as Python commands
-            venv (Optional[str]): Virtualenv parameter for executing commands
-
-        Returns:
-            None
-        """
-        repositories: List[Tuple[str, Dict[str, str]]] = [
-            (repo, repo_details) for repo, repo_details in self.repositories.items() if repo in repos
-        ]
-
-        for repo, repo_details in repositories:
-
-            # Generate complete set of parameters for substitution
-            with self.cd(repo_details['path']):
-                with Command(
-                        commands,
-                        self.generate_parameters(repo, repo_details, python),
-                        shell,
-                        python,
-                        self.virtualenvs.get(venv)
-                ) as c:
-                    yield repo, c
-
-    def generate_parameters(self, repo: str, repo_details: Dict, python: bool = False) -> Dict:
-        """
-        Generates the set of parameters for each repository to be substituted into command strings. 
-        
-        Args:
-            repo (str): Repository name of parameters to be generated
-            repo_details (Dict): Repository details from .gameta file
-            python (bool): Flag to indicate if Python variables should be generated, defaults to False
-
-        Returns:
-            Dict: Generated set of parameters
-        """
-
-        combined_details: Dict = {
-            k: v.format(**self.env_vars) if isinstance(v, str) else v
-            for k, v in deepcopy(repo_details).items()
-        }
-        if python:
-            repositories: Dict = deepcopy(self.repositories)
-            repositories[repo] = deepcopy(combined_details)
-            combined_details.update(
-                {
-                    '__repos__':
-                        json.dumps(repositories)
-                            .replace("true", "True")
-                            .replace("false", "False")
-                            .replace("null", "None")
-                }
-            )
-        combined_details.update(self.constants)
-        combined_details.update(self.env_vars)
-        return combined_details
-
-    @contextmanager
-    def cd(self, sub_directory: str) -> Generator[str, None, None]:
-        """
-        Changes directory to a subdirectory within the project
-
-        Args:
-            sub_directory (str): Relative subdirectory within the project
-
-        Returns:
-            Generator[str, None, None]: Path to current directory
-        """
-        cwd = getcwd()
-        path = normpath(join(self.project_dir, sub_directory.lstrip('/')))
-        chdir(path)
-        yield path
-        chdir(cwd)
 
 
 gameta_context = click.make_pass_decorator(GametaContext, ensure=True)
