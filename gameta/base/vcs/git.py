@@ -67,7 +67,7 @@ class Git(VCS):
                 'branch': str(repo.active_branch),
                 'hash': repo.commit().hexsha,
             }
-            return GitRepo(cls(path), GitIgnore(path), repo, details)
+            return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
             raise VCSError(f"Could not create git repository due to {e.__class__.__name__}.{str(e)}")
 
@@ -94,7 +94,7 @@ class Git(VCS):
                 'branch': str(repo.active_branch),
                 'hash': None,
             }
-            return GitRepo(cls(path), GitIgnore(path), repo, details)
+            return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
             raise VCSError(f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}")
 
@@ -124,7 +124,7 @@ class Git(VCS):
                 'branch': str(repo.active_branch),
                 'hash': repo.commit().hexsha
             }
-            return GitRepo(cls(path), GitIgnore(path), repo, details)
+            return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
             raise VCSError(f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}")
 
@@ -183,12 +183,25 @@ class GitRepo(GametaRepo):
     Attributes:
         interface (Git): Git interface wrapper
         ignore_file (GitIgnore): File that holds all the data to be ignored
-        repo (git.Repo): Git Repo class for interacting with the repository
         details (Dict): Git repository details
+        repo (git.Repo): Git Repo class for interacting with the repository
+        *args (Tuple): Generic arguments
+        **kwargs (Dict[str, Any]): Generic keyword arguments
     """
 
-    def __init__(self, interface: Git, ignore_file: GitIgnore, repo: git.Repo, details: Dict):
-        super(GitRepo, self).__init__(interface, ignore_file, repo, details)
+    def __init__(
+            self,
+            interface: Git,
+            ignore_file: GitIgnore,
+            details: Dict,
+            repo: git.Repo,
+            *args: Tuple[Any],
+            **kwargs: Dict[str, Any]
+    ):
+        super(GitRepo, self).__init__(interface, ignore_file, details)
+
+        # Repo class
+        self.repo: git.Repo = repo
 
         # GitIgnore data
         self.ignore_data: List[str] = self.ignore_file.load()
