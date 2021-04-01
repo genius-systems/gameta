@@ -1,4 +1,3 @@
-from typing import Dict
 
 from .schema import Schema
 
@@ -6,30 +5,7 @@ from .schema import Schema
 __all__ = ['v030']
 
 
-class Version030Schema(Schema):
-    """
-    Schema for Gameta schema version 0.3.0
-    """
-
-    def structures(self) -> Dict[str, Dict]:
-        """
-        Returns a set of dictionaries that structure input for each schema class object, containing all default values
-        when upgrading from 0.2.X version
-
-        Returns:
-            Dict[str, Dict]: Dictionary of structures
-        """
-        return {
-            'repositories': {},
-            'commands': {
-                'all': False,
-                'venv': None,
-            },
-            'virtualenvs': {},
-        }
-
-
-v030: Version030Schema = Version030Schema(
+v030: Schema = Schema(
     version='0.3.0',
     schema={
         '$schema': "http://json-schema.org/draft-07/schema#",
@@ -76,7 +52,8 @@ v030: Version030Schema = Version030Schema(
                 "properties": {
                     "url": {
                         "type": ["string", "null"],
-                        "format": "uri"
+                        "format": "uri",
+                        "default": None
                     },
                     "path": {
                         "type": "string"
@@ -87,12 +64,18 @@ v030: Version030Schema = Version030Schema(
                             "type": "string"
                         }
                     },
+                    "vcs": {
+                        "type": "string",
+                        "enum": ["git"],
+                        "default": "git"
+                    },
                     "__metarepo__": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": False
                     }
                 },
                 "required": [
-                    "url", "path", "__metarepo__"
+                    "url", "path", "__metarepo__", "vcs"
                 ]
             },
             "commands": {
@@ -105,22 +88,28 @@ v030: Version030Schema = Version030Schema(
                         },
                     },
                     "description": {
-                        "type": "string"
+                        "type": "string",
+                        "default": ""
                     },
                     "raise_errors": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": False
                     },
                     "all": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": False
                     },
                     "shell": {
-                        "type": "boolean"
-                    },
-                    "python": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": False
                     },
                     "verbose": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "default": False,
+                    },
+                    "debug": {
+                        "type": "boolean",
+                        "default": False
                     },
                     "repositories": {
                         "type": "array",
@@ -135,11 +124,17 @@ v030: Version030Schema = Version030Schema(
                         },
                     },
                     "venv": {
-                        "type": ["string", "null"]
+                        "type": ["string", "null"],
+                        "default": None
+                    },
+                    "sep": {
+                        "type": "string",
+                        "enum": ["&&", "||", ";"],
+                        "default": "&&"
                     }
                 },
-                "minProperties": 10,
-                "maxProperties": 10,
+                "minProperties": 11,
+                "maxProperties": 11,
                 "additionalProperties": False,
             },
             "constants": {

@@ -1,4 +1,3 @@
-from typing import Type, Dict
 
 from .schema import Schema
 
@@ -6,27 +5,7 @@ from .schema import Schema
 __all__ = ['v025']
 
 
-class Version025Schema(Schema):
-    """
-    Schema for Gameta schema version 0.2.5
-    """
-
-    @property
-    def structures(self) -> Dict[str, Dict]:
-        """
-        Returns a set of dictionaries that structure input for each schema class object, containing all default values
-        versus the previous version
-
-        Returns:
-            Dict[str, Dict]: Dictionary of structures
-        """
-        return {
-            'repositories': {},
-            'commands': {},
-        }
-
-
-v025: Version025Schema = Version025Schema(
+v025: Schema = Schema(
     version='0.2.5',
     schema={
         '$schema': "http://json-schema.org/draft-07/schema#",

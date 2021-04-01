@@ -96,14 +96,3 @@ class Schema(object):
             Dict[str, List[str]]: Reserved parameters index
         """
         return deepcopy(self.__reserved_params)
-
-    @property
-    @abstractmethod
-    def structures(self) -> Dict[str, Dict]:
-        """
-        Returns a set of dictionaries that structure input for each class of objects, containing all default values
-        that differ from the previous version
-
-        Returns:
-            Dict[str, Dict]: Dictionary of structures
-        """

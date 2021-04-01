@@ -19,7 +19,8 @@ class TestVersion030Schema(TestCase):
                     "tags": [
                         "metarepo"
                     ],
-                    "url": "git@github.com:genius-systems/gameta.git"
+                    "url": "git@github.com:genius-systems/gameta.git",
+                    "vcs": "git"
                 },
                 "GitPython": {
                     "__metarepo__": False,
@@ -29,7 +30,8 @@ class TestVersion030Schema(TestCase):
                         "b",
                         "c"
                     ],
-                    "url": "https://github.com/gitpython-developers/GitPython.git"
+                    "url": "https://github.com/gitpython-developers/GitPython.git",
+                    "vcs": "git"
                 },
                 "gitdb": {
                     "__metarepo__": False,
@@ -39,7 +41,8 @@ class TestVersion030Schema(TestCase):
                         "c",
                         "d"
                     ],
-                    "url": "https://github.com/gitpython-developers/gitdb.git"
+                    "url": "https://github.com/gitpython-developers/gitdb.git",
+                    "vcs": "git"
                 }
             },
             "commands": {
@@ -58,7 +61,8 @@ class TestVersion030Schema(TestCase):
                     "verbose": False,
                     "all": True,
                     "shell": False,
-                    "python": False,
+                    "debug": False,
+                    "sep": "&&",
                     "venv": None,
                     "raise_errors": True
                 },
@@ -77,7 +81,8 @@ class TestVersion030Schema(TestCase):
                     "verbose": False,
                     "all": True,
                     "shell": False,
-                    "python": False,
+                    "debug": False,
+                    "sep": "&&",
                     "venv": None,
                     "raise_errors": True
                 },
@@ -93,7 +98,8 @@ class TestVersion030Schema(TestCase):
                     "verbose": False,
                     "all": False,
                     "shell": False,
-                    "python": True,
+                    "debug": False,
+                    "sep": "&&",
                     "venv": None,
                     "raise_errors": True
                 }
