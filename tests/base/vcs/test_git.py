@@ -248,10 +248,6 @@ class TestGitRepo(TestCase):
                     '.github', '.circleci', '.git'
                 ]
             )
-    def test_gameta_context_gitignore_points_to_gitignore_file_if_not_provided(self):
-        with self.runner.isolated_filesystem() as f:
-            self.context.project_dir = f
-            self.assertEqual(self.context.gitignore, join(f, '.gitignore'))
 
     def test_git_repo_remove_ignore_files_not_found(self):
         with self.runner.isolated_filesystem() as f:
