@@ -108,7 +108,7 @@ class GametaCommand(object):
         Returns:
             str: Prepared command string
         """
-        return f'{SHELL} -c "' + f'{self.separators[self.config.sep]}'.join(commands) + '"'
+        return rf"""{SHELL} -c '{f'{self.separators[self.config.sep]}'.join(commands)}'"""
 
     @staticmethod
     def tokenise(command: str) -> List[str]:
@@ -167,10 +167,12 @@ class Runner(object):
             None
         """
         try:
+            # Retrieve repositories for execution
             repositories: List[Tuple[str, Dict[str, str]]] = [
                 (repo, repo_details) for repo, repo_details in self.repositories.items() if repo in repos
             ]
 
+            # Prepare config by overriding existing configuration with necessary execution values
             config: CommandConfig = CommandConfig(
                 **{
                     **kwargs,
@@ -209,7 +211,7 @@ class Runner(object):
         Returns:
             Dict: Generated set of parameters
         """
-
+        # Substitute into parameters first and combine all into constants
         combined_details: Dict = {
             k: Parameter(v).substitute({**self.constants, **self.env_vars}) if isinstance(v, str) else v
             for k, v in deepcopy(repo_details).items()

@@ -161,9 +161,9 @@ class TestGametaCommand(TestCase):
         )
         self.assertEqual(
             self.command.shell(test_inputs['commands']),
-            f'{SHELL} -c "generate_version_info () '
+            f"{SHELL} -c 'generate_version_info () "
             '{ echo \"HELLO_WORLD=\\\"$1\\\"\" >> output.env; }; '
-            f'generate_version_info $(git rev-parse --abbrev-ref HEAD)"'
+            f"generate_version_info $(git rev-parse --abbrev-ref HEAD)'"
         )
 
     def test_gameta_command_shell_pipe_command(self):
@@ -185,8 +185,8 @@ class TestGametaCommand(TestCase):
         )
         self.assertEqual(
             self.command.shell(test_inputs['commands']),
-            f'{SHELL} -c "aws ecr get-login-password --region region | '
-            f'docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com"'
+            f"{SHELL} -c 'aws ecr get-login-password --region region | "
+            f"docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com'"
         )
 
     def test_gameta_command_shell_multiple_commands(self):
@@ -209,8 +209,8 @@ class TestGametaCommand(TestCase):
         )
         self.assertEqual(
             self.command.shell(test_inputs['commands']),
-            f'{SHELL} -c "git clone https://github.com/libgit2/libgit2 && '
-            f'git fetch --all --tags --prune && git merge"'
+            f"{SHELL} -c 'git clone https://github.com/libgit2/libgit2 && "
+            f"git fetch --all --tags --prune && git merge'"
         )
 
     def test_gameta_command_shell_with_semicolon_separator(self):
@@ -234,8 +234,8 @@ class TestGametaCommand(TestCase):
         )
         self.assertEqual(
             self.command.shell(test_inputs['commands']),
-            f'{SHELL} -c "git clone https://github.com/libgit2/libgit2; '
-            f'git fetch --all --tags --prune; git merge"'
+            f"{SHELL} -c 'git clone https://github.com/libgit2/libgit2; "
+            f"git fetch --all --tags --prune; git merge'"
         )
 
     def test_gameta_command_shell_with_double_pipe_separator(self):
@@ -259,8 +259,8 @@ class TestGametaCommand(TestCase):
         )
         self.assertEqual(
             self.command.shell(test_inputs['commands']),
-            f'{SHELL} -c "git clone https://github.com/libgit2/libgit2 || '
-            f'git fetch --all --tags --prune || git merge"'
+            f"{SHELL} -c 'git clone https://github.com/libgit2/libgit2 || "
+            f"git fetch --all --tags --prune || git merge'"
         )
 
     def test_gameta_command_tokenise_valid_command(self):
