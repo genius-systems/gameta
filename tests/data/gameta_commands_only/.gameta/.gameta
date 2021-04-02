@@ -1,0 +1,63 @@
+{
+  "version": "0.3.0",
+  "commands": {
+    "hello_world": {
+      "commands": [
+        "git fetch --all --tags --prune"
+      ],
+      "description": "",
+      "tags": [
+        "a",
+        "b"
+      ],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": true,
+      "shell": false,
+      "python": false,
+      "venv": null,
+      "raise_errors": true
+    },
+    "hello_world2": {
+      "commands": [
+        "git fetch --all --tags --prune"
+      ],
+      "description": "",
+      "tags": [
+        "a",
+        "b"
+      ],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": true,
+      "shell": false,
+      "python": false,
+      "venv": null,
+      "raise_errors": true
+    },
+    "hello_world3": {
+      "commands": [
+        "from random import choice\nfrom string import ascii_lowercase, ascii_uppercase, digits, punctuation\nwith open(\"{ENCRYPTION_FILE_NAME}\", \"w\") as f:\n    f.write(\"\".join([choice(ascii_lowercase + ascii_uppercase + digits + punctuation) for _ in range({KEY_LEN})]))"
+      ],
+      "description": "",
+      "tags": [],
+      "repositories": [
+        "gameta"
+      ],
+      "verbose": false,
+      "all": false,
+      "shell": false,
+      "python": true,
+      "venv": null,
+      "raise_errors": true
+    }
+  },
+  "constants": {
+    "ENCRYPTION_FILE_NAME": "encryption.txt",
+    "KEY_LEN": 16
+  }
+}

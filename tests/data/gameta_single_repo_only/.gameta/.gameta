@@ -5,7 +5,8 @@
       "__metarepo__": true,
       "path": ".",
       "tags": ["metarepo"],
-      "url": "git@github.com:genius-systems/gameta.git"
+      "url": "git@github.com:genius-systems/gameta.git",
+      "vcs": "git"
     }
   }
 }

@@ -7,7 +7,8 @@
       "tags": [
         "metarepo"
       ],
-      "url": "git@github.com:genius-systems/gameta.git"
+      "url": "git@github.com:genius-systems/gameta.git",
+      "vcs": "git"
     },
     "GitPython": {
       "__metarepo__": false,
@@ -17,7 +18,8 @@
         "b",
         "c"
       ],
-      "url": "https://github.com/gitpython-developers/GitPython.git"
+      "url": "https://github.com/gitpython-developers/GitPython.git",
+      "vcs": "git"
     },
     "gitdb": {
       "__metarepo__": false,
@@ -27,7 +29,8 @@
         "c",
         "d"
       ],
-      "url": "https://github.com/gitpython-developers/gitdb.git"
+      "url": "https://github.com/gitpython-developers/gitdb.git",
+      "vcs": "git"
     }
   },
   "commands": {
