@@ -1,5 +1,5 @@
 import json
-from os.path import join, dirname
+from os.path import dirname, join
 from shutil import copyfile
 from unittest import TestCase
 from unittest.mock import patch

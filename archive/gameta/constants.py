@@ -3,8 +3,7 @@ from typing import Union
 
 import click
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['constants_cli']
 

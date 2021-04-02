@@ -1,9 +1,8 @@
 from abc import abstractmethod
-from os.path import join, exists
+from os.path import exists, join
 from typing import Any
 
-
-__all__ = ['File']
+__all__ = ["File"]
 
 
 class File(object):
@@ -45,7 +44,7 @@ class File(object):
         Returns:
             None
         """
-        with open(self.file, 'w+'):
+        with open(self.file, "w+"):
             pass
 
     clear = create

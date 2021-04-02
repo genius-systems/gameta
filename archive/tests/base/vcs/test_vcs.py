@@ -1,7 +1,7 @@
 
 from unittest import TestCase
 
-from gameta.base import vcs_interfaces, VCS
+from gameta.base import VCS, vcs_interfaces
 
 
 class TestVCSInterfaces(TestCase):

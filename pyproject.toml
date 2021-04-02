@@ -62,6 +62,9 @@ dataclasses = { version = "^0.8", python = "~3.6" }
 mkdocs = "^1.1.2"
 tox = "^3.16.1"
 tox-pyenv = "^1.1.0"
+flake8 = "^3.9.0"
+black = "^20.8"
+isort = "^5.8.0"
 
 [tool.poetry.scripts]
 gameta = "gameta.cli:gameta_cli"
@@ -78,3 +81,24 @@ schema = "gameta.schemas:schema_cli"
 sync = "gameta.sync:sync"
 tags = "gameta.tags:tags_cli"
 venv = "gameta.venv:venv_cli"
+
+[tool.black]
+line-length = 88
+target-version = ['py36', 'py37', 'py38']
+include = '\.pyi?$'
+exclude = '''
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.tox
+    | \.venv
+    | \.circleci
+    | \.github
+    | build
+    | dist
+  )/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3

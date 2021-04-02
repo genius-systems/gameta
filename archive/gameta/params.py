@@ -1,11 +1,10 @@
 import builtins
 import json
-from typing import Type, Optional, TypeVar
+from typing import Optional, Type, TypeVar
 
 import click
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['params_cli']
 

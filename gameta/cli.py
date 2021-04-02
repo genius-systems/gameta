@@ -1,22 +1,20 @@
-
-from os import getcwd, chdir
+from os import chdir, getcwd
 from os.path import abspath, exists
 
 import click
 
-from gameta.base import gameta_context, GametaContext
+from gameta.base import GametaContext, gameta_context
 from gameta.base.imports import import_gameta_plugins
-
 
 __all__ = [
     # Gameta CLI
-    'gameta_cli'
+    "gameta_cli"
 ]
 
 
-@click.group('gameta', invoke_without_command=True)
-@click.option('--project-dir', '-d', type=str, default=getcwd())
-@click.option('--version', '-v', is_flag=True, default=False)
+@click.group("gameta", invoke_without_command=True)
+@click.option("--project-dir", "-d", type=str, default=getcwd())
+@click.option("--version", "-v", is_flag=True, default=False)
 @gameta_context
 def gameta_cli(context: GametaContext, project_dir: str, version: bool) -> None:
     """

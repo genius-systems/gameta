@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from gameta.base import to_schema_tuple, to_schema_str
+from gameta.base import to_schema_str, to_schema_tuple
 
 
 class TestToSchemaTuple(TestCase):

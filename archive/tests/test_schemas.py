@@ -1,13 +1,13 @@
 import json
 from os import makedirs
-from os.path import join, dirname
+from os.path import dirname, join
 from shutil import copyfile
 from unittest import TestCase
 
 from click.testing import CliRunner
 
 from gameta import __version__
-from gameta.schemas import validate, update, ls
+from gameta.schemas import ls, update, validate
 
 
 class TestSchemaValidate(TestCase):

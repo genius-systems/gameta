@@ -1,11 +1,9 @@
 import re
-
 from abc import abstractmethod
 from copy import deepcopy
-from typing import Dict, List, Tuple, Pattern
+from typing import Dict, List, Pattern, Tuple
 
 from jsonschema import Draft7Validator
-
 
 __all__ = ['Schema', 'to_schema_tuple', 'to_schema_str']
 

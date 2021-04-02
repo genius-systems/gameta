@@ -1,7 +1,7 @@
 import json
 import venv
 import zipfile
-from os.path import join, dirname, exists
+from os.path import dirname, exists, join
 from shutil import copyfile
 from unittest import TestCase
 from unittest.mock import patch
@@ -10,7 +10,7 @@ from click.testing import CliRunner
 
 from gameta import __version__
 from gameta.base import GametaContext
-from gameta.cmd import add, delete, update, ls
+from gameta.cmd import add, delete, ls, update
 
 
 class TestCommandAdd(TestCase):

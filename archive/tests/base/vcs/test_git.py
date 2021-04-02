@@ -1,7 +1,7 @@
 import zipfile
 from os import listdir
-from os.path import join, dirname, basename, exists
-from shutil import copytree, copyfile
+from os.path import basename, dirname, exists, join
+from shutil import copyfile, copytree
 from unittest import TestCase
 
 from click.testing import CliRunner

@@ -1,16 +1,15 @@
 import re
-
-from abc import abstractmethod
 from copy import deepcopy
-from typing import Dict, List, Tuple, Pattern
+from typing import Dict, List, Pattern, Tuple
 
 from jsonschema import Draft7Validator
 
+__all__ = ["Schema", "to_schema_tuple", "to_schema_str"]
 
-__all__ = ['Schema', 'to_schema_tuple', 'to_schema_str']
 
-
-schema_expression: Pattern = re.compile(r'(?P<maj>[0-9]+)\.(?P<min>[0-9]+)\.(?P<patch>[0-9]+).*')
+schema_expression: Pattern = re.compile(
+    r"(?P<maj>[0-9]+)\.(?P<min>[0-9]+)\.(?P<patch>[0-9]+).*"
+)
 
 
 def to_schema_tuple(version: str) -> Tuple[int, int, int]:
@@ -38,7 +37,7 @@ def to_schema_str(version: Tuple[int, int, int]) -> str:
     """
     if not version or any(not isinstance(i, int) for i in version):
         raise TypeError("Invalid version")
-    return '.'.join(str(i) for i in version)
+    return ".".join(str(i) for i in version)
 
 
 class Schema(object):
@@ -51,6 +50,7 @@ class Schema(object):
         __validators (Dict[str, Draft7Validator]): JSON schema validators for schema version
         __reserved_params (Dict[str, List[str]): Reserved parameters for structured components in the schema
     """
+
     def __init__(self, version: str, schema: Dict):
         """
         Initialisation function
@@ -60,11 +60,15 @@ class Schema(object):
         """
         self.version: str = version
         self.__schema: Dict = schema
-        self.__validators: Dict[str, Draft7Validator] = {'gameta': Draft7Validator(self.__schema)}
-        self.__validators.update({k: Draft7Validator(v) for k, v in self.__schema['definitions'].items()})
+        self.__validators: Dict[str, Draft7Validator] = {
+            "gameta": Draft7Validator(self.__schema)
+        }
+        self.__validators.update(
+            {k: Draft7Validator(v) for k, v in self.__schema["definitions"].items()}
+        )
         self.__reserved_params: Dict[str, List[str]] = {
-            p: list(self.schema['definitions'][p]['properties'].keys())
-            for p in ['repositories', 'commands']
+            p: list(self.schema["definitions"][p]["properties"].keys())
+            for p in ["repositories", "commands"]
         }
 
     @property

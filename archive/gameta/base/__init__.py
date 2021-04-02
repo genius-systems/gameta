@@ -1,9 +1,8 @@
 
-from .files import File
-from .schemas import supported_versions, to_schema_tuple, Schema, to_schema_str
-from .vcs import vcs_interfaces, VCS
 from .context import GametaContext, gameta_context
-
+from .files import File
+from .schemas import Schema, supported_versions, to_schema_str, to_schema_tuple
+from .vcs import VCS, vcs_interfaces
 
 __all__ = [
     # Schemas

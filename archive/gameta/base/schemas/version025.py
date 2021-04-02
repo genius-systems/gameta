@@ -1,7 +1,6 @@
-from typing import Type, Dict
+from typing import Dict, Type
 
 from .schema import Schema
-
 
 __all__ = ['v025']
 

@@ -1,10 +1,9 @@
 from copy import deepcopy
-from typing import Tuple, Dict, Optional, Callable, Any
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import click
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['command_cli']
 

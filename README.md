@@ -1,6 +1,10 @@
 # Gameta
 
-[![genius-systems](https://circleci.com/gh/genius-systems/gameta.svg?style=svg)](https://circleci.com/gh/genius-systems/gameta)
+[![genius-systems](https://circleci.com/gh/genius-systems/gameta.svg?style=shield)](https://circleci.com/gh/genius-systems/gameta)
+[![License](https://img.shields.io/pypi/l/gameta)](https://github.com/genius-systems/gameta/blob/master/LICENSE)
+[![PyPI version](https://badge.fury.io/py/gameta.svg)](https://badge.fury.io/py/gameta)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 Gameta is a powerful CLI tool that helps you build workspaces to manage your 
 repositories and command-line scripts. It provides powerful parameter substitution 

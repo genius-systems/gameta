@@ -1,11 +1,9 @@
 from typing import Any, List
 
 import pkg_resources
-
 from click import Group
 
-
-__all__ = ['import_plugins', 'import_gameta_plugins']
+__all__ = ["import_plugins", "import_gameta_plugins"]
 
 
 def import_plugins(entry_point: str) -> List[Any]:
@@ -15,7 +13,10 @@ def import_plugins(entry_point: str) -> List[Any]:
     Returns:
         List[Any]: Loaded plugins
     """
-    return [entry_point.load() for entry_point in pkg_resources.iter_entry_points(entry_point)]
+    return [
+        entry_point.load()
+        for entry_point in pkg_resources.iter_entry_points(entry_point)
+    ]
 
 
 def import_gameta_plugins(cli: Group) -> Group:
@@ -28,7 +29,7 @@ def import_gameta_plugins(cli: Group) -> Group:
     Returns:
         click.Group: Gameta command line interface with plugin interfaces attached
     """
-    for entry_point in pkg_resources.iter_entry_points('gameta.cli'):
+    for entry_point in pkg_resources.iter_entry_points("gameta.cli"):
         cli.add_command(cmd=entry_point.load())
 
     return cli

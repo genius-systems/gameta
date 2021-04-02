@@ -1,14 +1,13 @@
-import subprocess
 import shlex
+import subprocess
+from typing import Any, Dict, Optional
 
 import regex as re
-from typing import Dict, Any, Optional
 
 from .env import SHELL
 from .errors import CommandError
 
-
-__all__ = ['Parameter']
+__all__ = ["Parameter"]
 
 
 _sentinel_dict: Dict = {}
@@ -35,16 +34,18 @@ class Parameter(object):
             )                                              |
             (?P<or>((?&constructs)\|?)*)               |  # For or logic that comprises of recursive constructs
             (?P<invalid>.*?)                                  # For invalid statements
-          )                                                     
+            )
         }
         """,
-        re.VERBOSE
+        re.VERBOSE,
     )
 
     def __init__(self, template: str):
         self.template = template
 
-    def substitute(self, mapping: Dict[str, Any]=_sentinel_dict, **kwargs: Dict[str, Any]) -> str:
+    def substitute(
+        self, mapping: Dict[str, Any] = _sentinel_dict, **kwargs: Dict[str, Any]
+    ) -> str:
         """
         Substitutes the parameters provided in the mapping dictionary and kwargs provided into the template string
 
@@ -74,14 +75,18 @@ class Parameter(object):
                 CommandError: If specified parameter does not exist
             """
             # Evaluate output of shell commands
-            if match.group('shell') is not None:
-                return subprocess.check_output(
-                    shlex.split(rf"""{SHELL} -c '{match.group('shell_val')}'""")
-                ).decode().strip()
+            if match.group("shell") is not None:
+                return (
+                    subprocess.check_output(
+                        shlex.split(rf"""{SHELL} -c '{match.group('shell_val')}'""")
+                    )
+                    .decode()
+                    .strip()
+                )
 
             # Retrieve parameter from parameter dictionary
-            elif match.group('param') is not None:
-                param: str = match.group('param')
+            elif match.group("param") is not None:
+                param: str = match.group("param")
                 try:
                     return str(mapping[param])
                 except KeyError:
@@ -90,7 +95,7 @@ class Parameter(object):
         def parse(match: re.regex.Match) -> str:
             """
             Function to parse each individual match found in the function
-            
+
             Args:
                 match (regex.Match): A regex match instance
 
@@ -102,20 +107,20 @@ class Parameter(object):
                 CommandError: Invalid parameter
             """
             # Ignore escaped characters
-            if match.group('escaped') is not None:
-                return match.group('escaped')
+            if match.group("escaped") is not None:
+                return match.group("escaped")
 
             # Handle shell and param groups
-            elif match.group('shell') or match.group('param'):
+            elif match.group("shell") or match.group("param"):
                 return handle(match)
 
             # Handle or group
-            elif match.group('or') is not None:
+            elif match.group("or") is not None:
 
                 # Evaluate each match and return the parameter that evaluated first
-                for g in match.group('or').split('|'):
+                for g in match.group("or").split("|"):
                     try:
-                        output: Optional[str] = self.pattern.sub(handle, '{' + g + '}')
+                        output: Optional[str] = self.pattern.sub(handle, "{" + g + "}")
                         if output:
                             return output
 

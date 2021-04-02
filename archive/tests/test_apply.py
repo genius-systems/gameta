@@ -1,20 +1,20 @@
 import json
 import subprocess
 import sys
-import zipfile
 import venv
+import zipfile
 from os import listdir
-from os.path import join, dirname, exists
-from tempfile import mkdtemp
+from os.path import dirname, exists, join
 from shutil import copyfile, copytree, rmtree
+from tempfile import mkdtemp
 from unittest import TestCase, skipIf
 from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from gameta.base.context import GametaContext
-from gameta.base.command import SHELL, Command
 from gameta.apply import apply
+from gameta.base.command import SHELL, Command
+from gameta.base.context import GametaContext
 
 
 class TestApply(TestCase):

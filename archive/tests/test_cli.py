@@ -1,15 +1,15 @@
 
 import zipfile
-from os.path import join, dirname
+from os.path import dirname, join
 from unittest import TestCase
 from unittest.mock import patch
 
 import click
 from click.testing import CliRunner
 
+from gameta import __version__
 from gameta.base import GametaContext
 from gameta.cli import gameta_cli
-from gameta import __version__
 
 
 class TestGametaCli(TestCase):

@@ -1,14 +1,13 @@
 
-from os import getcwd, chdir
+from os import chdir, getcwd
 from os.path import abspath
 from typing import Union
 
 import click
 import pkg_resources
 
-from gameta.base import gameta_context, GametaContext
 from gameta import __version__
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = [
     # Gameta CLI

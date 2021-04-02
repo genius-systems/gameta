@@ -2,17 +2,16 @@ import json
 import shlex
 from contextlib import contextmanager
 from copy import deepcopy
-from os import getenv, getcwd, chdir, environ
-from os.path import join, basename, normpath, abspath
-from typing import Optional, List, Generator, Dict, Tuple, Union, Any
+from os import chdir, environ, getcwd, getenv
+from os.path import abspath, basename, join, normpath
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 import click
 
 from gameta import __version__
 
 from .files import File
-from .schemas import supported_versions, Schema, to_schema_tuple
-
+from .schemas import Schema, supported_versions, to_schema_tuple
 
 __all__ = [
     # Contexts

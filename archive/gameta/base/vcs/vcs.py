@@ -1,10 +1,8 @@
 
 from abc import abstractmethod
-
-from typing import Any, Optional, List, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..files import File
-
 
 __all__ = ['VCS', 'GametaRepo']
 

@@ -1,13 +1,12 @@
 from copy import deepcopy
-from os.path import join, normpath, exists
-from shutil import rmtree, copytree
+from os.path import exists, join, normpath
+from shutil import copytree, rmtree
 from typing import Dict, Optional
 
 import click
-from git import Repo, GitError
+from git import GitError, Repo
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['repo_cli']
 

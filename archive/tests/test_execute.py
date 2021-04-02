@@ -2,7 +2,7 @@ import json
 import sys
 import venv
 import zipfile
-from os.path import join, dirname, exists
+from os.path import dirname, exists, join
 from shutil import copyfile, copytree
 from unittest import TestCase, skipIf
 from unittest.mock import patch
@@ -10,8 +10,8 @@ from unittest.mock import patch
 from click import Context
 from click.testing import CliRunner
 
-from gameta.base.context import GametaContext
 from gameta.base.command import SHELL
+from gameta.base.context import GametaContext
 from gameta.execute import execute
 
 

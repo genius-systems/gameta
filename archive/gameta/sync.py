@@ -1,8 +1,7 @@
 import click
-from git import Repo, GitError
+from git import GitError, Repo
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['sync']
 

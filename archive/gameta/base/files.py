@@ -1,7 +1,6 @@
 from abc import abstractmethod
-from os.path import join, exists
+from os.path import exists, join
 from typing import Any
-
 
 __all__ = ['File']
 

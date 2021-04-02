@@ -1,6 +1,6 @@
 import json
-from os import makedirs, listdir, symlink, getcwd, getenv, environ
-from os.path import join, basename, exists
+from os import environ, getcwd, getenv, listdir, makedirs, symlink
+from os.path import basename, exists, join
 from unittest import TestCase, skipIf
 
 from click.testing import CliRunner

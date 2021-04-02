@@ -2,7 +2,6 @@ from typing import Dict
 
 from .schema import Schema
 
-
 __all__ = ['v030']
 
 

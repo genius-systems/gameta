@@ -1,12 +1,9 @@
-
 from abc import abstractmethod
-
-from typing import Any, Optional, List, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..files import File
 
-
-__all__ = ['VCS', 'GametaRepo']
+__all__ = ["VCS", "GametaRepo"]
 
 
 class VCS(object):
@@ -18,7 +15,8 @@ class VCS(object):
         path (str): Absolute path to the folder
         __interface (Optional[Any]): Wrapper around the interface
     """
-    name: str = 'base'
+
+    name: str = "base"
 
     def __init__(self, path: str):
         self.path: str = path
@@ -43,7 +41,7 @@ class VCS(object):
 
     @classmethod
     @abstractmethod
-    def generate_repo(cls, path: str) -> 'GametaRepo':
+    def generate_repo(cls, path: str) -> "GametaRepo":
         """
         Generates a GametaRepo along with the interface created
 
@@ -61,7 +59,7 @@ class VCS(object):
 
     @classmethod
     @abstractmethod
-    def init(cls, path: str) -> 'GametaRepo':
+    def init(cls, path: str) -> "GametaRepo":
         """
         Initialises the path specified as a GametaRepo
 
@@ -79,7 +77,7 @@ class VCS(object):
 
     @classmethod
     @abstractmethod
-    def clone(cls, path: str, url: str) -> 'GametaRepo':
+    def clone(cls, path: str, url: str) -> "GametaRepo":
         """
         Clones a new URL to the path specified and generates a GametaRepo instance
 
@@ -111,13 +109,14 @@ class GametaRepo(object):
         *args (Tuple[Any]): Generic arguments
         **kwargs (Dict[str, Any]): Generic keyword arguments
     """
+
     def __init__(
-            self,
-            interface: 'VCS',
-            ignore_file: 'File',
-            details: Optional[Dict[str, Any]] = None,
-            *args: Tuple[Any],
-            **kwargs: Dict[str, Any]
+        self,
+        interface: "VCS",
+        ignore_file: "File",
+        details: Optional[Dict[str, Any]] = None,
+        *args: Tuple[Any],
+        **kwargs: Dict[str, Any]
     ):
         self.ignore_file: File = ignore_file
         self.interface: VCS = interface
@@ -183,7 +182,7 @@ class GametaRepo(object):
         Raises:
             VCSError: If errors occur during execution
         """
-        self['branch'] = branch
+        self["branch"] = branch
 
     @abstractmethod
     def push(self, branch: str, remote: str, *args: Tuple, **kwargs: Dict) -> None:
@@ -264,7 +263,7 @@ class GametaRepo(object):
         Returns:
             Optional[str]: Name of the repository or none if uninitialised
         """
-        return self.__details.get('name')
+        return self.__details.get("name")
 
     @property
     def url(self) -> Optional[str]:
@@ -274,7 +273,7 @@ class GametaRepo(object):
         Returns:
             Optional[str]: URL of the repository or none if uninitialised
         """
-        return self.__details.get('url')
+        return self.__details.get("url")
 
     @property
     def branch(self) -> Optional[str]:
@@ -284,7 +283,7 @@ class GametaRepo(object):
         Returns:
             Optional[str]: Name of the current branch or none if uninitialised
         """
-        return self.__details.get('branch')
+        return self.__details.get("branch")
 
     @property
     def hash(self) -> Optional[str]:
@@ -294,7 +293,7 @@ class GametaRepo(object):
         Returns:
             Optional[str]: Name of the current commit or none if uninitialised
         """
-        return self.__details.get('hash')
+        return self.__details.get("hash")
 
     @property
     def path(self) -> Optional[str]:
@@ -304,7 +303,7 @@ class GametaRepo(object):
         Returns:
             Optional[str]: Path of the current folder or none if uninitialised
         """
-        return self.__details.get('path')
+        return self.__details.get("path")
 
     @property
     def vcs(self) -> str:

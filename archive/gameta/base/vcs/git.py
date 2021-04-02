@@ -1,13 +1,11 @@
-from os.path import basename, splitext, join
-from typing import Optional, Any, Dict, Tuple, List
+from os.path import basename, join, splitext
+from typing import Any, Dict, List, Optional, Tuple
 
 import git
 
 from ..errors import VCSError
 from ..files import File
-
 from .vcs import VCS, GametaRepo
-
 
 __all__ = ['Git', 'GitRepo']
 

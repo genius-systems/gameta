@@ -1,11 +1,9 @@
 from typing import Optional
 
 import click
+from git import InvalidGitRepositoryError, Repo
 
-from git import Repo, InvalidGitRepositoryError
-
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['init']
 

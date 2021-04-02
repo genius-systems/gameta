@@ -1,7 +1,7 @@
 import json
 import zipfile
 from os import listdir
-from os.path import join, dirname, exists
+from os.path import dirname, exists, join
 from shutil import copyfile
 from unittest import TestCase
 from unittest.mock import patch

@@ -1,11 +1,10 @@
 import venv
-from os.path import join, exists
+from os.path import exists, join
 from shutil import rmtree
 
 import click
 
-from gameta.base import gameta_context, GametaContext
-
+from gameta.base import GametaContext, gameta_context
 
 __all__ = ['venv_cli']
 

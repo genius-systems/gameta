@@ -1,15 +1,13 @@
-from os.path import basename, splitext, join
-from typing import Optional, Any, Dict, Tuple, List
+from os.path import basename, join, splitext
+from typing import Any, Dict, List, Optional, Tuple
 
 import git
 
 from ..errors import VCSError
 from ..files import File
-
 from .vcs import VCS, GametaRepo
 
-
-__all__ = ['Git', 'GitRepo']
+__all__ = ["Git", "GitRepo"]
 
 
 class Git(VCS):
@@ -21,7 +19,8 @@ class Git(VCS):
         path (str): Absolute path to the folder
         __interface (Any): Git VCS interface
     """
-    name: str = 'git'
+
+    name: str = "git"
 
     def __init__(self, path: str):
         super(Git, self).__init__(path)
@@ -45,7 +44,7 @@ class Git(VCS):
             return False
 
     @classmethod
-    def generate_repo(cls, path: str) -> 'GitRepo':
+    def generate_repo(cls, path: str) -> "GitRepo":
         """
         Generates a GitRepo instance from a git repository
 
@@ -61,18 +60,20 @@ class Git(VCS):
         try:
             repo: git.Repo = git.Repo(path)
             details: Dict = {
-                'path': path,
-                'name': splitext(basename(repo.remote().url))[0],
-                'url': repo.remote().url,
-                'branch': str(repo.active_branch),
-                'hash': repo.commit().hexsha,
+                "path": path,
+                "name": splitext(basename(repo.remote().url))[0],
+                "url": repo.remote().url,
+                "branch": str(repo.active_branch),
+                "hash": repo.commit().hexsha,
             }
             return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
-            raise VCSError(f"Could not create git repository due to {e.__class__.__name__}.{str(e)}")
+            raise VCSError(
+                f"Could not create git repository due to {e.__class__.__name__}.{str(e)}"
+            )
 
     @classmethod
-    def init(cls, path: str) -> 'GitRepo':
+    def init(cls, path: str) -> "GitRepo":
         """
         Initialises a folder as a git repository
 
@@ -88,18 +89,20 @@ class Git(VCS):
         try:
             repo: git.Repo = git.Repo.init(path)
             details: Dict = {
-                'path': path,
-                'name': basename(path),
-                'url': None,
-                'branch': str(repo.active_branch),
-                'hash': None,
+                "path": path,
+                "name": basename(path),
+                "url": None,
+                "branch": str(repo.active_branch),
+                "hash": None,
             }
             return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
-            raise VCSError(f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}")
+            raise VCSError(
+                f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}"
+            )
 
     @classmethod
-    def clone(cls, path: str, url: str) -> 'GitRepo':
+    def clone(cls, path: str, url: str) -> "GitRepo":
         """
         Git clones a new URL to the path specified and generates a GitRepo instance
 
@@ -118,15 +121,17 @@ class Git(VCS):
         try:
             repo: git.Repo = git.Repo.clone_from(url, path)
             details: Dict = {
-                'path': path,
-                'name': splitext(basename(url))[0],
-                'url': url,
-                'branch': str(repo.active_branch),
-                'hash': repo.commit().hexsha
+                "path": path,
+                "name": splitext(basename(url))[0],
+                "url": url,
+                "branch": str(repo.active_branch),
+                "hash": repo.commit().hexsha,
             }
             return GitRepo(cls(path), GitIgnore(path), details, repo)
         except Exception as e:
-            raise VCSError(f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}")
+            raise VCSError(
+                f"Could not initialise git repository due to {e.__class__.__name__}.{str(e)}"
+            )
 
 
 class GitIgnore(File):
@@ -137,7 +142,8 @@ class GitIgnore(File):
         path (str): Absolute path to the folder
         file_name (str): Reference to the .gitignore file
     """
-    def __init__(self, path: str, file_name: str = '.gitignore'):
+
+    def __init__(self, path: str, file_name: str = ".gitignore"):
         super(GitIgnore, self).__init__(path, file_name)
 
     def load(self) -> Any:
@@ -148,7 +154,7 @@ class GitIgnore(File):
             Optional[Any]: Returns the data loaded from the file or none if the file does not exist
         """
         try:
-            with open(self.file, 'r') as f:
+            with open(self.file, "r") as f:
                 return f.readlines()
 
         # Handle case where file has not been created
@@ -157,7 +163,9 @@ class GitIgnore(File):
 
         # General exception case
         except Exception as e:
-            VCSError(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
+            VCSError(
+                f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}"
+            )
 
     def export(self, data: Any) -> None:
         """
@@ -170,10 +178,12 @@ class GitIgnore(File):
             None
         """
         try:
-            with open(self.file, 'a+') as f:
+            with open(self.file, "a+") as f:
                 f.writelines(data)
         except Exception as e:
-            raise VCSError(f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}")
+            raise VCSError(
+                f"Could not export data to {self.file_name} file: {e.__class__.__name__}.{str(e)}"
+            )
 
 
 class GitRepo(GametaRepo):
@@ -190,13 +200,13 @@ class GitRepo(GametaRepo):
     """
 
     def __init__(
-            self,
-            interface: Git,
-            ignore_file: GitIgnore,
-            details: Dict,
-            repo: git.Repo,
-            *args: Tuple[Any],
-            **kwargs: Dict[str, Any]
+        self,
+        interface: Git,
+        ignore_file: GitIgnore,
+        details: Dict,
+        repo: git.Repo,
+        *args: Tuple[Any],
+        **kwargs: Dict[str, Any],
     ):
         super(GitRepo, self).__init__(interface, ignore_file, details)
 
@@ -222,7 +232,7 @@ class GitRepo(GametaRepo):
         """
         try:
             for remote in self.repo.remotes:
-                remote.fetch(*args, **{**{'tags': True, 'prune': True}, **kwargs})
+                remote.fetch(*args, **{**{"tags": True, "prune": True}, **kwargs})
         except git.GitError as e:
             raise VCSError(f"{e.__class__.__name__}.{str(e)} fetching remote updates")
 
@@ -249,23 +259,23 @@ class GitRepo(GametaRepo):
 
             # Defaults to the current head (this is a new branch
             except git.BadName:
-                commit: str = 'HEAD'
+                commit: str = "HEAD"
 
             # Check out branch
             self.repo.head.set_reference(
                 # Create branch
                 self.repo.create_head(
                     branch,
-                    kwargs.get('commit', commit),
-                    kwargs.get('force', False),
-                    kwargs.get('logmsg')
+                    kwargs.get("commit", commit),
+                    kwargs.get("force", False),
+                    kwargs.get("logmsg"),
                 ),
-                kwargs.get('logmsg')
+                kwargs.get("logmsg"),
             )
             self.repo.head.reset(index=True, working_tree=True)
 
             # Update the commit and branches
-            self['hash'] = self.repo.commit().hexsha
+            self["hash"] = self.repo.commit().hexsha
             super(GitRepo, self).switch(str(self.repo.active_branch))
         except git.GitError as e:
             raise VCSError(f"{e.__class__.__name__}.{str(e)} creating branch {branch}")
@@ -292,7 +302,13 @@ class GitRepo(GametaRepo):
         except git.GitError as e:
             raise VCSError(f"{e.__class__.__name__}.{str(e)} pushing branch {branch}")
 
-    def update(self, source: str = 'origin', branch: Optional[str] = None, *args: Tuple, **kwargs: Dict) -> None:
+    def update(
+        self,
+        source: str = "origin",
+        branch: Optional[str] = None,
+        *args: Tuple,
+        **kwargs: Dict,
+    ) -> None:
         """
         Merge the latest code into the current branch
 
@@ -326,10 +342,12 @@ class GitRepo(GametaRepo):
         try:
             self.repo.remote(source).pull(branch, *args, **kwargs)
         except git.GitError as e:
-            raise VCSError(f"{e.__class__.__name__}.{str(e)} pulling data from {source}/{branch}")
+            raise VCSError(
+                f"{e.__class__.__name__}.{str(e)} pulling data from {source}/{branch}"
+            )
 
         # Update the latest commit hash
-        self['hash'] = self.repo.commit().hexsha
+        self["hash"] = self.repo.commit().hexsha
 
     def ignore(self, files: List[str], *args: Tuple, **kwargs: Dict) -> None:
         """
@@ -347,13 +365,15 @@ class GitRepo(GametaRepo):
             VCSError: If errors occur during execution
         """
         try:
-            data: List[str] = [f + '\n' for f in files]
+            data: List[str] = [f + "\n" for f in files]
             if not self.ignore_file.exists():
                 self.ignore_file.create()
             self.ignore_file.export(data)
             self.ignore_data.extend(data)
         except Exception as e:
-            raise VCSError(f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore")
+            raise VCSError(
+                f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore"
+            )
 
     def remove_ignore(self, files: List[str], *args: Tuple, **kwargs: Dict) -> None:
         """
@@ -371,7 +391,7 @@ class GitRepo(GametaRepo):
             VCSError: If errors occur during execution
         """
         try:
-            data: List[str] = [f + '\n' for f in files]
+            data: List[str] = [f + "\n" for f in files]
             for f in data:
                 try:
                     self.ignore_data.remove(f)
@@ -380,4 +400,6 @@ class GitRepo(GametaRepo):
             self.ignore_file.clear()
             self.ignore_file.export(self.ignore_data)
         except Exception as e:
-            raise VCSError(f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore")
+            raise VCSError(
+                f"{e.__class__.__name__}.{str(e)} adding {files} to .gitignore"
+            )

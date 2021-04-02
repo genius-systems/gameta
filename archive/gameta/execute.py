@@ -1,9 +1,8 @@
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 import click
 
 from gameta.base import GametaContext
-
 
 __all__ = ['execute']
 

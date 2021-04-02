@@ -2,16 +2,15 @@ import shlex
 from contextlib import contextmanager
 from copy import deepcopy
 from dataclasses import dataclass
-from os import getcwd, chdir
+from os import chdir, getcwd
 from os.path import join, normpath
-from typing import List, Dict, Optional, Tuple, Generator, Any, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
-from .env import SHELL, ENV_VARS
+from .env import ENV_VARS, SHELL
 from .errors import CommandError
 from .parameters import Parameter
 
-
-__all__ = ['CommandConfig', 'GametaCommand', 'Runner']
+__all__ = ["CommandConfig", "GametaCommand", "Runner"]
 
 
 @dataclass
@@ -25,6 +24,7 @@ class CommandConfig:
         shell (bool): Flag to indicate that shell generator should be used
         venv (Optional[str]): Indicates that virtualenv generator should be used
     """
+
     shell: bool = False
     debug: bool = False
     sep: str = "&&"
@@ -49,7 +49,7 @@ class GametaCommand(object):
         self.commands: List[str] = commands
         self.params: Dict = params
         self.config: CommandConfig = config
-        self.separators: Dict[str, str] = {';': '; ', '&&': ' && ', '||': ' || '}
+        self.separators: Dict[str, str] = {";": "; ", "&&": " && ", "||": " || "}
 
     @contextmanager
     def generate(self) -> List[str]:
@@ -68,7 +68,9 @@ class GametaCommand(object):
         elif self.config.shell:
             prepared_command: str = self.shell(substituted_commands)
         else:
-            prepared_command: str = f'{self.separators[self.config.sep]}'.join(substituted_commands)
+            prepared_command: str = f"{self.separators[self.config.sep]}".join(
+                substituted_commands
+            )
 
         # Tokenise results for subprocess execution
         yield self.tokenise(prepared_command)
@@ -81,7 +83,9 @@ class GametaCommand(object):
             List[str]: Set of commands post-substitution
         """
         try:
-            return [Parameter(c).substitute(**self.params) for c in deepcopy(self.commands)]
+            return [
+                Parameter(c).substitute(**self.params) for c in deepcopy(self.commands)
+            ]
         except Exception as e:
             raise CommandError(f"Parameter {str(e)} was not provided")
 
@@ -108,7 +112,9 @@ class GametaCommand(object):
         Returns:
             str: Prepared command string
         """
-        return rf"""{SHELL} -c '{f'{self.separators[self.config.sep]}'.join(commands)}'"""
+        return (
+            rf"""{SHELL} -c '{f'{self.separators[self.config.sep]}'.join(commands)}'"""
+        )
 
     @staticmethod
     def tokenise(command: str) -> List[str]:
@@ -135,14 +141,15 @@ class Runner(object):
         virtualenvs (Dict[str, str]): Virtualenv data
         constants (Dict[str, Union[str, int, float, bool]]): Gameta constants
     """
+
     env_vars: Dict[str, str] = deepcopy(ENV_VARS)
 
     def __init__(
-            self,
-            project_dir: str,
-            repositories: Dict[str, Dict[str, Any]],
-            virtualenvs: Dict[str, str],
-            constants: Dict[str, Union[str, int, float, bool]],
+        self,
+        project_dir: str,
+        repositories: Dict[str, Dict[str, Any]],
+        virtualenvs: Dict[str, str],
+        constants: Dict[str, Union[str, int, float, bool]],
     ):
         self.project_dir: str = project_dir
         self.repositories: Dict[str, Dict[str, Any]] = repositories
@@ -150,10 +157,7 @@ class Runner(object):
         self.constants: Dict[str, Union[str, int, float, bool]] = constants
 
     def apply(
-            self,
-            commands: List[str],
-            repos: List[str] = (),
-            **kwargs: Dict[str, Any]
+        self, commands: List[str], repos: List[str] = (), **kwargs: Dict[str, Any]
     ) -> Generator[Tuple[str, str], None, None]:
         """
         Yields a list of commands to all repositories or a selected set of them, substitutes relevant parameters stored
@@ -169,7 +173,9 @@ class Runner(object):
         try:
             # Retrieve repositories for execution
             repositories: List[Tuple[str, Dict[str, str]]] = [
-                (repo, repo_details) for repo, repo_details in self.repositories.items() if repo in repos
+                (repo, repo_details)
+                for repo, repo_details in self.repositories.items()
+                if repo in repos
             ]
 
             # Prepare config by overriding existing configuration with necessary execution values
@@ -179,19 +185,21 @@ class Runner(object):
                     **{
                         # Python subprocess does not handle multiple commands
                         # hence we need to execute these in a separate shell
-                        'shell': True if len(commands) > 1 else kwargs.get('shell', False),
-                        'venv': self.virtualenvs[kwargs['venv']] if kwargs.get('venv') else None
-                    }
+                        "shell": True
+                        if len(commands) > 1
+                        else kwargs.get("shell", False),
+                        "venv": self.virtualenvs[kwargs["venv"]]
+                        if kwargs.get("venv")
+                        else None,
+                    },
                 }
             )
 
             for repo, repo_details in repositories:
                 # Generate complete set of parameters for substitution
-                with self.cd(repo_details['path']):
+                with self.cd(repo_details["path"]):
                     with GametaCommand(
-                            commands,
-                            self.generate_parameters(repo_details),
-                            config
+                        commands, self.generate_parameters(repo_details), config
                     ) as c:
                         yield repo, c
         except CommandError:
@@ -199,7 +207,8 @@ class Runner(object):
         except Exception as e:
             raise CommandError(
                 f"Error {e.__class__.__name__}.{str(e)} occurred when running commands {commands} in {repos} with "
-                f"parameters {kwargs}")
+                f"parameters {kwargs}"
+            )
 
     def generate_parameters(self, repo_details: Dict) -> Dict:
         """
@@ -213,7 +222,9 @@ class Runner(object):
         """
         # Substitute into parameters first and combine all into constants
         combined_details: Dict = {
-            k: Parameter(v).substitute({**self.constants, **self.env_vars}) if isinstance(v, str) else v
+            k: Parameter(v).substitute({**self.constants, **self.env_vars})
+            if isinstance(v, str)
+            else v
             for k, v in deepcopy(repo_details).items()
         }
         combined_details.update({**self.constants, **self.env_vars})
@@ -231,7 +242,7 @@ class Runner(object):
             Generator[str, None, None]: Path to current directory
         """
         cwd = getcwd()
-        path = normpath(join(self.project_dir, sub_directory.lstrip('/')))
+        path = normpath(join(self.project_dir, sub_directory.lstrip("/")))
         chdir(path)
         yield path
         chdir(cwd)

@@ -1,15 +1,14 @@
 import json
 from os import getcwd
 from os.path import join
-from typing import Tuple, List, Dict
+from typing import Dict, List, Tuple
 
 import click
 from jsonschema import Draft7Validator, ValidationError
 
 from gameta import __version__
+from gameta.base import Schema, supported_versions, to_schema_tuple
 from gameta.base.schemas.schema import to_schema_str
-from gameta.base import supported_versions, Schema, to_schema_tuple
-
 
 __all__ = ['schema_cli']
 

@@ -8,16 +8,21 @@ import click
 from jsonschema import Draft7Validator, ValidationError
 
 from gameta import __version__
+from gameta.base import Schema, supported_versions, to_schema_tuple
 from gameta.base.schemas.schema import to_schema_str
-from gameta.base import supported_versions, Schema, to_schema_tuple
+
+__all__ = ["schema_cli"]
 
 
-__all__ = ['schema_cli']
-
-
-@click.group('schema', invoke_without_command=True)
-@click.option('--schema-version', '-s', 'version', type=str, default=None,
-              help='.gameta schema version to print')
+@click.group("schema", invoke_without_command=True)
+@click.option(
+    "--schema-version",
+    "-s",
+    "version",
+    type=str,
+    default=None,
+    help=".gameta schema version to print",
+)
 def schema_cli(version: Optional[str]) -> None:
     """
     CLI for .gameta schemas, prints a specified version if provided
@@ -39,11 +44,24 @@ def schema_cli(version: Optional[str]) -> None:
 
 
 @schema_cli.command()
-@click.option('--path', '-p', type=str, default=None,
-              help='Absolute path to directory containing .gameta folder to validate')
-@click.option('--verbose', '-v', is_flag=True, default=False, help='Prints verbose error details')
-@click.option('--schema-version', '-s', 'version', type=str, default=None,
-              help='.gameta schema version to validate against, defaults to None')
+@click.option(
+    "--path",
+    "-p",
+    type=str,
+    default=None,
+    help="Absolute path to directory containing .gameta folder to validate",
+)
+@click.option(
+    "--verbose", "-v", is_flag=True, default=False, help="Prints verbose error details"
+)
+@click.option(
+    "--schema-version",
+    "-s",
+    "version",
+    type=str,
+    default=None,
+    help=".gameta schema version to validate against, defaults to None",
+)
 def validate(path: str, verbose: bool, version: Optional[str]) -> None:
     """
     Validates the .gameta data against a specified schema version
@@ -66,7 +84,7 @@ def validate(path: str, verbose: bool, version: Optional[str]) -> None:
         $ gameta schema validate -s  # Validate against a specific schema version
     """
     # Import .gameta data
-    gameta_path: str = join(path if path else getcwd(), '.gameta', '.gameta')
+    gameta_path: str = join(path if path else getcwd(), ".gameta", ".gameta")
     try:
         with open(gameta_path) as f:
             gameta_data: Dict = json.load(f)
@@ -76,7 +94,7 @@ def validate(path: str, verbose: bool, version: Optional[str]) -> None:
         )
 
     # Get schema version to validate against, defaults to version specified in the .gameta file
-    version: str = version or gameta_data['version']
+    version: str = version or gameta_data["version"]
 
     # Handle case where gameta version does not support schema context
     if to_schema_tuple(version) not in supported_versions:
@@ -90,7 +108,7 @@ def validate(path: str, verbose: bool, version: Optional[str]) -> None:
     validators: Dict[str, Draft7Validator] = schema.validators
 
     # Iterate over all the schema definitions
-    for section in schema.schema['definitions']:
+    for section in schema.schema["definitions"]:
         if section in gameta_data:
 
             # Validate each entry independently for thoroughness and collect errors
@@ -103,18 +121,24 @@ def validate(path: str, verbose: bool, version: Optional[str]) -> None:
                 except ValidationError as e:
                     if section not in errors:
                         errors[section] = {}
-                    errors[section][entry_name] = f'{e.__class__.__name__} {str(e) if verbose else e.message}'
+                    errors[section][
+                        entry_name
+                    ] = f"{e.__class__.__name__} {str(e) if verbose else e.message}"
 
     # Print the errors if there are any
     if errors:
-        click.echo(f"Validation errors associated with .gameta schema found in {gameta_path}")
+        click.echo(
+            f"Validation errors associated with .gameta schema found in {gameta_path}"
+        )
         for section_name, section in errors.items():
             click.echo(f"Section {section_name}:")
             for entry_name, error in section.items():
                 click.echo(f"\tEntry: {entry_name}, error: {error}")
 
     else:
-        click.echo(f"There are no validation errors associated with .gameta schema found in {gameta_path}")
+        click.echo(
+            f"There are no validation errors associated with .gameta schema found in {gameta_path}"
+        )
 
 
 @schema_cli.command()

@@ -1,8 +1,7 @@
 import json
 import zipfile
-from os.path import join, dirname, basename
+from os.path import basename, dirname, join
 from shutil import copyfile
-
 from unittest import TestCase
 from unittest.mock import patch
 
