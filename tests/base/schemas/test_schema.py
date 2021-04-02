@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from gameta.base import to_schema_tuple, to_schema_str
+from gameta.base import to_schema_tuple, to_schema_str, supported_versions, Schema
 
 
 class TestToSchemaTuple(TestCase):
@@ -43,3 +43,10 @@ class TestToSchemaStr(TestCase):
 
     def test_to_schema_tuple_valid_version(self):
         self.assertEqual('1.3.4', self.to_schema_str((1, 3, 4)))
+
+
+class TestSupportedVersions(TestCase):
+    def test_supported_versions(self):
+        self.assertEqual(list(supported_versions), [(0, 2, 5), (0, 2, 6), (0, 2, 7), (0, 3, 0)])
+        self.assertTrue(all(isinstance(i, Schema) for i in supported_versions.values()))
+        self.assertTrue(supported_versions[(0, 2, 5)] == supported_versions[(0, 2, 6)] == supported_versions[(0, 2, 7)])
