@@ -32,7 +32,7 @@ class Gameta(File):
     def __init__(self, path: str, file_name: str = '.gameta'):
         super(Gameta, self).__init__(path, file_name)
 
-    def load(self) -> Optional[Any]:
+    def load(self) -> Any:
         """
         Loads data from the .gameta file
 
@@ -46,7 +46,7 @@ class Gameta(File):
 
         # .gameta file does not exist
         except FileNotFoundError:
-            return
+            return {}
 
         except Exception as e:
             click.echo(f"Could not load {self.file_name} file due to: {e.__class__.__name__}.{str(e)}")
@@ -226,7 +226,7 @@ class GametaContext(object):
             None
         """
         for file, interface in self.files.items():
-            interface.load()
+            self.gameta_data = interface.load()
 
         # Retrieve validation schemas
         try:

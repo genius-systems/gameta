@@ -1,6 +1,6 @@
 
 from os import getcwd, chdir
-from os.path import abspath
+from os.path import abspath, exists
 
 import click
 
@@ -39,7 +39,10 @@ def gameta_cli(context: GametaContext, project_dir: str, version: bool) -> None:
         click.echo(f"Gameta version: {__version__}")
         return
 
-    context.project_dir = abspath(project_dir)
+    if not exists(project_dir):
+        raise click.ClickException(f"Project directory {project_dir} does not exist")
+
+    context.init(abspath(project_dir))
     chdir(context.project_dir)
 
     # Load current repositories
