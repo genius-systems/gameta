@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "gameta"
 version = "0.3.0a1"
-description = "CLI Tool for managing meta-repositories"
+description = "CLI Tool for managing workspaces"
 license = "MIT"
 authors = [ "David Lee <ltw_david@hotmail.com>", ]
 exclude = [ "tests", ]
@@ -32,23 +32,6 @@ classifiers = [
     "Topic :: Terminals"
 ]
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-isolated_build = True
-envlist = py36,py37,py38,py39
-
-[testenv]
-download = true
-deps = -etests/cli_plugin
-commands = python -m unittest discover -v -s ./tests -t .
-
-[testenv:py36]
-setenv =
-    LC_ALL = C.UTF-8
-    LANG = C.UTF-8
-"""
-
 [tool.poetry.dependencies]
 python = ">=3.6"
 Click = "^7.1.2"
@@ -65,22 +48,52 @@ tox-pyenv = "^1.1.0"
 flake8 = "^3.9.0"
 black = "^20.8"
 isort = "^5.8.0"
+mypy = "^"
 
 [tool.poetry.scripts]
 gameta = "gameta.cli:gameta_cli"
 
 [tool.poetry.plugins."gameta.cli"]
-apply = "gameta.apply:apply"
-cmd = "gameta.cmd:command_cli"
-const = "gameta.constants:constants_cli"
-exec = "gameta.execute:execute"
-init = "gameta.init:init"
-params = "gameta.params:params_cli"
-repo = "gameta.repos:repo_cli"
+#apply = "gameta.apply:apply"
+#cmd = "gameta.cmd:command_cli"
+#const = "gameta.constants:constants_cli"
+#exec = "gameta.execute:execute"
+#init = "gameta.init:init"
+#params = "gameta.params:params_cli"
+#repo = "gameta.repos:repo_cli"
 schema = "gameta.schemas:schema_cli"
-sync = "gameta.sync:sync"
-tags = "gameta.tags:tags_cli"
-venv = "gameta.venv:venv_cli"
+#sync = "gameta.sync:sync"
+#tags = "gameta.tags:tags_cli"
+#venv = "gameta.venv:venv_cli"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py36,py37,py38,py39
+
+[testenv]
+download = true
+deps = -etests/cli_plugin
+commands = python -m unittest discover -v -s ./tests -t .
+
+[testenv:py36]
+setenv =
+    LC_ALL = C.UTF-8
+    LANG = C.UTF-8
+
+[testenv:lint]
+deps =
+    flake8
+    black
+    isort
+    mypy
+commands =
+    flake8
+    isort .
+    mypy gameta tests
+    black gameta tests
+"""
 
 [tool.black]
 line-length = 88
@@ -96,6 +109,7 @@ exclude = '''
     | \.github
     | build
     | dist
+    | archive
   )/
 '''
 

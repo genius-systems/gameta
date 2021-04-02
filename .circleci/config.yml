@@ -12,6 +12,9 @@ jobs:
       - run:
           name: Test
           command: tox
+      - run:
+          name: Lint
+          command: tox -e lint
   docs:
     docker:
       - image: "fkrull/multi-python:bionic"

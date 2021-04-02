@@ -116,7 +116,7 @@ class GametaRepo(object):
         ignore_file: "File",
         details: Optional[Dict[str, Any]] = None,
         *args: Tuple[Any],
-        **kwargs: Dict[str, Any]
+        **kwargs: Dict[str, Any],
     ):
         self.ignore_file: File = ignore_file
         self.interface: VCS = interface

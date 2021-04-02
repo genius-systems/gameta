@@ -1,7 +1,6 @@
 import json
 from os.path import dirname, join
 from pprint import pformat
-from shutil import copytree
 from unittest import TestCase
 
 from click.testing import CliRunner
@@ -9,6 +8,7 @@ from click.testing import CliRunner
 from gameta import __version__
 from gameta.base import supported_versions, to_schema_tuple
 from gameta.schemas import ls, schema_cli, validate
+from tests import copytree
 
 
 class TestSchemaCli(TestCase):
@@ -58,11 +58,7 @@ class TestSchemaValidate(TestCase):
     def test_validate_gameta_schema_does_not_exist(self):
         params = {"version": "0.1.1"}
         with self.runner.isolated_filesystem() as f:
-            copytree(
-                join(dirname(__file__), "data", "gameta_multi_repos_only"),
-                f,
-                dirs_exist_ok=True,
-            )
+            copytree(join(dirname(__file__), "data", "gameta_multi_repos_only"), f)
             with open(join(f, ".gameta", ".gameta"), "r+") as m:
                 output = json.load(m)
                 output["version"] = params["version"]
@@ -99,11 +95,7 @@ class TestSchemaValidate(TestCase):
             "constants": {"hello": "world"},
         }
         with self.runner.isolated_filesystem() as f:
-            copytree(
-                join(dirname(__file__), "data", "gameta_multi_repos_only"),
-                f,
-                dirs_exist_ok=True,
-            )
+            copytree(join(dirname(__file__), "data", "gameta_multi_repos_only"), f)
             with open(join(f, ".gameta", ".gameta"), "r+") as m:
                 output = json.load(m)
                 output["repositories"].update(params["repositories"])
@@ -155,11 +147,7 @@ class TestSchemaValidate(TestCase):
             "constants": {"HELLO": "world"},
         }
         with self.runner.isolated_filesystem() as f:
-            copytree(
-                join(dirname(__file__), "data", "gameta_multi_repos_only"),
-                f,
-                dirs_exist_ok=True,
-            )
+            copytree(join(dirname(__file__), "data", "gameta_multi_repos_only"), f)
             with open(join(f, ".gameta", ".gameta"), "r+") as m:
                 output = json.load(m)
                 output["commands"] = params["commands"]
@@ -197,11 +185,7 @@ class TestSchemaValidate(TestCase):
             "constants": {"HELLO": "world"},
         }
         with self.runner.isolated_filesystem() as f:
-            copytree(
-                join(dirname(__file__), "data", "gameta_multi_repos_only"),
-                f,
-                dirs_exist_ok=True,
-            )
+            copytree(join(dirname(__file__), "data", "gameta_multi_repos_only"), f)
             with open(join(f, ".gameta", ".gameta"), "r+") as m:
                 output = json.load(m)
                 output["commands"] = params["commands"]
@@ -295,11 +279,7 @@ class TestSchemaValidate(TestCase):
             "constants": {"hello": "world"},
         }
         with self.runner.isolated_filesystem() as f:
-            copytree(
-                join(dirname(__file__), "data", "gameta_multi_repos_only"),
-                f,
-                dirs_exist_ok=True,
-            )
+            copytree(join(dirname(__file__), "data", "gameta_multi_repos_only"), f)
             with open(join(f, ".gameta", ".gameta"), "r+") as m:
                 output = json.load(m)
                 output["repositories"].update(params["repositories"])
@@ -366,10 +346,10 @@ class TestSchemaValidate(TestCase):
                 "     'verbose': False}\n"
                 "Section constants:\n"
                 "\t"
-                r"Entry: hello, error: ValidationError 'hello' does not match '^\$?[A-Z0-9_-]+$'"
+                r"Entry: hello, error: ValidationError 'hello' does not match '^\\$?[A-Z0-9_-]+$'"
                 "\n"
                 "\nFailed validating 'pattern' in schema['propertyNames']:\n"
-                r"    {'pattern': '^\$?[A-Z0-9_-]+$'}"
+                r"    {'pattern': '^\\$?[A-Z0-9_-]+$'}"
                 "\n"
                 "\nOn instance:\n"
                 "    'hello'\n",

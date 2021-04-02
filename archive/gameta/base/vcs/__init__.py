@@ -2,10 +2,8 @@ from importlib import import_module
 from pkgutil import iter_modules
 from typing import Dict, Type
 
-from .vcs import VCS
-
 from ..imports import import_plugins
-
+from .vcs import VCS
 
 __all__ = ['vcs_interfaces', 'VCS']
 
