@@ -129,11 +129,13 @@ class Runner(object):
     Runner class that encapsulates the execution of all Gameta Commands from parameter generation to command generation.
 
     Attributes:
+        env_vars (Dict[str, str]): Environment variables extracted from the OS
         project_dir (str): Absolute path to the project directory
         repositories (Dict[str, Dict[str, Any]]): Repository details
         virtualenvs (Dict[str, str]): Virtualenv data
         constants (Dict[str, Union[str, int, float, bool]]): Gameta constants
     """
+    env_vars: Dict[str, str] = deepcopy(ENV_VARS)
 
     def __init__(
             self,
@@ -146,8 +148,6 @@ class Runner(object):
         self.repositories: Dict[str, Dict[str, Any]] = repositories
         self.virtualenvs: Dict[str, str] = virtualenvs
         self.constants: Dict[str, Union[str, int, float, bool]] = constants
-
-        self.env_vars: Dict[str, str] = deepcopy(ENV_VARS)
 
     def apply(
             self,

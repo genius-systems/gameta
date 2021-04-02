@@ -1,6 +1,6 @@
-from os import makedirs, symlink, getcwd, listdir, getenv
+from os import makedirs, symlink, getcwd, listdir, getenv, environ
 from os.path import join, basename
-from unittest import TestCase
+from unittest import TestCase, skipIf
 
 from click.testing import CliRunner
 
@@ -288,6 +288,13 @@ class TestGametaCommand(TestCase):
 class TestRunner(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
+
+    def test_runner_environment_variables_properly_extracted(self):
+        self.assertTrue(all(i[0] == '$' for i in Runner.env_vars))
+
+    @skipIf('HOME' not in environ, 'HOME variable is not present')
+    def test_runner_environment_variables_exists(self):
+        self.assertTrue('$HOME' in Runner.env_vars)
 
     def test_runner_cd_to_valid_directory(self):
         with self.runner.isolated_filesystem() as f:

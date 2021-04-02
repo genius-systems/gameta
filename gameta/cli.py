@@ -4,7 +4,6 @@ from os.path import abspath, exists
 
 import click
 
-from gameta import __version__
 from gameta.base import gameta_context, GametaContext
 from gameta.base.imports import import_gameta_plugins
 
@@ -36,7 +35,7 @@ def gameta_cli(context: GametaContext, project_dir: str, version: bool) -> None:
         $ gameta -d /path/to/project/dir  # Specify a project directory
     """
     if version:
-        click.echo(f"Gameta version: {__version__}")
+        click.echo(f"Gameta version: {context.version}")
         return
 
     if not exists(project_dir):

@@ -1,6 +1,6 @@
 
 
-__all__ = ['GametaError', 'VCSError', 'CommandError']
+__all__ = ['GametaError', 'VCSError', 'CommandError', 'ContextError']
 
 
 class GametaError(Exception):
@@ -18,4 +18,10 @@ class VCSError(GametaError):
 class CommandError(GametaError):
     """
     Errors related to Gameta Commands
+    """
+
+
+class ContextError(GametaError):
+    """
+    Errors related to Gameta Contexts
     """

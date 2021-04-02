@@ -1,12 +1,12 @@
 import json
 from contextlib import contextmanager
-from os import environ
 from os.path import join, basename, abspath
 from typing import Optional, List, Dict, Tuple, Union, Any
 
 import click
 
 from gameta import __version__
+from .errors import ContextError
 
 from .files import File
 from .schemas import supported_versions, Schema, to_schema_tuple
@@ -70,37 +70,33 @@ class GametaContext(object):
     GametaContext for the current Gameta session
 
     Attributes:
+        version (str): Gameta version
         schema (Schema): Schema class for Gameta .gameta file
         project_dir (Optional[str]): Project directory
         is_metarepo (bool): Project is a metarepo
+        files (Dict[str, File]): File formats supported
         gameta_data (Dict): Gameta data cache to store extracted data and updated data for export
         repositories (Dict[str, Dict]): Data of all the repositories contained in the metarepo
         tags (Dict[str, List[str]]): Repository data organised according to tags
         constants (Dict[str, Union[str, int, bool, float]]): Gameta constants data extracted
         commands (Dict): Gameta commands data extracted
-        env_vars (Dict): Extracted environment variables with keys prefixed with $
-        files (Dict[str, File]): File formats supported
     """
 
     def __init__(self):
+        self.version: str = __version__
+
+        # Project dependent variables
+        self.schema: Optional[Schema] = None
         self.project_dir: Optional[str] = None
         self.is_metarepo: bool = False
-        self.gameta_data: Dict[str, Any] = {}
-        self.virtualenvs: Dict[str, str] = {}
-        self.constants: Dict[str, Union[str, int, bool, float]] = {}
-        self.commands: Dict = {}
-        self.repositories: Dict[str, Dict[str, Any]] = {}
-        self.tags: Dict[str, List[str]] = {}
-
-        self.env_vars: Dict = {
-            '$' + k.upper(): v
-            for k, v in environ.items()
-        }
-
         self.files: Dict[str, File] = {}
 
-        self.version: str = __version__
-        self.schema: Optional[Schema] = None
+        self.gameta_data: Dict[str, Any] = {}
+        self.repositories: Dict[str, Dict[str, Any]] = {}
+        self.tags: Dict[str, List[str]] = {}
+        self.commands: Dict = {}
+        self.virtualenvs: Dict[str, str] = {}
+        self.constants: Dict[str, Union[str, int, bool, float]] = {}
 
     def init(self, project_dir: str) -> None:
         """
@@ -124,7 +120,13 @@ class GametaContext(object):
 
         Returns:
             str: Name of the project
+
+        Raises:
+            ContextError: If Gameta Context has not been initialised
         """
+        if self.project_dir is None:
+            raise ContextError("Gameta Context has not been initialised, run the init function first")
+
         return basename(self.project_dir)
 
     @property
@@ -134,7 +136,13 @@ class GametaContext(object):
 
         Returns:
             str: Absolute path to the .gameta folder
+
+        Raises:
+            ContextError: If Gameta Context has not been initialised
         """
+        if self.project_dir is None:
+            raise ContextError("Gameta Context has not been initialised, run the init function first")
+
         return join(self.project_dir, '.gameta')
 
     @property
@@ -145,7 +153,13 @@ class GametaContext(object):
 
         Returns:
             str: Path to the project's .gameta file
+
+        Raises:
+            ContextError: If Gameta Context has not been initialised
         """
+        if 'gameta' not in self.files:
+            raise ContextError("Gameta Context has not been initialised, run the init function first")
+
         return self.files['gameta'].file
 
     @property
@@ -215,7 +229,13 @@ class GametaContext(object):
 
         Returns:
             bool: Flag to indicate if repository is a primary meta-repository
+
+        Raises:
+            ContextError: If repository does not exist
         """
+        if repo not in self.repositories:
+            raise ContextError(f"Repository {repo} does not exist")
+
         return abspath(self.repositories[repo]["path"]) == self.project_dir
 
     def load(self) -> None:
